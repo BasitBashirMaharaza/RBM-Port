@@ -3,6 +3,7 @@ let output;
 let welcomePending = false;
 let welcomeStarting = false;
 let welcomeAudio;
+let welcomeReady;
 
 const WELCOME_SOUND_URL = '/sounds/welcome-chime.mp3';
 
@@ -50,16 +51,32 @@ function voice(frequency, { at = 0, duration = 0.12, volume = 0.018, type = 'sin
 
 function welcomeTrack() {
   if (welcomeAudio) return welcomeAudio;
-  welcomeAudio = new Audio(WELCOME_SOUND_URL);
+  welcomeAudio = new Audio();
   welcomeAudio.preload = 'auto';
   welcomeAudio.playsInline = true;
-  welcomeAudio.volume = 0.2;
+  welcomeAudio.volume = 0.18;
+  welcomeAudio.src = WELCOME_SOUND_URL;
   return welcomeAudio;
 }
 
 export function prepareWelcomeSound() {
   const track = welcomeTrack();
-  track.load();
+  if (welcomeReady) return welcomeReady;
+  welcomeReady = new Promise((resolve) => {
+    const finish = () => {
+      track.removeEventListener('canplay', finish);
+      track.removeEventListener('error', finish);
+      resolve();
+    };
+    if (track.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+      finish();
+      return;
+    }
+    track.addEventListener('canplay', finish, { once: true });
+    track.addEventListener('error', finish, { once: true });
+    track.load();
+  });
+  return welcomeReady;
 }
 
 function playWelcomeTrack() {

@@ -481,13 +481,16 @@ function App() {
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme || 'dark');
   const [welcomeOpen, setWelcomeOpen] = useState(true);
   const [welcomeLeaving, setWelcomeLeaving] = useState(false);
+  const welcomeSoundArmed = useRef(false);
   useInterfaceSounds();
 
   const finishWelcome = () => {
     if (welcomeLeaving) return;
-    requestWelcomeSound();
     setWelcomeLeaving(true);
-    window.setTimeout(() => setWelcomeOpen(false), 480);
+    window.setTimeout(() => {
+      welcomeSoundArmed.current = true;
+      setWelcomeOpen(false);
+    }, 480);
   };
 
   useEffect(() => {
@@ -498,6 +501,12 @@ function App() {
   useEffect(() => {
     prepareWelcomeSound();
   }, []);
+
+  useEffect(() => {
+    if (welcomeOpen || !welcomeSoundArmed.current) return undefined;
+    const frame = requestAnimationFrame(requestWelcomeSound);
+    return () => cancelAnimationFrame(frame);
+  }, [welcomeOpen]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
