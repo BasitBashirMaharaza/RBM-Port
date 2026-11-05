@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import InkRidges from './components/InkRidges.jsx';
 import CanvasText from './components/CanvasText.jsx';
 import ExpandableTabs from './components/ExpandableTabs.jsx';
+import { playControlSound, requestWelcomeSound, unlockSound } from './soundDesign.js';
 
 const profileLinks = {
   github: 'https://github.com/BasitBashirMaharaza',
@@ -114,123 +115,26 @@ function Arrow({ direction = 'up' }) {
   return <span className={`arrow arrow-${direction}`} aria-hidden="true">↗</span>;
 }
 
-let sharedAudioContext;
-let fallbackChimeUrl;
-
-function getFallbackChimeUrl() {
-  if (fallbackChimeUrl) return fallbackChimeUrl;
-  const sampleRate = 22050;
-  const duration = 1.45;
-  const samples = Math.floor(sampleRate * duration);
-  const buffer = new ArrayBuffer(44 + samples * 2);
-  const view = new DataView(buffer);
-  const write = (offset, value) => [...value].forEach((character, index) => view.setUint8(offset + index, character.charCodeAt(0)));
-  write(0, 'RIFF'); view.setUint32(4, 36 + samples * 2, true); write(8, 'WAVE'); write(12, 'fmt ');
-  view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
-  view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
-  write(36, 'data'); view.setUint32(40, samples * 2, true);
-  const notes = [261.63, 329.63, 392];
-  for (let index = 0; index < samples; index += 1) {
-    const time = index / sampleRate;
-    const sample = notes.reduce((sum, note, noteIndex) => {
-      const start = noteIndex * 0.12;
-      if (time < start) return sum;
-      const localTime = time - start;
-      const envelope = Math.min(1, localTime * 48) * Math.exp(-localTime * 2.8);
-      const bell = Math.sin(2 * Math.PI * note * localTime) + Math.sin(2 * Math.PI * note * 2.01 * localTime) * 0.16;
-      return sum + bell * envelope * 0.105;
-    }, 0);
-    view.setInt16(44 + index * 2, sample * 32767, true);
-  }
-  fallbackChimeUrl = URL.createObjectURL(new Blob([buffer], { type: 'audio/wav' }));
-  return fallbackChimeUrl;
-}
-
-function getAudioContext() {
-  const AudioEngine = window.AudioContext || window.webkitAudioContext;
-  if (!AudioEngine) return null;
-  sharedAudioContext ||= new AudioEngine();
-  return sharedAudioContext;
-}
-
-async function playArrivalChime() {
-  const context = getAudioContext();
-  if (!context) {
-    const audio = new Audio(getFallbackChimeUrl());
-    audio.volume = 0.28;
-    try { await audio.play(); return true; } catch { return false; }
-  }
-  if (context.state === 'suspended') {
-    try { await context.resume(); } catch { return false; }
-  }
-  if (context.state !== 'running') return false;
-  const now = context.currentTime;
-  [261.63, 329.63, 392].forEach((frequency, index) => {
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    const filter = context.createBiquadFilter();
-    const start = now + index * 0.12;
-    oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(frequency, start);
-    filter.type = 'lowpass';
-    filter.frequency.value = 1550;
-    gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(0.028, start + 0.018);
-    gain.gain.exponentialRampToValueAtTime(0.0001, start + 1.18);
-    oscillator.connect(filter).connect(gain).connect(context.destination);
-    oscillator.start(start);
-    oscillator.stop(start + 1.2);
-  });
-  return true;
-}
-
-function playWelcomeChime() {
-  playArrivalChime().then((played) => {
-    if (played) return;
-    const retry = () => {
-      playArrivalChime();
-      window.removeEventListener('pointerdown', retry, true);
-      window.removeEventListener('keydown', retry, true);
-    };
-    window.addEventListener('pointerdown', retry, { capture: true, once: true });
-    window.addEventListener('keydown', retry, { capture: true, once: true });
-  });
-}
-
 function useInterfaceSounds() {
   useEffect(() => {
     const play = (event) => {
-      const control = event.target.closest('button, a, input');
-      if (!control || control.matches('.skip-link')) return;
+      unlockSound();
+      const control = event.target.closest('button, a, input, label[data-sound], [role="button"], [data-sound]');
+      if (control) playControlSound(control);
+    };
 
-      const audioContext = getAudioContext();
-      if (!audioContext) return;
-
-      const signature = (control.dataset.sound || control.textContent || 'interface').trim();
-      if (signature === 'silent') return;
-      const hash = [...signature].reduce((total, character) => total + character.charCodeAt(0), 0);
-      const notes = [220, 246.94, 277.18, 329.63, 369.99];
-      const now = audioContext.currentTime;
-      const oscillator = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-      const filter = audioContext.createBiquadFilter();
-
-      oscillator.type = hash % 2 ? 'sine' : 'triangle';
-      oscillator.frequency.setValueAtTime(notes[hash % notes.length], now);
-      oscillator.frequency.exponentialRampToValueAtTime(notes[hash % notes.length] * 1.025, now + 0.16);
-      filter.type = 'lowpass';
-      filter.frequency.value = 1450;
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.018, now + 0.014);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
-      oscillator.connect(filter).connect(gain).connect(audioContext.destination);
-      oscillator.start(now);
-      oscillator.stop(now + 0.2);
+    const keyboard = (event) => {
+      if (event.repeat || (event.key !== 'Enter' && event.key !== ' ')) return;
+      unlockSound();
+      const control = event.target.closest('button, a, input, label[data-sound], [role="button"], [data-sound]');
+      if (control) playControlSound(control);
     };
 
     document.addEventListener('pointerdown', play, { capture: true, passive: true });
+    document.addEventListener('keydown', keyboard, true);
     return () => {
       document.removeEventListener('pointerdown', play, true);
+      document.removeEventListener('keydown', keyboard, true);
     };
   }, []);
 }
@@ -557,7 +461,7 @@ function App() {
 
   const finishWelcome = () => {
     if (welcomeLeaving) return;
-    playWelcomeChime();
+    requestWelcomeSound();
     setWelcomeLeaving(true);
     window.setTimeout(() => setWelcomeOpen(false), 480);
   };
