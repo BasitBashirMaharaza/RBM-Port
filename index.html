@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0d0c" />
+    <meta name="description" content="Basit Bashir — Computer Science Engineer building AI, data science and healthcare informatics systems." />
+    <meta property="og:title" content="Basit Bashir — AI, Data & Healthcare" />
+    <meta property="og:description" content="Applied intelligence for real-world care." />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Basit Bashir — AI, Data & Healthcare</title>
+    <script>
+      (() => {
+        const saved = localStorage.getItem('basit-theme');
+        const system = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        document.documentElement.dataset.theme = saved || system;
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
