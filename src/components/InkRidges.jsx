@@ -7,9 +7,9 @@ function random(seed) {
   return x - Math.floor(x);
 }
 
-function ridgePoints(width, height, layer, seed, shiftX) {
+function ridgePoints(width, height, layer, seed, shiftX, compact) {
   const points = [];
-  const count = Math.max(90, Math.floor(width / 9));
+  const count = compact ? Math.max(48, Math.floor(width / 12)) : Math.max(90, Math.floor(width / 9));
   const base = height * (0.56 + layer * 0.105);
   const amplitude = height * (0.055 + layer * 0.018);
 
@@ -35,6 +35,8 @@ export default function InkRidges() {
     if (!canvas || !root || !context) return undefined;
 
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const compact = matchMedia('(max-width: 700px), (pointer: coarse)').matches;
+    const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
     let frame = 0;
     let width = 0;
     let height = 0;
@@ -43,6 +45,8 @@ export default function InkRidges() {
     let targetX = 0;
     let targetY = 0;
     let time = 0;
+    let lastPaint = 0;
+    let visible = !document.hidden;
 
     const resize = () => {
       const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -55,7 +59,13 @@ export default function InkRidges() {
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
     };
 
-    const draw = () => {
+    const draw = (now = 0) => {
+      if (!visible) return;
+      if (!reduced && compact && now - lastPaint < 32) {
+        frame = requestAnimationFrame(draw);
+        return;
+      }
+      lastPaint = now;
       const light = document.documentElement.dataset.theme === 'light';
       const ink = light ? '20, 29, 21' : '220, 220, 226';
       const accent = light ? '71, 120, 39' : '164, 166, 174';
@@ -63,10 +73,7 @@ export default function InkRidges() {
 
       pointerX += (targetX - pointerX) * 0.045;
       pointerY += (targetY - pointerY) * 0.045;
-      // The landscape is a core identity element, so it keeps a calm ambient
-      // drift even when the browser requests reduced motion. Pointer and scroll
-      // depth remain restrained; only the slow paint breathing continues.
-      time += reduced ? 0.0032 : 0.009;
+      time += reduced ? 0 : compact ? 0.005 : 0.009;
       context.clearRect(0, 0, width, height);
 
       const sunX = width * 0.79 + pointerX * 18;
@@ -85,10 +92,11 @@ export default function InkRidges() {
       context.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);
       context.stroke();
 
-      for (let layer = 0; layer < 5; layer += 1) {
-        const depth = layer / 4;
+      const layers = compact ? 3 : 5;
+      for (let layer = 0; layer < layers; layer += 1) {
+        const depth = layer / Math.max(1, layers - 1);
         const drift = Math.sin(time * (0.58 + depth * 0.34) + layer) * (8 + depth * 6);
-        const points = ridgePoints(width, height, layer, 7.13, pointerY * (2 + depth * 4) + scroll * 28 * (1 - depth));
+        const points = ridgePoints(width, height, layer, 7.13, pointerY * (2 + depth * 4) + scroll * 28 * (1 - depth), compact);
         const gradient = context.createLinearGradient(0, height * 0.38, 0, height);
         gradient.addColorStop(0, `rgba(${ink}, ${0.045 + depth * 0.04})`);
         gradient.addColorStop(1, `rgba(${ink}, ${0.014 + depth * 0.022})`);
@@ -112,7 +120,7 @@ export default function InkRidges() {
         context.stroke();
       }
 
-      for (let mist = 0; mist < 3; mist += 1) {
+      for (let mist = 0; mist < (compact ? 2 : 3); mist += 1) {
         const y = height * (0.58 + mist * 0.1) + Math.sin(time * 1.4 + mist) * 12;
         const mistGradient = context.createLinearGradient(0, y - 30, 0, y + 34);
         mistGradient.addColorStop(0, 'rgba(255,255,255,0)');
@@ -122,7 +130,7 @@ export default function InkRidges() {
         context.fillRect(0, y - 30, width, 64);
       }
 
-      frame = requestAnimationFrame(draw);
+      if (!reduced) frame = requestAnimationFrame(draw);
     };
 
     const pointerMove = (event) => {
@@ -130,18 +138,26 @@ export default function InkRidges() {
       targetY = (event.clientY / height - 0.5) * 2;
     };
 
-    const scrollHandler = () => {};
+    const visibilityChange = () => {
+      visible = !document.hidden;
+      if (visible) {
+        lastPaint = 0;
+        draw(performance.now());
+      } else {
+        cancelAnimationFrame(frame);
+      }
+    };
     window.addEventListener('resize', resize);
-    window.addEventListener('pointermove', pointerMove, { passive: true });
-    window.addEventListener('scroll', scrollHandler, { passive: true });
+    if (finePointer) window.addEventListener('pointermove', pointerMove, { passive: true });
+    document.addEventListener('visibilitychange', visibilityChange);
     resize();
     draw();
 
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', resize);
-      window.removeEventListener('pointermove', pointerMove);
-      window.removeEventListener('scroll', scrollHandler);
+      if (finePointer) window.removeEventListener('pointermove', pointerMove);
+      document.removeEventListener('visibilitychange', visibilityChange);
     };
   }, []);
 

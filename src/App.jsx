@@ -201,6 +201,7 @@ function ExperienceGallery() {
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState('next');
   const gallery = useRef(null);
+  const touchStart = useRef(null);
   const item = experiences[active];
 
   const select = (index) => {
@@ -221,14 +222,28 @@ function ExperienceGallery() {
     gallery.current?.style.setProperty('--gallery-y', '0deg');
   };
 
+  const startSwipe = (event) => {
+    if (event.pointerType === 'mouse') return;
+    touchStart.current = { x: event.clientX, y: event.clientY };
+  };
+
+  const endSwipe = (event) => {
+    if (!touchStart.current) return;
+    const deltaX = event.clientX - touchStart.current.x;
+    const deltaY = event.clientY - touchStart.current.y;
+    touchStart.current = null;
+    if (Math.abs(deltaX) < 46 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
+    select(active + (deltaX < 0 ? 1 : -1));
+  };
+
   return (
     <div className="experience-gallery reveal" ref={gallery} onPointerMove={parallax} onPointerLeave={reset}>
-      <div className="experience-stage">
+      <div className="experience-stage" onPointerDown={startSwipe} onPointerUp={endSwipe} onPointerCancel={() => { touchStart.current = null; }}>
         <div className={`experience-panel is-${direction}`} key={item.role}>
           <div className="experience-visual" aria-hidden="true">
             <span>0{active + 1}</span>
             <div className="experience-rings"><i /><i /><i /></div>
-            <div className="experience-brand"><img src={item.logo} alt="" /><span>Verified identity</span></div>
+            <div className="experience-brand"><img src={item.logo} alt="" loading="lazy" decoding="async" /><span>Verified identity</span></div>
             <small>{item.label}</small>
             <strong>{item.company}</strong>
           </div>
@@ -306,6 +321,15 @@ function Header({ theme, onThemeToggle }) {
   }, [menuOpen]);
 
   useEffect(() => {
+    if (!menuOpen) return undefined;
+    const escape = (event) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', escape);
+    return () => window.removeEventListener('keydown', escape);
+  }, [menuOpen]);
+
+  useEffect(() => {
     document.body.classList.toggle('menu-open', menuOpen);
     return () => document.body.classList.remove('menu-open');
   }, [menuOpen]);
@@ -329,17 +353,17 @@ function Header({ theme, onThemeToggle }) {
     <>
       <header className={`site-header ${hidden ? 'header-hidden' : ''}`}>
         <a className="brand" href="#home" onClick={close} aria-label="Basit Bashir, home">
-          <span className="brand-avatar"><img src="/portfolio_photo.webp" alt="" /></span>
+          <span className="brand-avatar"><img src="/portfolio_photo.webp" alt="" decoding="async" fetchPriority="high" /></span>
           <span className="brand-name">Basit Bashir <small>AI · DATA · HEALTH</small></span>
         </a>
         <div className="desktop-nav"><ExpandableTabs tabs={navTabs} onChange={navigateTab} /></div>
         <div className="header-actions">
           <a className="nav-cta" href="#contact">Let’s talk <Arrow /></a>
-          <button className={`menu-button ${menuOpen ? 'open' : ''}`} type="button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Toggle navigation"><span /><span /></button>
+          <button className={`menu-button ${menuOpen ? 'open' : ''}`} type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label="Toggle navigation"><span /><span /></button>
         </div>
       </header>
       <div className={`header-switch-dock ${hidden ? 'header-hidden' : ''}`}><LampSwitch theme={theme} onToggle={onThemeToggle} /></div>
-      <nav className={`mobile-menu ${menuOpen ? 'open' : ''}`} aria-label="Mobile navigation">
+      <nav id="mobile-navigation" className={`mobile-menu ${menuOpen ? 'open' : ''}`} aria-label="Mobile navigation" aria-hidden={!menuOpen}>
         {['about', 'experience', 'work', 'toolkit', 'education', 'contact'].map((item, index) => <a key={item} href={`#${item}`} onClick={close}><span>0{index + 1}</span>{item}</a>)}
       </nav>
     </>
@@ -407,7 +431,7 @@ function OrbitalHero({ introReady }) {
       </div>
       <div className="portrait-core">
         <button className="portrait-frame" type="button" onClick={() => setProfileOpen((open) => !open)} aria-expanded={profileOpen} aria-haspopup="dialog" data-sound="profile-greeting">
-          <img src="/portfolio_photo.webp" alt="Basit Bashir" />
+          <img src="/portfolio_photo.webp" alt="Basit Bashir" decoding="async" fetchPriority="high" />
           <span className="sr-only">Open a greeting from Basit</span>
         </button>
         <div className="portrait-copy">
@@ -570,7 +594,7 @@ function App() {
                 <a className="underlink" href={profileLinks.pharmacy} target="_blank" rel="noreferrer">View the pharmacy location <Arrow /></a>
               </div>
               <aside className="profile-card reveal">
-                <img src="/portfolio_photo.webp" alt="Basit Bashir" />
+                <img src="/portfolio_photo.webp" alt="Basit Bashir" loading="lazy" decoding="async" />
                 <div><span>Focus</span><strong>Data Science<br />Generative AI<br />Healthcare Informatics</strong></div>
                 <div><span>Core stack</span><strong>Python · LangChain<br />Scikit-Learn · Pandas<br />Streamlit · NumPy</strong></div>
               </aside>
@@ -619,10 +643,10 @@ function App() {
           <div className="container">
             <SectionHeading index="05" label="Education">Formal learning, <em>applied.</em></SectionHeading>
             <div className="education-grid">
-              <article className="degree-card reveal" data-tilt><div className="degree-year">2019<span>—</span>2024</div><div><div className="degree-institution-mark"><img src="/logos/gcet-degree.svg" alt="" /><span>GCET Kashmir<small>Safapora · Ganderbal</small></span></div><p className="mini-label">Academic degree</p><h3>Bachelor of Technology</h3><h4>Computer Science & Engineering</h4><p>Government College of Engineering and Technology (GCET), Safapora Ganderbal, Jammu & Kashmir, India.</p><div className="tag-list"><span>Algorithms & DSA</span><span>Machine learning</span><span>DBMS</span><span>Software engineering</span><span>Operating systems</span></div></div></article>
+              <article className="degree-card reveal" data-tilt><div className="degree-year">2019<span>—</span>2024</div><div><div className="degree-institution-mark"><img src="/logos/gcet-degree.svg" alt="" loading="lazy" decoding="async" /><span>GCET Kashmir<small>Safapora · Ganderbal</small></span></div><p className="mini-label">Academic degree</p><h3>Bachelor of Technology</h3><h4>Computer Science & Engineering</h4><p>Government College of Engineering and Technology (GCET), Safapora Ganderbal, Jammu & Kashmir, India.</p><div className="tag-list"><span>Algorithms & DSA</span><span>Machine learning</span><span>DBMS</span><span>Software engineering</span><span>Operating systems</span></div></div></article>
               <div className="credentials">
-                <article className="credential reveal"><img className="credential-logo credential-logo-michigan" src="/logos/michigan.svg" alt="University of Michigan logo" /><div><span>University of Michigan</span><time>Jun 2024</time></div><h3>Applied Machine Learning in Python</h3><p>Applied algorithms, Scikit-Learn model creation, NumPy and Pandas preprocessing, and evaluation metrics.</p></article>
-                <article className="credential reveal"><img className="credential-logo credential-logo-google" src="/logos/google.svg" alt="Google logo" /><div><span>Google Digital Garage</span><time>Nov 2022</time></div><h3>The Fundamentals of Digital Marketing</h3><p>SEO practices, digital strategy, web analytics and search-performance optimization.</p><small>Credential ID: U33 RXC S8T</small></article>
+                <article className="credential reveal"><img className="credential-logo credential-logo-michigan" src="/logos/michigan.svg" alt="University of Michigan logo" loading="lazy" decoding="async" /><div><span>University of Michigan</span><time>Jun 2024</time></div><h3>Applied Machine Learning in Python</h3><p>Applied algorithms, Scikit-Learn model creation, NumPy and Pandas preprocessing, and evaluation metrics.</p></article>
+                <article className="credential reveal"><img className="credential-logo credential-logo-google" src="/logos/google.svg" alt="Google logo" loading="lazy" decoding="async" /><div><span>Google Digital Garage</span><time>Nov 2022</time></div><h3>The Fundamentals of Digital Marketing</h3><p>SEO practices, digital strategy, web analytics and search-performance optimization.</p><small>Credential ID: U33 RXC S8T</small></article>
               </div>
             </div>
           </div>
