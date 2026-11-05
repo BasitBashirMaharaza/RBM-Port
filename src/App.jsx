@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import InkRidges from './components/InkRidges.jsx';
 import CanvasText from './components/CanvasText.jsx';
 import ExpandableTabs from './components/ExpandableTabs.jsx';
-import { playControlSound, requestWelcomeSound, unlockSound } from './soundDesign.js';
+import { playControlSound, prepareWelcomeSound, requestWelcomeSound, unlockSound } from './soundDesign.js';
 
 const profileLinks = {
   github: 'https://github.com/BasitBashirMaharaza',
@@ -494,6 +494,10 @@ function App() {
     document.body.classList.toggle('welcome-open', welcomeOpen);
     return () => document.body.classList.remove('welcome-open');
   }, [welcomeOpen]);
+
+  useEffect(() => {
+    prepareWelcomeSound();
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;

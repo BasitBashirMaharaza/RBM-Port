@@ -1,6 +1,10 @@
 let context;
 let output;
 let welcomePending = false;
+let welcomeStarting = false;
+let welcomeAudio;
+
+const WELCOME_SOUND_URL = '/sounds/welcome-chime.mp3';
 
 const AudioEngine = () => window.AudioContext || window.webkitAudioContext;
 
@@ -44,33 +48,56 @@ function voice(frequency, { at = 0, duration = 0.12, volume = 0.018, type = 'sin
   oscillator.stop(start + duration + 0.02);
 }
 
-function welcomePattern() {
-  const audio = engine();
-  if (!audio || audio.state !== 'running') return false;
-  const start = audio.currentTime + 0.025;
-  [261.63, 329.63, 392, 523.25].forEach((frequency, index) => {
-    voice(frequency, {
-      at: start + index * 0.115,
-      duration: 1.05 - index * 0.07,
-      volume: 0.021 - index * 0.0015,
-      type: 'sine',
-      glide: 1.002,
-      cutoff: 1650,
-    });
+function welcomeTrack() {
+  if (welcomeAudio) return welcomeAudio;
+  welcomeAudio = new Audio(WELCOME_SOUND_URL);
+  welcomeAudio.preload = 'auto';
+  welcomeAudio.playsInline = true;
+  welcomeAudio.volume = 0.2;
+  return welcomeAudio;
+}
+
+export function prepareWelcomeSound() {
+  const track = welcomeTrack();
+  track.load();
+}
+
+function playWelcomeTrack() {
+  if (!welcomePending || welcomeStarting) return;
+  const track = welcomeTrack();
+  welcomeStarting = true;
+  track.pause();
+  track.currentTime = 0;
+  const started = track.play();
+  if (!started?.then) {
+    welcomePending = false;
+    welcomeStarting = false;
+    return;
+  }
+  started.then(() => {
+    welcomePending = false;
+    welcomeStarting = false;
+  }).catch(() => {
+    welcomeStarting = false;
+    // Autoplay may be blocked until a visitor taps or presses a key. Keep this
+    // queued so the exact supplied MP3 plays from that first trusted gesture.
   });
-  voice(783.99, { at: start + 0.355, duration: 0.72, volume: 0.006, type: 'sine', cutoff: 2200 });
-  return true;
 }
 
 function flushWelcome() {
-  if (!welcomePending || context?.state !== 'running') return;
-  welcomePending = false;
-  welcomePattern();
+  if (!welcomePending) return;
+  playWelcomeTrack();
 }
 
 export function unlockSound() {
   const audio = engine();
-  if (!audio) return;
+  if (!audio) {
+    flushWelcome();
+    return;
+  }
+  // Calling media playback directly inside the input event avoids a delayed
+  // retry and satisfies browsers that require a user activation for audio.
+  flushWelcome();
   if (audio.state === 'suspended') {
     audio.resume().then(flushWelcome).catch(() => {});
   } else {
@@ -79,14 +106,9 @@ export function unlockSound() {
 }
 
 export function requestWelcomeSound() {
-  const audio = engine();
-  if (!audio) return;
-  if (audio.state === 'running') {
-    welcomePattern();
-    return;
-  }
+  prepareWelcomeSound();
   welcomePending = true;
-  audio.resume().then(flushWelcome).catch(() => {});
+  playWelcomeTrack();
 }
 
 function soundIdentity(control) {
