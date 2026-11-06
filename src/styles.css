@@ -233,7 +233,7 @@ html[data-theme='light'] .portrait-copy .canvas-text { color: #0b0d0a; }
 .capabilities { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 90px; border-block: 1px solid var(--line); }.capabilities span { padding: 23px 16px; color: var(--muted); font: 400 9px/1.5 'DM Mono', monospace; text-align: center; text-transform: uppercase; }.capabilities span + span { border-left: 1px solid var(--line); }
 
 /* Experience */
-.experience, .toolkit { background: color-mix(in srgb, var(--bg-soft) 91%, transparent); backdrop-filter: blur(2px); }
+.experience, .toolkit { background: transparent; backdrop-filter: none; }
 .timeline { position: relative; }.timeline::before { content: ''; position: absolute; top: 6px; bottom: 6px; left: calc(18% + 12px); width: 1px; background: var(--line); }
 .experience-row { display: grid; grid-template-columns: 18% 24px 1fr; gap: 25px; padding-bottom: 90px; }.experience-row:last-child { padding-bottom: 0; }
 .experience-date { display: flex; flex-direction: column; gap: 7px; padding-top: 3px; font: 400 9px/1.4 'DM Mono', monospace; }.experience-date strong { font-weight: 500; }.experience-date span { color: var(--quiet); }
