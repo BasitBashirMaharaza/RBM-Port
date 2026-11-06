@@ -1,0 +1,23 @@
+.signal-hero{position:relative;isolation:isolate;overflow:hidden;background:transparent;color:var(--text);padding:145px max(6vw,24px) 28px;min-height:100svh;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;transition:background .3s,color .3s}
+.signal-heading{position:relative;z-index:2;max-width:1600px;width:100%;margin:auto}
+.signal-eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 32px;font-size:11px;letter-spacing:.05em;color:var(--muted)}
+.signal-eyebrow>span{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.signal-hero h1{font-family:Manrope,system-ui,sans-serif;font-size:clamp(68px,8.6vw,166px);font-weight:500;line-height:.95;letter-spacing:-.075em;margin:0;max-width:1100px}
+.signal-hero h1>span{color:var(--muted)}
+.signal-intro{position:absolute;right:0;bottom:8px;max-width:290px;border-left:1px solid var(--line-strong);padding-left:25px}
+.signal-intro p:first-child{font-size:20px;font-weight:500;line-height:1.35;margin:0 0 18px;letter-spacing:-.03em}
+.signal-intro p:last-child{font-size:12px;line-height:1.8;color:var(--muted);margin:0}
+.signal-art{position:relative;min-height:230px;height:30vh;max-height:380px;margin:0 -6vw;flex:1}
+.signal-art canvas{position:absolute;width:100%;height:100%;inset:0}
+.signal-art-caption{position:absolute;inset:40px 6vw auto;display:flex;justify-content:space-between;font:8px 'DM Mono',monospace;color:var(--quiet);letter-spacing:.1em;pointer-events:none}
+.signal-bottom{position:relative;display:flex;justify-content:space-between;align-items:center;gap:24px;margin-top:10px;padding-bottom:30px;border-bottom:1px solid var(--line-strong)}
+.signal-links,.signal-controls{display:flex;align-items:center;gap:12px}
+.signal-links a{display:flex;align-items:center;justify-content:space-between;gap:40px;padding:16px 23px;background:var(--text);color:var(--bg);border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;transition:transform .16s}
+.signal-links a.signal-about{background:transparent;color:var(--text);gap:22px}
+.signal-controls button{display:flex;align-items:center;gap:10px;min-height:44px;border:1px solid var(--line-strong);border-radius:30px;background:var(--surface);color:var(--text);padding:10px 16px;font:11px Manrope,sans-serif;cursor:pointer;transition:transform .16s,background .16s}
+.signal-controls i{width:14px;height:14px;background:repeating-linear-gradient(90deg,var(--accent) 0 1px,transparent 1px 4px);transform:skewY(-25deg);transition:transform .2s}.signal-controls i.resolved{transform:skewY(0)}
+.signal-controls button:active,.signal-links a:active{transform:scale(.97)}
+.signal-footnote{display:flex;justify-content:space-between;gap:18px;padding-top:22px;font:8px 'DM Mono',monospace;letter-spacing:.04em;color:var(--quiet)}
+@media(min-width:1600px){.signal-hero{padding-top:175px}.signal-intro{max-width:340px}.signal-intro p:first-child{font-size:26px}.signal-intro p:last-child{font-size:14px}}
+@media(max-width:1100px){.signal-hero h1{font-size:clamp(64px,10vw,112px)}.signal-intro{max-width:230px}.signal-intro p:first-child{font-size:17px}.signal-intro p:last-child{font-size:11px}}
+@media(max-width:760px){.signal-hero{padding-top:120px}.signal-eyebrow{font-size:9px;margin-bottom:28px}.signal-hero h1{font-size:clamp(60px,12vw,90px)}.signal-intro{position:static;display:grid;grid-template-columns:1fr 1.4fr;gap:20px;max-width:none;border:0;padding:0;margin-top:30px}.signal-intro p:first-child{font-size:16px}.signal-art{height:240px;min-height:240px}.signal-art-caption{font-size:7px;top:25px}.signal-bottom{align-items:flex-start;flex-direction:column;gap:20px}.signal-links{width:100%}.signal-links a{padding:14px 18px;gap:24px}.signal-controls{justify-content:space-between;width:100%}.signal-footnote{font-size:7px;line-height:1.6}.signal-footnote>span:last-child{display:none}}

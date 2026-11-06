@@ -1,0 +1,7 @@
+.text-roll-letter{position:relative;display:inline-block;perspective:10000px;transform-style:preserve-3d}
+.text-roll-face{position:absolute;top:0;left:0;display:inline-block;white-space:pre;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.text-roll-enter{transform-origin:50% 25%}
+.text-roll-exit{transform-origin:50% 100%}
+.text-roll-width{visibility:hidden;display:inline-block;white-space:pre}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(prefers-reduced-motion:reduce){.text-roll-face{transition:none!important}}

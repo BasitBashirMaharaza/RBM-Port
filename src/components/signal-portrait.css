@@ -1,0 +1,13 @@
+.signal-title-group{display:grid;grid-template-columns:minmax(0,1fr) 290px;align-items:center;gap:60px}
+.signal-title-group h1{font-size:clamp(58px,6.7vw,128px);line-height:1.01;letter-spacing:-.065em}
+.signal-title-group h1 em{font-family:Newsreader,Georgia,serif;color:var(--accent);font-weight:400;letter-spacing:-.05em}
+.signal-person{display:grid;gap:20px}
+.signal-portrait{position:relative;display:block;width:190px;height:210px;overflow:hidden;border:1px solid var(--line-strong);border-radius:20px;box-shadow:0 18px 45px rgba(0,0,0,.18);transition:transform .25s cubic-bezier(.23,1,.32,1)}
+.signal-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 35%}
+.signal-portrait span{position:absolute;inset:auto 0 0;padding:30px 16px 14px;background:linear-gradient(transparent,rgba(0,0,0,.8));color:white;font-size:11px}
+.signal-person .signal-intro{position:static;max-width:none;border:0;padding:0}
+.signal-person .signal-intro p:first-child{font-size:20px;margin-bottom:10px}
+.signal-person .signal-intro p:last-child{font-size:13px;color:var(--muted);line-height:1.75}
+@media(hover:hover){.signal-portrait:hover{transform:translateY(-5px) rotate(-2deg)}}
+@media(max-width:1000px){.signal-title-group{grid-template-columns:minmax(0,1fr) 220px;gap:30px}.signal-title-group h1{font-size:clamp(48px,6.5vw,82px)}.signal-portrait{width:155px;height:170px}}
+@media(max-width:700px){.signal-title-group{grid-template-columns:1fr;gap:28px}.signal-title-group h1{font-size:clamp(42px,9.3vw,66px)}.signal-person{grid-template-columns:105px minmax(0,1fr);gap:18px;align-items:center}.signal-portrait{width:105px;height:130px;border-radius:14px}.signal-portrait span{font-size:9px;padding:22px 10px 9px}.signal-person .signal-intro{display:block;margin:0}.signal-person .signal-intro p:first-child{font-size:16px}.signal-person .signal-intro p:last-child{font-size:11px}.signal-art{min-height:180px;height:180px}}

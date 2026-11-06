@@ -1,0 +1,14 @@
+.aura-background{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:var(--bg);--aura-one:rgba(81,143,132,.4);--aura-two:rgba(104,109,177,.32);--aura-three:rgba(184,223,135,.24)}
+html[data-theme='light'] .aura-background{--aura-one:rgba(102,182,154,.34);--aura-two:rgba(156,151,216,.3);--aura-three:rgba(211,190,118,.25)}
+.aura-flow{position:absolute;width:85vw;height:90vh;border-radius:45%;filter:blur(55px);will-change:transform;opacity:.9}
+.aura-flow-a{left:-30%;top:-30%;background:radial-gradient(ellipse,var(--aura-one),transparent 68%);animation:aura-drift-a 13s ease-in-out infinite alternate}
+.aura-flow-b{right:-28%;top:5%;background:radial-gradient(ellipse,var(--aura-two),transparent 68%);animation:aura-drift-b 17s ease-in-out infinite alternate}
+.aura-flow-c{left:10%;bottom:-55%;background:radial-gradient(ellipse,var(--aura-three),transparent 65%);animation:aura-drift-c 11s ease-in-out infinite alternate}
+.aura-silk{position:absolute;inset:-50%;background:conic-gradient(from 40deg at 50% 50%,transparent 0deg,var(--aura-one) 60deg,transparent 95deg,var(--aura-two) 175deg,transparent 210deg,var(--aura-three) 285deg,transparent 340deg);filter:blur(65px);opacity:.35;animation:aura-turn 35s linear infinite}
+.welcome-screen>.aura-background{position:absolute;z-index:0}
+html[data-aura-paused='true'] .aura-background *{animation-play-state:paused}
+@keyframes aura-drift-a{to{transform:translate(45vw,35vh) rotate(35deg) scale(.8)}}
+@keyframes aura-drift-b{to{transform:translate(-45vw,20vh) rotate(-45deg) scale(1.25)}}
+@keyframes aura-drift-c{to{transform:translate(10vw,-60vh) scale(.8)}}
+@keyframes aura-turn{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.aura-background *{animation:none!important}}

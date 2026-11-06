@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import InkRidges from './components/InkRidges.jsx';
+import InkRidges from './components/AuraBackground.jsx';
 import CanvasText from './components/CanvasText.jsx';
 import ExpandableTabs from './components/ExpandableTabs.jsx';
+import SignatureHero from './components/SignalHero.jsx';
 import { playControlSound, prepareWelcomeSound, requestWelcomeSound, unlockSound } from './soundDesign.js';
 
 const profileLinks = {
@@ -141,6 +142,7 @@ function useInterfaceSounds() {
 
 const greetings = [
   { word: 'Hello', emoji: '✦' },
+  { word: 'السلام علیکم', emoji: '☾' },
   { word: 'Namaste', emoji: '🙏' },
   { word: 'Hola', emoji: '☀️' },
   { word: 'Bonjour', emoji: '✧' },
@@ -359,10 +361,10 @@ function Header({ theme, onThemeToggle }) {
         <div className="desktop-nav"><ExpandableTabs tabs={navTabs} onChange={navigateTab} /></div>
         <div className="header-actions">
           <a className="nav-cta" href="#contact">Let’s talk <Arrow /></a>
+          <div className="header-switch-dock"><LampSwitch theme={theme} onToggle={onThemeToggle} /></div>
           <button className={`menu-button ${menuOpen ? 'open' : ''}`} type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label="Toggle navigation"><span /><span /></button>
         </div>
       </header>
-      <div className={`header-switch-dock ${hidden ? 'header-hidden' : ''}`}><LampSwitch theme={theme} onToggle={onThemeToggle} /></div>
       <nav id="mobile-navigation" className={`mobile-menu ${menuOpen ? 'open' : ''}`} aria-label="Mobile navigation" aria-hidden={!menuOpen}>
         {['about', 'experience', 'work', 'toolkit', 'education', 'contact'].map((item, index) => <a key={item} href={`#${item}`} onClick={close}><span>0{index + 1}</span>{item}</a>)}
       </nav>
@@ -466,15 +468,52 @@ function SectionHeading({ index, label, children, aside }) {
 }
 
 function ProjectVisual({ type }) {
+  const images = { pulse: 'healthbot', document: 'docsense', data: 'predictive', nodes: 'semantic', search: 'seo' };
   return (
-    <div className={`project-visual visual-${type}`} aria-hidden="true">
-      {type === 'pulse' && <><div className="medical-grid" /><div className="pulse-line" /><span>Symptoms</span><span>Triage</span><span>Care</span></>}
-      {type === 'document' && <><div className="document-sheet"><i /><i /><i /><i /></div><b>?</b><div className="vector-plane" /></>}
-      {type === 'data' && <><svg viewBox="0 0 600 350" preserveAspectRatio="none"><path d="M0 260 C80 250 90 160 165 180 S270 260 350 140 S470 100 600 40" /><path d="M0 290 C130 260 190 300 285 220 S430 160 600 190" /></svg><i /></>}
-      {type === 'nodes' && <div className="node-field">{Array.from({ length: 16 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</div>}
-      {type === 'search' && <><div className="search-ring" /><div className="search-bars">{[68, 42, 86, 58, 94].map((height, i) => <i key={i} style={{ height: `${height}%` }} />)}</div></>}
+    <div className="project-visual project-art" aria-hidden="true">
+      <img className="project-photograph" src={`/project-images/${images[type]}.svg`} alt="" loading="lazy" decoding="async" />
     </div>
   );
+}
+
+function LegacySignatureHero() {
+  const surface = useRef(null);
+  useEffect(() => {
+    const root = surface.current;
+    if (!root || !matchMedia('(hover: hover) and (pointer: fine)').matches) return undefined;
+    const move = (event) => {
+      const box = root.getBoundingClientRect();
+      root.style.setProperty('--hero-x', `${((event.clientX - box.left) / box.width - .5) * 18}px`);
+      root.style.setProperty('--hero-y', `${((event.clientY - box.top) / box.height - .5) * 18}px`);
+    };
+    const reset = () => { root.style.setProperty('--hero-x', '0px'); root.style.setProperty('--hero-y', '0px'); };
+    root.addEventListener('pointermove', move);
+    root.addEventListener('pointerleave', reset);
+    return () => { root.removeEventListener('pointermove', move); root.removeEventListener('pointerleave', reset); };
+  }, []);
+  return <section className="signature-hero" id="home" ref={surface}>
+    <div className="signature-noise" aria-hidden="true" />
+    <div className="signature-glow signature-glow-one" aria-hidden="true" /><div className="signature-glow signature-glow-two" aria-hidden="true" />
+    <svg className="signature-contours" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true"><path d="M-50 655 C180 514 225 798 445 646 S720 545 890 676 S1190 765 1360 590 S1530 670 1660 490" /><path d="M-80 720 C120 575 272 858 490 702 S764 604 934 733 S1210 822 1412 645 S1540 734 1690 552" /><path d="M-80 785 C120 640 270 922 504 758 S786 668 944 790 S1214 888 1424 710 S1540 800 1690 615" /></svg>
+    <div className="signature-shell container">
+      <div className="signature-topline"><span><i /> Available for thoughtful AI systems</span><span>34.15° N&nbsp; / &nbsp;75.01° E</span></div>
+      <div className="signature-main">
+        <div className="signature-copy">
+          <p className="signature-index">01 — Basit Bashir / independent systems engineer</p>
+          <h1><span>Human</span><span>context,</span><em>made useful.</em></h1>
+          <p className="signature-intro">I design applied intelligence that is calm under complexity—bridging generative AI, data systems, and the lived realities of healthcare operations.</p>
+          <div className="signature-actions"><a href="#work" className="signature-primary">Enter the work <b>↓</b></a><a href="#experience" className="signature-text-link">View field notes <Arrow /></a></div>
+        </div>
+        <div className="signature-object" aria-label="Interactive profile signal">
+          <div className="signature-orbit orbit-one" /><div className="signature-orbit orbit-two" /><div className="signature-orbit orbit-three" />
+          <div className="signature-crosshair" /><div className="signature-avatar"><img src="/portfolio_photo.webp" alt="Basit Bashir" /><span>BB</span></div>
+          <div className="signature-data signature-data-top"><b>01</b><span>RETRIEVAL<br />SYSTEMS</span></div><div className="signature-data signature-data-right"><b>02</b><span>MODEL<br />CRAFT</span></div><div className="signature-data signature-data-bottom"><b>03</b><span>CARE<br />OPERATIONS</span></div>
+          <div className="signature-pulse"><i /><i /><i /></div>
+        </div>
+      </div>
+      <div className="signature-footer"><span>AI · DATA · HEALTHCARE</span><span className="signature-scroll">SCROLL TO EXPLORE <i>↓</i></span><span>ANANTNAG, INDIA</span></div>
+    </div>
+  </section>;
 }
 
 function App() {
@@ -504,6 +543,7 @@ function App() {
 
   useEffect(() => {
     if (welcomeOpen || !welcomeSoundArmed.current) return undefined;
+    window.scrollTo({ top: 0, behavior: 'instant' });
     const frame = requestAnimationFrame(requestWelcomeSound);
     return () => cancelAnimationFrame(frame);
   }, [welcomeOpen]);
@@ -577,24 +617,7 @@ function App() {
       <Header theme={theme} onThemeToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')} />
 
       <main id="main">
-        <section className="hero" id="home">
-          <div className="hero-grain" />
-          <div className="hero-layout container">
-            <div className="hero-copy">
-              <p className="availability reveal"><i /> Available for AI & data science opportunities</p>
-              <h1><span><i>Engineering</i></span><span><i>intelligence for</i></span><span className="hero-accent"><i>real-world care.</i></span></h1>
-              <p className="hero-intro reveal">I’m <strong>Basit Bashir</strong>, a computer science engineer connecting data science, generative AI and two years of frontline pharmacy experience to build useful systems.</p>
-              <div className="hero-actions reveal">
-                <a className="primary-button" href="#work">Explore selected work <span>↓</span></a>
-                <a className="underlink" href={profileLinks.github} target="_blank" rel="noreferrer">GitHub <Arrow /></a>
-                <a className="underlink" href={profileLinks.linkedin} target="_blank" rel="noreferrer">LinkedIn <Arrow /></a>
-              </div>
-              <div className="hero-meta reveal"><span>Anantnag, Jammu & Kashmir, India</span><span>Open to onsite & remote roles</span></div>
-            </div>
-            <OrbitalHero introReady={!welcomeOpen} />
-          </div>
-          <div className="marquee" aria-hidden="true"><div>{['Generative AI', 'Predictive systems', 'Healthcare informatics', 'Data engineering', 'Human-centered technology', 'Generative AI'].map((item, i) => <span key={`${item}-${i}`}>{item}<b>✦</b></span>)}</div></div>
-        </section>
+        {welcomeOpen ? <div className="hero-placeholder" aria-hidden="true" /> : <SignatureHero />}
 
         <section className="section about" id="about">
           <div className="container">
