@@ -12,3 +12,4 @@ html[data-aura-paused='true'] .aura-background *{animation-play-state:paused}
 @keyframes aura-drift-c{to{transform:translate(10vw,-60vh) scale(.8)}}
 @keyframes aura-turn{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.aura-background *{animation:none!important}}
+@media(max-width:600px){.aura-background{bottom:auto;height:100lvh;transform:translate3d(0,0,0);backface-visibility:hidden}}

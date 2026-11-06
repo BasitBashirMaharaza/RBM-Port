@@ -202,6 +202,7 @@ function WelcomeScreen({ onComplete, leaving }) {
 function ExperienceGallery() {
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState('next');
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const gallery = useRef(null);
   const touchStart = useRef(null);
   const item = experiences[active];
@@ -210,6 +211,7 @@ function ExperienceGallery() {
     const normalized = (index + experiences.length) % experiences.length;
     setDirection(normalized > active || (active === experiences.length - 1 && normalized === 0) ? 'next' : 'previous');
     setActive(normalized);
+    setDetailsOpen(false);
   };
 
   const parallax = (event) => {
@@ -249,13 +251,16 @@ function ExperienceGallery() {
             <small>{item.label}</small>
             <strong>{item.company}</strong>
           </div>
-          <article className="experience-detail">
+          <article className={`experience-detail${detailsOpen ? ' is-expanded' : ''}`}>
             <div className="experience-meta"><span>{item.period}</span><span>{item.location}</span></div>
             <p>{item.company}</p>
             <h3>{item.role}</h3>
             <div className="experience-summary">{item.summary}</div>
-            <ul>{item.points.map((point) => <li key={point}>{point}</li>)}</ul>
-            <div className="tag-list">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+            <button className="experience-details-toggle" type="button" aria-expanded={detailsOpen} aria-controls="experience-expanded-content" onClick={() => setDetailsOpen((open) => !open)} data-sound="experience-details">{detailsOpen ? 'Hide details' : 'View details'} <span aria-hidden="true">{detailsOpen ? '−' : '+'}</span></button>
+            <div id="experience-expanded-content" className="experience-expanded-content">
+              <ul>{item.points.map((point) => <li key={point}>{point}</li>)}</ul>
+              <div className="tag-list">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+            </div>
           </article>
         </div>
       </div>

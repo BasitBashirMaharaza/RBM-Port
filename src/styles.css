@@ -441,6 +441,45 @@ footer { padding: 28px 0; background: var(--bg); border-top: 1px solid var(--lin
 @keyframes project-art-drift{from{transform:scale(1.01) translate3d(-.5%,.4%,0)}to{transform:scale(1.07) translate3d(.5%,-.4%,0)}}
 @keyframes project-art-orbit{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.project-art .project-photograph,.project-art::before{animation:none}.project-art .project-photograph{will-change:auto}}
+
+/* A compact, readable experience gallery on narrow touch screens. */
+@media(max-width:600px){
+  .experience .section-heading{margin-bottom:34px}
+  .experience-gallery{perspective:none}
+  .experience-stage{min-height:0;transform:none;transform-style:flat}
+  .experience-panel{min-height:0;grid-template-columns:1fr;border-radius:18px;transform-style:flat;animation:experience-mobile-in .28s ease-out both;box-shadow:0 12px 35px color-mix(in srgb,var(--bg) 28%,transparent)}
+  .experience-visual{min-height:142px;padding:18px 20px 19px;transform:none}
+  .experience-visual>span{top:11px;left:17px;font-size:65px;opacity:.34}
+  .experience-rings{width:140px;height:140px;right:-35px;top:-20px}
+  .experience-brand{min-height:38px;margin-bottom:10px;padding:5px 9px}
+  .experience-brand img{width:72px;height:26px}
+  .experience-visual small{margin-bottom:5px;font-size:8px}
+  .experience-visual strong{max-width:100%;font-size:17px;line-height:1.22;letter-spacing:-.025em}
+  .experience-detail{padding:20px 20px 22px;transform:none}
+  .experience-meta{gap:8px;flex-wrap:wrap;color:var(--muted);font-size:9px;line-height:1.4}
+  .experience-detail>p{margin:17px 0 6px;font-size:9px;line-height:1.4}
+  .experience-detail h3{font-size:clamp(24px,7vw,30px);line-height:1.08;letter-spacing:-.045em}
+  .experience-summary{margin-top:13px;color:var(--text);font-size:12.5px;line-height:1.55}
+  .experience-detail ul{gap:8px;margin:14px 0 17px}
+  .experience-detail li{font-size:11.5px;line-height:1.5;color:var(--muted)}
+  .experience-detail .tag-list{gap:5px}
+  .experience-detail .tag-list span{font-size:8px;line-height:1.25}
+  .experience-controls{margin-top:12px}
+  .experience-thumbnails{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(142px,44%);grid-template-columns:none;gap:8px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;scrollbar-width:none;margin-top:12px;padding-bottom:3px}
+  .experience-thumbnails::-webkit-scrollbar{display:none}
+  .experience-thumbnails button{min-height:58px;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:9px 11px;scroll-snap-align:start}
+  .experience-thumbnails span{font-size:8px}
+  .experience-thumbnails strong{white-space:normal;font-size:10.5px;line-height:1.2}
+  .experience-thumbnails small{font-size:8px;line-height:1.2}
+}
+@keyframes experience-mobile-in{from{opacity:.6}to{opacity:1}}
+.experience-details-toggle{display:none}
+@media(max-width:600px){
+  .experience-details-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;margin-top:14px;padding:8px 12px;border:1px solid var(--line-strong);border-radius:9px;background:var(--surface-2);color:var(--text);font-size:11px;font-weight:600;text-align:left;cursor:pointer}
+  .experience-details-toggle span{color:var(--accent);font-size:18px;line-height:1}
+  .experience-expanded-content{display:none}
+  .experience-detail.is-expanded .experience-expanded-content{display:block}
+}
 .project-copy{padding:clamp(30px,3.5vw,52px)}
 .project-meta{margin-bottom:27px}
 .project-copy h3{font-size:clamp(32px,4vw,58px)}

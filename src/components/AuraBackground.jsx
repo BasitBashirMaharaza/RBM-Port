@@ -6,8 +6,22 @@ export default function AuraBackground() {
   useEffect(() => {
     const canvas = ref.current, ctx = canvas.getContext('2d');
     let frame, last = 0, time = 0, pointer = { x: .5, y: .5 }, target = { x: .5, y: .5 };
-    const resize = () => { canvas.width = Math.min(1100, Math.max(640, innerWidth)); canvas.height = Math.max(480, canvas.width*innerHeight/innerWidth); };
-    const move = event => { target.x = event.clientX / innerWidth; target.y = event.clientY / innerHeight; };
+    let viewportWidth = 0;
+    const resize = () => {
+      // Mobile browser bars change innerHeight during scroll. Reassigning canvas
+      // dimensions clears it, so redraw only when the viewport width changes.
+      const nextWidth = document.documentElement.clientWidth;
+      if (Math.abs(nextWidth - viewportWidth) < 2) return;
+      viewportWidth = nextWidth;
+      const mobile = matchMedia('(pointer: coarse)').matches;
+      canvas.width = Math.min(1100, Math.max(mobile ? 480 : 640, nextWidth));
+      canvas.height = Math.max(480, Math.round(canvas.width * innerHeight / nextWidth));
+    };
+    const move = event => {
+      if (event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
+      target.x = event.clientX / innerWidth;
+      target.y = event.clientY / innerHeight;
+    };
     resize(); window.addEventListener('resize',resize);
     window.addEventListener('pointermove', move, { passive: true });
     const paint = now => {
