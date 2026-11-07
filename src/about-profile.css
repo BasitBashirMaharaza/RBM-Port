@@ -52,9 +52,8 @@
 }
 
 .about .about-profile-arrows path {
-  stroke-dasharray: 65;
-  stroke-dashoffset: 65;
-  transition: stroke-dashoffset .7s ease;
+  opacity: 0;
+  transition: opacity .24s cubic-bezier(.23, 1, .32, 1);
 }
 
 .about .about-profile-note {
@@ -79,7 +78,7 @@ html[data-theme='light'] .about .about-profile-arrows { stroke: #695cb1; }
 .about .note-consistent { bottom: 5%; right: 5%; transform: translateY(5px) rotate(2deg); }
 
 .about .about-profile-sketch.visible .about-profile-portrait { opacity: 1; transform: none; }
-.about .about-profile-sketch.visible .about-profile-arrows path { stroke-dashoffset: 0; }
+.about .about-profile-sketch.visible .about-profile-arrows path { opacity: 1; }
 .about .about-profile-sketch.visible .about-profile-note { opacity: 1; transform: rotate(-3deg); }
 .about .about-profile-sketch.visible .note-detail,
 .about .about-profile-sketch.visible .note-curious,
@@ -116,7 +115,7 @@ html[data-theme='light'] .about .about-profile-arrows { stroke: #695cb1; }
   .about .about-profile-arrows path { transition: none; }
   .about .about-profile-sketch .about-profile-portrait,
   .about .about-profile-sketch .about-profile-note { opacity: 1; transform: none; }
-  .about .about-profile-sketch .about-profile-arrows path { stroke-dashoffset: 0; }
+  .about .about-profile-sketch .about-profile-arrows path { opacity: 1; }
 }
 
 /* One portrait and one editorial text column. */
