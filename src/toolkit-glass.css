@@ -1,78 +1,183 @@
-.toolkit .skills-grid {
-  border-block: 0;
-}
-
-.toolkit .skill-column + .skill-column,
-.toolkit .skill-column:nth-child(3),
-.toolkit .skill-column:nth-child(4) {
+.toolkit .toolkit-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
   border: 0;
 }
 
-.toolkit .skill-column {
-  position: relative;
-  isolation: isolate;
+.toolkit .skill-card,
+.toolkit .skill-column:nth-child(3),
+.toolkit .skill-column:nth-child(4) {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 420px;
+  padding: clamp(24px, 2.3vw, 36px);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: linear-gradient(155deg,
+    color-mix(in srgb, var(--surface) 94%, var(--bg)),
+    color-mix(in srgb, var(--surface-2) 78%, var(--bg)));
+  box-shadow: inset 0 1px color-mix(in srgb, var(--text) 7%, transparent),
+    0 18px 42px color-mix(in srgb, var(--bg) 42%, transparent);
+  transition: border-color 220ms ease, background-color 220ms ease, transform 220ms cubic-bezier(.23, 1, .32, 1);
 }
 
-.toolkit .skill-column::before {
-  content: '';
-  position: absolute;
-  z-index: 0;
-  inset: 9px;
-  border: 1px solid color-mix(in srgb, var(--line-strong) 78%, white 22%);
-  border-radius: 15px;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--surface) 94%, transparent), color-mix(in srgb, var(--surface-2) 86%, transparent));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 42%, transparent), 0 12px 30px rgba(0, 0, 0, .09);
-  pointer-events: none;
-  transition: border-color .35s ease, box-shadow .35s ease, transform .35s var(--ease);
+.toolkit .skill-card::before { display: none; }
+.toolkit .skill-card[data-open='true'] {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--line-strong));
+  background: linear-gradient(155deg,
+    color-mix(in srgb, var(--surface) 91%, var(--accent) 9%),
+    color-mix(in srgb, var(--surface-2) 86%, var(--bg)));
 }
-
-@supports (backdrop-filter: blur(10px)) {
-  .toolkit .skill-column::before {
-    background: linear-gradient(145deg, color-mix(in srgb, var(--surface) 78%, transparent), color-mix(in srgb, var(--surface-2) 56%, transparent));
-    backdrop-filter: blur(10px) saturate(115%);
-    -webkit-backdrop-filter: blur(10px) saturate(115%);
-  }
+.toolkit .skill-card-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
 }
-
-.toolkit .skill-column > span,
-.toolkit .skill-column > h3,
-.toolkit .skill-column > ul {
+.toolkit .skill-card-top > span {
+  color: var(--quiet);
+  font: 500 9px/1.2 'DM Mono', monospace;
+  letter-spacing: .12em;
+}
+.toolkit .skill-card-top svg {
+  width: 57px;
+  height: 57px;
+  color: color-mix(in srgb, var(--text) 88%, var(--surface));
+  transition: transform 260ms cubic-bezier(.23, 1, .32, 1), color 220ms ease;
+}
+.toolkit .skill-card[data-open='true'] .skill-card-top svg {
+  color: var(--accent);
+  transform: translateY(-3px);
+}
+.toolkit .skill-card h3 {
   position: relative;
   z-index: 1;
+  min-height: 0;
+  margin: auto 0 0;
+  max-width: 13ch;
+  color: color-mix(in srgb, var(--text) 91%, var(--surface));
+  font-size: clamp(19px, 1.4vw, 25px);
+  font-weight: 600;
+  line-height: 1.16;
+  letter-spacing: -.035em;
 }
-
-.toolkit .skill-column > span { font-size: 9px; }
-.toolkit .skill-column h3 { color: var(--text); }
-.toolkit .skill-column li {
-  width: max-content;
-  max-width: calc(100% + 14px);
-  margin: -4px -7px;
-  padding: 4px 7px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: linear-gradient(130deg, color-mix(in srgb, var(--surface) 72%, transparent), color-mix(in srgb, var(--surface-2) 50%, transparent));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 28%, transparent);
-  color: color-mix(in srgb, var(--text) 86%, var(--surface));
-  font-size: 12px;
-  line-height: 1.5;
-  transition: border-color .25s ease, background .25s ease, transform .25s var(--ease);
+.toolkit .skill-card-details {
+  display: grid;
+  grid-template-rows: 0fr;
+  min-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: grid-template-rows 260ms cubic-bezier(.23, 1, .32, 1), opacity 180ms ease;
 }
-.toolkit .skill-column li::before { color: var(--accent); }
-
+.toolkit .skill-card[data-open='true'] .skill-card-details {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  pointer-events: auto;
+}
+.toolkit .skill-card-details-inner { min-height: 0; overflow: hidden; }
+.toolkit .skill-card-details p {
+  margin: 18px 0 11px;
+  color: var(--quiet);
+  font: 500 9px/1.25 'DM Mono', monospace;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+.toolkit .skill-card-details ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.toolkit .skill-card-details li {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0 0 0 13px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+  position: relative;
+  transition: none;
+}
+.toolkit .skill-card-details li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: .55em;
+  width: 4px;
+  height: 4px;
+  margin: 0;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.toolkit .skill-card-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 45px;
+  margin-top: 28px;
+  padding: 4px 5px 4px 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 68%, transparent);
+  color: color-mix(in srgb, var(--text) 88%, var(--surface));
+  cursor: pointer;
+  font: 700 10px/1 Manrope, sans-serif;
+  letter-spacing: .015em;
+  text-align: left;
+  touch-action: manipulation;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 140ms cubic-bezier(.23, 1, .32, 1);
+}
+.toolkit .skill-card-action:active { transform: scale(.97); }
+.toolkit .skill-card-action-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  font: 600 18px/1 Manrope, sans-serif;
+  transition: color 180ms ease, background-color 180ms ease, transform 220ms cubic-bezier(.23, 1, .32, 1);
+}
+.toolkit .skill-card[data-open='true'] .skill-card-action-icon {
+  color: var(--accent-ink);
+  background: var(--accent);
+  transform: rotate(0deg);
+}
 @media (hover: hover) and (pointer: fine) {
-  .toolkit .skill-column:hover::before {
-    border-color: color-mix(in srgb, var(--accent) 24%, var(--line-strong));
-    box-shadow: inset 0 1px 0 color-mix(in srgb, white 52%, transparent), 0 18px 38px rgba(0, 0, 0, .12);
-    transform: translateY(-2px);
-  }
-  .toolkit .skill-column li:hover {
-    border-color: color-mix(in srgb, var(--accent) 30%, var(--line-strong));
-    background: color-mix(in srgb, var(--surface) 84%, transparent);
-    transform: translateX(2px);
+  .toolkit .skill-card:hover { transform: translateY(-3px); }
+  .toolkit .skill-card-action:hover {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--surface-2) 78%, transparent);
   }
 }
-
+@media (max-width: 1100px) {
+  .toolkit .toolkit-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .toolkit .skill-card { min-height: 330px; }
+  .toolkit .skill-card h3 { font-size: clamp(20px, 2vw, 25px); }
+}
+@media (max-width: 600px) {
+  .toolkit .toolkit-cards { grid-template-columns: 1fr; gap: 10px; }
+  .toolkit .skill-card { min-height: 225px; padding: 23px; border-radius: 22px; }
+  .toolkit .skill-card-top { flex-direction: row; align-items: flex-start; justify-content: space-between; }
+  .toolkit .skill-card-top svg { width: 44px; height: 44px; }
+  .toolkit .skill-card h3 { margin-top: 26px; font-size: 23px; }
+  .toolkit .skill-card-action { margin-top: 21px; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .toolkit .skill-column::before,
-  .toolkit .skill-column li { transition: none; }
+  .toolkit .skill-card,
+  .toolkit .skill-card-top svg,
+  .toolkit .skill-card-details,
+  .toolkit .skill-card-action,
+  .toolkit .skill-card-action-icon { transition: none; }
 }

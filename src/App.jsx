@@ -119,6 +119,42 @@ const skillGroups = [
   ['Web & analytics', 'Streamlit prototyping', 'Search engine optimization', 'Web analytics', 'Git & Linux', 'Digital growth strategy'],
 ];
 
+function SkillIcon({ index }) {
+  const paths = [
+    <><path d="M4 23 16 4l12 19H4Z" /><path d="m13 23 7-11 7 11" /><circle cx="16" cy="4" r="1.5" /></>,
+    <><rect x="4" y="5" width="16" height="21" rx="3" /><path d="M10 10h4M10 15h9M10 20h6M23 9l5 5-5 5" /></>,
+    <><path d="M16 3 29 16 16 29 3 16 16 3Z" /><path d="M7 16h5l3-5 3 10 3-5h4" /></>,
+    <><circle cx="16" cy="16" r="12" /><path d="M5 19h5l4-7 4 10 4-6h5M10 9h12" /></>,
+  ];
+  return <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[index]}</svg>;
+}
+
+function ToolkitGallery() {
+  const [selected, setSelected] = useState(null);
+  const [hovered, setHovered] = useState(null);
+  const active = hovered ?? selected;
+  return <div className="skills-grid toolkit-cards">
+    {skillGroups.map(([title, ...skills], index) => {
+      const open = active === index;
+      return <article className="skill-column skill-card reveal" data-open={open} key={title}
+        onPointerEnter={(event) => { if (event.pointerType === 'mouse' && matchMedia('(hover: hover) and (pointer: fine)').matches) setHovered(index); }}
+        onPointerLeave={() => setHovered(null)}
+        onFocus={(event) => { if (event.target.matches(':focus-visible')) setHovered(index); }}
+        onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setHovered(null); }}>
+        <div className="skill-card-top"><span>0{index + 1} / 04</span><SkillIcon index={index} /></div>
+        <h3>{title}</h3>
+        <div id={`skill-card-panel-${index}`} className="skill-card-details" aria-hidden={!open}>
+          <div className="skill-card-details-inner"><p>Working knowledge</p><ul>{skills.map((skill) => <li key={skill}>{skill}</li>)}</ul></div>
+        </div>
+        <button className="skill-card-action" type="button" aria-expanded={open} aria-controls={`skill-card-panel-${index}`}
+          onClick={() => { setSelected(selected === index ? null : index); setHovered(null); }} data-sound={`toolkit-${index + 1}`}>
+          <span>{open ? 'Show less' : 'Explore skills'}</span><span className="skill-card-action-icon" aria-hidden="true">{open ? '−' : '↗'}</span>
+        </button>
+      </article>;
+    })}
+  </div>;
+}
+
 function Arrow({ direction = 'up' }) {
   return <span className={`arrow arrow-${direction}`} aria-hidden="true">↗</span>;
 }
@@ -658,19 +694,15 @@ function App() {
             <div className="about-grid">
               <figure ref={voiceTrigger} className="about-profile-sketch reveal" role="button" tabIndex={0} aria-haspopup="dialog" aria-label="Basit Bashir portrait. Double-click or double-tap to open a voice note; press Enter to open with a keyboard." data-sound="silent" onDoubleClick={openVoiceNote} onPointerUp={handleVoicePress} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openVoiceNote(event); } }} onPointerMove={(event) => { if (event.pointerType !== 'mouse') return; const rect = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--profile-tilt-x', `${((event.clientY - rect.top) / rect.height - .5) * -3}deg`); event.currentTarget.style.setProperty('--profile-tilt-y', `${((event.clientX - rect.left) / rect.width - .5) * 3}deg`); }} onPointerLeave={(event) => { event.currentTarget.style.setProperty('--profile-tilt-x', '0deg'); event.currentTarget.style.setProperty('--profile-tilt-y', '0deg'); }}>
                 <div className="about-profile-portrait"><img src="/portfolio_photo.webp" alt="Basit Bashir" loading="lazy" decoding="async" /></div>
-                <svg className="about-profile-arrows" viewBox="0 0 400 320" preserveAspectRatio="none" aria-hidden="true"><path d="M112 37 Q137 36 151 59 M143 53 L151 59 L151 49" /><path d="M290 37 Q269 37 253 59 M254 49 L253 59 L262 54" /><path d="M77 155 Q96 139 113 151 M102 148 L113 151 L108 160" /><path d="M326 158 Q307 144 287 153 M298 146 L287 153 L296 157" /><path d="M102 292 Q118 274 144 268 M133 264 L144 268 L137 277" /><path d="M308 291 Q288 275 260 267 M270 265 L260 267 L267 276" /></svg>
+                <svg className="about-profile-arrows" viewBox="0 0 400 320" preserveAspectRatio="none" aria-hidden="true"><path d="M83 36 Q91 22 108 27 M98 23 L108 27 L102 35" /><path d="M317 36 Q309 22 292 27 M302 23 L292 27 L298 35" /><path d="M36 145 Q52 137 78 153 M67 144 L78 153 L66 158" /><path d="M364 145 Q348 137 322 153 M333 144 L322 153 L334 158" /><path d="M84 303 Q93 291 112 290 M101 286 L112 290 L106 298" /><path d="M316 303 Q307 291 288 290 M299 286 L288 290 L294 298" /></svg>
                 <span className="about-profile-note note-clear">Clear Thinker</span><span className="about-profile-note note-detail">Detail-Oriented</span><span className="about-profile-note note-people">People-First</span><span className="about-profile-note note-curious">Curious</span><span className="about-profile-note note-fast">Fast Learner</span><span className="about-profile-note note-consistent">Consistent</span>
               </figure>
               <div className="about-copy reveal">
                 <p>I graduated with a Bachelor of Technology in Computer Science & Engineering from Government College of Engineering and Technology, Safapora Ganderbal, in the 2024 batch.</p>
                 <p>Technical internships at NIELIT Srinagar and Google sit alongside two years at Dar Medicate and Medical Agency. Experience with pharmaceutical products, prescription workflows, inventory and Marg ERP 9+ now informs how I approach healthcare AI.</p>
                 <a className="underlink" href={profileLinks.pharmacy} target="_blank" rel="noreferrer">View the pharmacy location <Arrow /></a>
+                <div className="about-focus"><div><span>Focus</span><strong>Data Science<br />Generative AI<br />Healthcare Informatics</strong></div><div><span>Core stack</span><strong>Python · LangChain<br />Scikit-Learn · Pandas<br />Streamlit · NumPy</strong></div></div>
               </div>
-              <aside className="profile-card reveal">
-                <img src="/portfolio_photo.webp" alt="Basit Bashir" loading="lazy" decoding="async" />
-                <div><span>Focus</span><strong>Data Science<br />Generative AI<br />Healthcare Informatics</strong></div>
-                <div><span>Core stack</span><strong>Python · LangChain<br />Scikit-Learn · Pandas<br />Streamlit · NumPy</strong></div>
-              </aside>
             </div>
             <div className="capabilities reveal"><span>Retrieval-Augmented Generation</span><span>Clinical conversational AI</span><span>Predictive modeling</span><span>Pharmacy operations & ERP</span></div>
           </div>
@@ -719,9 +751,7 @@ function App() {
         <section className="section toolkit" id="toolkit">
           <div className="container">
             <SectionHeading index="04" label="Toolkit">Capabilities over <em>percentages.</em></SectionHeading>
-            <div className="skills-grid">
-              {skillGroups.map(([title, ...skills], index) => <article className="skill-column reveal" key={title}><span>0{index + 1}</span><h3>{title}</h3><ul>{skills.map((skill) => <li key={skill}>{skill}</li>)}</ul></article>)}
-            </div>
+            <ToolkitGallery />
           </div>
         </section>
 
