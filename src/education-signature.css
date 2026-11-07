@@ -1,0 +1,96 @@
+.education .degree-card.reveal,
+.education .credential.reveal {
+  --education-enter: 24px;
+  --education-scale: .985;
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  transform: perspective(1200px) translateY(var(--education-enter)) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) scale(var(--education-scale));
+  transform-style: preserve-3d;
+  transition: opacity .7s var(--ease), transform .24s cubic-bezier(.2,.75,.2,1), border-color .35s, box-shadow .35s;
+}
+.education .degree-card.reveal.visible,
+.education .credential.reveal.visible {
+  --education-enter: 0px;
+  --education-scale: 1;
+}
+.education .credentials .credential:nth-child(1).reveal.visible { transition-delay: .08s, 0s, 0s, 0s; }
+.education .credentials .credential:nth-child(2).reveal.visible { transition-delay: .16s, 0s, 0s, 0s; }
+.education .degree-card > div:last-child { transform: none; }
+.education .degree-card p:not(.mini-label),
+.education .credential p { color: color-mix(in srgb, var(--text) 78%, var(--surface)); }
+.education .degree-institution-mark small,
+.education .credential time,
+.education .credential small { color: color-mix(in srgb, var(--text) 68%, var(--surface)); }
+.education .degree-card .tag-list,
+.education .credential > div { opacity: 1; }
+.education .degree-card .degree-year,
+.education .degree-card .mini-label { color: color-mix(in srgb, var(--accent) 72%, var(--text)) !important; }
+.education .degree-card .degree-institution-mark > span,
+.education .degree-card h3,
+.education .degree-card h4 { color: var(--text); }
+.education .degree-card .degree-institution-mark small { color: color-mix(in srgb, var(--text) 78%, var(--surface)); font-size: 7px; }
+.education .degree-card p:not(.mini-label) { color: color-mix(in srgb, var(--text) 88%, var(--surface)); }
+.education .degree-card .degree-institution-mark img { opacity: 1; filter: none; background: var(--surface); }
+.education .degree-card .tag-list span { color: color-mix(in srgb, var(--text) 88%, var(--surface)); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line-strong); font-size: 8px; }
+@media (hover: hover) and (pointer: fine) {
+  .education .degree-card.reveal.visible:hover,
+  .education .credential.reveal.visible:hover {
+    --education-scale: 1.012;
+    border-color: var(--line-strong);
+    box-shadow: 0 22px 48px color-mix(in srgb, var(--text) 12%, transparent), 0 0 0 1px rgba(var(--accent-rgb), .08);
+    transition-duration: .24s, .24s, .35s, .35s;
+    transition-delay: 0s;
+  }
+}
+.contact-copy .contact-signature-anchor {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 40px;
+  white-space: nowrap;
+}
+.contact-copy .contact-signature {
+  position: absolute;
+  top: calc(1.55em + 9px);
+  right: -68px;
+  width: 112px;
+  max-width: none;
+  height: 46px;
+  overflow: visible;
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent-ink) 88%, white);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: rotate(-4deg);
+  transform-origin: 50% 50%;
+  cursor: pointer;
+  transition: transform .5s cubic-bezier(.22,1,.36,1), filter .5s ease, stroke .5s ease;
+}
+.contact-copy .contact-signature:focus-visible { outline: 1px solid color-mix(in srgb, white 55%, transparent); outline-offset: 3px; border-radius: 6px; }
+@media (hover: hover) and (pointer: fine) {
+  .contact-copy .contact-signature:hover {
+    transform: translateY(-3px) rotate(-6deg) scale(1.055);
+    stroke: color-mix(in srgb, var(--accent-ink) 68%, white);
+    filter: drop-shadow(0 2px 3px color-mix(in srgb, var(--accent-ink) 18%, transparent));
+  }
+}
+.contact-copy .contact-signature:active { transform: translateY(1px) rotate(-4deg) scale(.985); }
+.contact-copy .contact-signature path { stroke-dasharray: 360; stroke-dashoffset: 360; }
+.contact-copy.visible .contact-signature path { animation: contact-signature-write .85s ease-out both; }
+.contact-copy.visible .contact-signature path:nth-child(2) { animation-delay: .35s; }
+.contact-copy.visible .contact-signature path:nth-child(3) { animation-delay: .7s; }
+.contact-copy.visible .contact-signature path:nth-child(4),
+.contact-copy.visible .contact-signature path:nth-child(5) { animation-delay: .95s; animation-duration: .3s; }
+.contact-copy .contact-signature path:last-child { stroke-width: 1.1; opacity: .75; }
+.contact-copy.visible .contact-signature path:last-child { animation-delay: 1.1s; animation-duration: .4s; }
+@keyframes contact-signature-write { to { stroke-dashoffset: 0; } }
+@media (hover: none), (pointer: coarse) {
+  .education .degree-card.reveal,
+  .education .credential.reveal { --tilt-x: 0deg !important; --tilt-y: 0deg !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .education .degree-card.reveal,
+  .education .credential.reveal { --education-enter: 0px; --education-scale: 1; transition: none; }
+  .contact-copy .contact-signature path { stroke-dashoffset: 0; animation: none !important; }
+  .contact-copy .contact-signature { transition: none; }
+}

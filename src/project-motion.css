@@ -1,0 +1,101 @@
+/* Motion is contained entirely within the existing Selected Work visual boxes. */
+.work .work-motion {
+  --work-x: 0px;
+  --work-y: 0px;
+  --work-parallax: 0px;
+  --work-scale: 1.055;
+  --work-light-x: 50%;
+  --work-light-y: 50%;
+  perspective: 1000px;
+}
+
+.work .work-motion-stage {
+  position: absolute;
+  inset: -12px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translate3d(0, 36px, 0) scale(.965) rotate(-1.2deg);
+  transition: opacity .8s ease, transform 1s cubic-bezier(.2,.75,.2,1);
+  transition-delay: var(--work-delay);
+  transform-style: preserve-3d;
+}
+
+.work .work-motion-entered .work-motion-stage {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1) rotate(0);
+}
+
+.work .work-motion .project-photograph,
+.work .project-card:hover .work-motion .project-photograph {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+  animation: none;
+  filter: saturate(.75) contrast(1.05);
+  transform: translate3d(var(--work-x), calc(var(--work-parallax) + var(--work-y)), 0) scale(var(--work-scale));
+  transition: transform .35s cubic-bezier(.2,.75,.2,1), filter .5s;
+}
+
+.work .project-card:hover .work-motion .project-photograph { filter: saturate(.93) contrast(1.04); }
+.work .work-motion-effect,
+.work .work-motion-light { position: absolute; inset: 0; pointer-events: none; }
+.work .work-motion-effect { opacity: .55; transition: opacity .35s; }
+.work .project-card:hover .work-motion-effect { opacity: .9; }
+.work .work-motion-effect i { position: absolute; display: block; }
+.work .work-motion-light {
+  opacity: 0;
+  background: radial-gradient(circle at var(--work-light-x) var(--work-light-y), rgba(194,232,220,.12), transparent 52%);
+  transition: opacity .4s;
+  mix-blend-mode: screen;
+}
+.work .project-card:hover .work-motion-light { opacity: 1; }
+
+/* Clinical signal: a soft pulse moves across the existing ECG artwork. */
+.work .work-motion-pulse .work-motion-effect i { top: 49%; width: 7px; height: 7px; border-radius: 50%; background: #a6d3bc; box-shadow: 0 0 18px 5px rgba(166,211,188,.4); animation: work-signal 5s ease-in-out infinite; }
+.work .work-motion-pulse .work-motion-effect i:nth-child(2) { animation-delay: -1.3s; }
+.work .work-motion-pulse .work-motion-effect i:nth-child(3) { animation-delay: -2.6s; }
+.work .work-motion-pulse .work-motion-effect i:nth-child(4) { animation-delay: -3.9s; }
+@keyframes work-signal { 0%, 12% { left: 16%; opacity: 0; transform: scale(.4); } 35% { opacity: .9; transform: scale(1.2); } 75% { opacity: .7; } 100% { left: 86%; opacity: 0; transform: scale(.5); } }
+
+/* Document processing: a translucent scan crosses the original sheet. */
+.work .work-motion-document .work-motion-effect i:first-child { left: 30%; top: 15%; width: 39%; height: 4px; border-radius: 50%; background: #dce9f4; box-shadow: 0 0 18px 5px rgba(164,191,240,.5); opacity: .65; animation: work-scan 5.5s ease-in-out infinite alternate; }
+.work .work-motion-document .work-motion-effect i:nth-child(2) { left: 29%; top: 15%; width: 40%; height: 62%; border: 1px solid rgba(220,233,244,.13); border-radius: 12px; transform: rotate(-8deg); }
+@keyframes work-scan { from { transform: translateY(0) rotate(-8deg); opacity: .1; } 50% { opacity: .75; } to { transform: translateY(320px) rotate(-8deg); opacity: .1; } }
+
+/* Pipeline: data samples follow the pictured chart's upward movement. */
+.work .work-motion-data .work-motion-effect i { bottom: 27%; width: 7px; height: 7px; border: 1px solid #a6d3bc; border-radius: 50%; background: #a6d3bc; box-shadow: 0 0 16px rgba(166,211,188,.6); animation: work-datum 4.8s ease-in-out infinite alternate; }
+.work .work-motion-data .work-motion-effect i:nth-child(1) { left: 27%; --rise: -28px; }
+.work .work-motion-data .work-motion-effect i:nth-child(2) { left: 44%; bottom: 39%; --rise: 18px; animation-delay: -.8s; }
+.work .work-motion-data .work-motion-effect i:nth-child(3) { left: 63%; bottom: 46%; --rise: -20px; animation-delay: -1.6s; }
+.work .work-motion-data .work-motion-effect i:nth-child(4) { left: 77%; bottom: 56%; --rise: 14px; animation-delay: -2.4s; }
+@keyframes work-datum { from { transform: translate3d(0, 0, 0) scale(.8); opacity: .35; } to { transform: translate3d(8px, var(--rise), 0) scale(1.25); opacity: 1; } }
+
+/* Semantic retrieval: linked points breathe over the existing vector art. */
+.work .work-motion-nodes .work-motion-effect i { width: 8px; height: 8px; border-radius: 50%; background: #b5c8ef; box-shadow: 0 0 0 9px rgba(181,200,239,.08), 0 0 19px rgba(181,200,239,.55); animation: work-node 4.5s ease-in-out infinite alternate; }
+.work .work-motion-nodes .work-motion-effect i:nth-child(1) { left: 28%; top: 32%; }
+.work .work-motion-nodes .work-motion-effect i:nth-child(2) { left: 61%; top: 27%; animation-delay: -1s; }
+.work .work-motion-nodes .work-motion-effect i:nth-child(3) { left: 43%; top: 66%; animation-delay: -2s; }
+.work .work-motion-nodes .work-motion-effect i:nth-child(4) { left: 76%; top: 58%; animation-delay: -3s; }
+@keyframes work-node { from { transform: translate3d(-4px, 5px, 0) scale(.8); opacity: .4; } to { transform: translate3d(5px, -5px, 0) scale(1.25); opacity: 1; } }
+
+/* Analytics: small indicators rise with the artwork's graph. */
+.work .work-motion-search .work-motion-effect i { bottom: 32%; width: 4px; height: 15%; border-radius: 4px; background: linear-gradient(to top, transparent, rgba(166,211,188,.55)); transform-origin: bottom; animation: work-metric 3.8s ease-in-out infinite alternate; }
+.work .work-motion-search .work-motion-effect i:nth-child(1) { left: 36%; --metric: .55; }
+.work .work-motion-search .work-motion-effect i:nth-child(2) { left: 45%; --metric: .8; animation-delay: -.7s; }
+.work .work-motion-search .work-motion-effect i:nth-child(3) { left: 55%; --metric: .65; animation-delay: -1.4s; }
+.work .work-motion-search .work-motion-effect i:nth-child(4) { left: 65%; --metric: 1; animation-delay: -2.1s; }
+@keyframes work-metric { from { transform: scaleY(.2); opacity: .2; } to { transform: scaleY(var(--metric)); opacity: .75; } }
+
+@media (hover: none), (pointer: coarse) {
+  .work .work-motion-light { display: none; }
+  .work .work-motion .project-photograph { transform: translate3d(0, var(--work-parallax), 0) scale(1.065); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work .work-motion-stage { opacity: 1; transform: none; transition: none; }
+  .work .work-motion .project-photograph,
+  .work .project-card:hover .work-motion .project-photograph { transform: none; animation: none; transition: none; }
+  .work .work-motion-effect, .work .work-motion-light { display: none; }
+  .work .work-motion::before { animation: none; }
+}

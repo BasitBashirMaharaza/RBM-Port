@@ -3,7 +3,14 @@ import InkRidges from './components/AuraBackground.jsx';
 import CanvasText from './components/CanvasText.jsx';
 import ExpandableTabs from './components/ExpandableTabs.jsx';
 import SignatureHero from './components/SignalHero.jsx';
-import { playControlSound, prepareWelcomeSound, requestWelcomeSound, unlockSound } from './soundDesign.js';
+import { playControlSound, requestWelcomeSound, stopWelcomeSound, unlockSound } from './soundDesign.js';
+import './project-motion.css';
+import ExperienceStack from './components/ui/card-stack.jsx';
+import './education-signature.css';
+import './toolkit-glass.css';
+import './about-profile.css';
+import VoiceNoteOverlay from './VoiceNoteOverlay.jsx';
+import { playVoiceNoteRevealSound } from './voiceNoteRevealSound.js';
 
 const profileLinks = {
   github: 'https://github.com/BasitBashirMaharaza',
@@ -119,14 +126,16 @@ function Arrow({ direction = 'up' }) {
 function useInterfaceSounds() {
   useEffect(() => {
     const play = (event) => {
+      if (!event.isTrusted) return;
       unlockSound();
       const control = event.target.closest('button, a, input, label[data-sound], [role="button"], [data-sound]');
       if (control) playControlSound(control);
     };
 
     const keyboard = (event) => {
-      if (event.repeat || (event.key !== 'Enter' && event.key !== ' ')) return;
+      if (!event.isTrusted || event.repeat) return;
       unlockSound();
+      if (event.key !== 'Enter' && event.key !== ' ') return;
       const control = event.target.closest('button, a, input, label[data-sound], [role="button"], [data-sound]');
       if (control) playControlSound(control);
     };
@@ -200,86 +209,7 @@ function WelcomeScreen({ onComplete, leaving }) {
 }
 
 function ExperienceGallery() {
-  const [active, setActive] = useState(0);
-  const [direction, setDirection] = useState('next');
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const gallery = useRef(null);
-  const touchStart = useRef(null);
-  const item = experiences[active];
-
-  const select = (index) => {
-    const normalized = (index + experiences.length) % experiences.length;
-    setDirection(normalized > active || (active === experiences.length - 1 && normalized === 0) ? 'next' : 'previous');
-    setActive(normalized);
-    setDetailsOpen(false);
-  };
-
-  const parallax = (event) => {
-    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-    const rect = gallery.current.getBoundingClientRect();
-    gallery.current.style.setProperty('--gallery-x', `${((event.clientX - rect.left) / rect.width - 0.5) * 4.5}deg`);
-    gallery.current.style.setProperty('--gallery-y', `${((event.clientY - rect.top) / rect.height - 0.5) * -3.5}deg`);
-  };
-
-  const reset = () => {
-    gallery.current?.style.setProperty('--gallery-x', '0deg');
-    gallery.current?.style.setProperty('--gallery-y', '0deg');
-  };
-
-  const startSwipe = (event) => {
-    if (event.pointerType === 'mouse') return;
-    touchStart.current = { x: event.clientX, y: event.clientY };
-  };
-
-  const endSwipe = (event) => {
-    if (!touchStart.current) return;
-    const deltaX = event.clientX - touchStart.current.x;
-    const deltaY = event.clientY - touchStart.current.y;
-    touchStart.current = null;
-    if (Math.abs(deltaX) < 46 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
-    select(active + (deltaX < 0 ? 1 : -1));
-  };
-
-  return (
-    <div className="experience-gallery reveal" ref={gallery} onPointerMove={parallax} onPointerLeave={reset}>
-      <div className="experience-stage" onPointerDown={startSwipe} onPointerUp={endSwipe} onPointerCancel={() => { touchStart.current = null; }}>
-        <div className={`experience-panel is-${direction}`} key={item.role}>
-          <div className="experience-visual" aria-hidden="true">
-            <span>0{active + 1}</span>
-            <div className="experience-rings"><i /><i /><i /></div>
-            <div className="experience-brand"><img src={item.logo} alt="" loading="lazy" decoding="async" /><span>Verified identity</span></div>
-            <small>{item.label}</small>
-            <strong>{item.company}</strong>
-          </div>
-          <article className={`experience-detail${detailsOpen ? ' is-expanded' : ''}`}>
-            <div className="experience-meta"><span>{item.period}</span><span>{item.location}</span></div>
-            <p>{item.company}</p>
-            <h3>{item.role}</h3>
-            <div className="experience-summary">{item.summary}</div>
-            <button className="experience-details-toggle" type="button" aria-expanded={detailsOpen} aria-controls="experience-expanded-content" onClick={() => setDetailsOpen((open) => !open)} data-sound="experience-details">{detailsOpen ? 'Hide details' : 'View details'} <span aria-hidden="true">{detailsOpen ? '−' : '+'}</span></button>
-            <div id="experience-expanded-content" className="experience-expanded-content">
-              <ul>{item.points.map((point) => <li key={point}>{point}</li>)}</ul>
-              <div className="tag-list">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-            </div>
-          </article>
-        </div>
-      </div>
-      <div className="experience-controls">
-        <div className="gallery-arrows">
-          <button type="button" onClick={() => select(active - 1)} aria-label="Previous experience" data-sound="experience-previous">←</button>
-          <button type="button" onClick={() => select(active + 1)} aria-label="Next experience" data-sound="experience-next">→</button>
-        </div>
-        <span><b>0{active + 1}</b> / 0{experiences.length}</span>
-      </div>
-      <div className="experience-thumbnails" role="tablist" aria-label="Experience gallery">
-        {experiences.map((experience, index) => (
-          <button className={active === index ? 'is-active' : ''} type="button" role="tab" aria-selected={active === index} onClick={() => select(index)} key={experience.role} data-sound={`experience-${index + 1}`}>
-            <span>0{index + 1}</span><strong>{experience.role}</strong><small>{experience.period}</small>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+  return <ExperienceStack items={experiences} />;
 }
 
 function LampSwitch({ theme, onToggle }) {
@@ -344,10 +274,10 @@ function Header({ theme, onThemeToggle }) {
   const close = () => setMenuOpen(false);
   const navTabs = [
     { title: 'About', icon: 'about', target: 'about' },
+    { title: 'Education', icon: 'education', target: 'education' },
     { title: 'Experience', icon: 'experience', target: 'experience' },
     { title: 'Work', icon: 'work', target: 'work' },
     { title: 'Toolkit', icon: 'toolkit', target: 'toolkit' },
-    { title: 'Education', icon: 'education', target: 'education' },
     { type: 'separator' },
     { title: 'Contact', icon: 'contact', target: 'contact' },
   ];
@@ -371,7 +301,7 @@ function Header({ theme, onThemeToggle }) {
         </div>
       </header>
       <nav id="mobile-navigation" className={`mobile-menu ${menuOpen ? 'open' : ''}`} aria-label="Mobile navigation" aria-hidden={!menuOpen}>
-        {['about', 'experience', 'work', 'toolkit', 'education', 'contact'].map((item, index) => <a key={item} href={`#${item}`} onClick={close}><span>0{index + 1}</span>{item}</a>)}
+        {['about', 'education', 'experience', 'work', 'toolkit', 'contact'].map((item, index) => <a key={item} href={`#${item}`} onClick={close}><span>0{index + 1}</span>{item}</a>)}
       </nav>
     </>
   );
@@ -472,11 +402,66 @@ function SectionHeading({ index, label, children, aside }) {
   );
 }
 
-function ProjectVisual({ type }) {
+function ProjectVisual({ type, index }) {
   const images = { pulse: 'healthbot', document: 'docsense', data: 'predictive', nodes: 'semantic', search: 'seo' };
+  const visual = useRef(null);
+
+  useEffect(() => {
+    const root = visual.current;
+    const card = root?.closest('.project-card');
+    if (!root || !card) return undefined;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
+    let frame = 0;
+    let visible = false;
+    const update = () => {
+      frame = 0;
+      if (!visible || reduced.matches) return;
+      const rect = root.getBoundingClientRect();
+      const progress = Math.max(0, Math.min(1, (innerHeight - rect.top) / (innerHeight + rect.height)));
+      root.style.setProperty('--work-progress', progress.toFixed(3));
+      root.style.setProperty('--work-parallax', `${((progress - .5) * 22).toFixed(2)}px`);
+      root.style.setProperty('--work-scale', (1.055 + progress * .018).toFixed(3));
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) { root.classList.add('work-motion-entered'); schedule(); }
+    }, { threshold: 0.08, rootMargin: '0px 0px 8% 0px' });
+    observer.observe(root);
+    const move = (event) => {
+      if (reduced.matches || !finePointer.matches) return;
+      const rect = root.getBoundingClientRect();
+      const x = Math.max(-1, Math.min(1, (event.clientX - rect.left) / rect.width * 2 - 1));
+      const y = Math.max(-1, Math.min(1, (event.clientY - rect.top) / rect.height * 2 - 1));
+      root.style.setProperty('--work-x', `${(-x * 7).toFixed(2)}px`);
+      root.style.setProperty('--work-y', `${(-y * 6).toFixed(2)}px`);
+      root.style.setProperty('--work-light-x', `${(50 + x * 32).toFixed(1)}%`);
+      root.style.setProperty('--work-light-y', `${(50 + y * 32).toFixed(1)}%`);
+    };
+    const reset = () => { root.style.setProperty('--work-x', '0px'); root.style.setProperty('--work-y', '0px'); root.style.setProperty('--work-light-x', '50%'); root.style.setProperty('--work-light-y', '50%'); };
+    card.addEventListener('pointermove', move);
+    card.addEventListener('pointerleave', reset);
+    addEventListener('scroll', schedule, { passive: true });
+    addEventListener('resize', schedule);
+    if (reduced.matches) root.classList.add('work-motion-entered');
+    return () => {
+      observer.disconnect();
+      card.removeEventListener('pointermove', move);
+      card.removeEventListener('pointerleave', reset);
+      removeEventListener('scroll', schedule);
+      removeEventListener('resize', schedule);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
   return (
-    <div className="project-visual project-art" aria-hidden="true">
-      <img className="project-photograph" src={`/project-images/${images[type]}.svg`} alt="" loading="lazy" decoding="async" />
+    <div className={`project-visual project-art work-motion work-motion-${type}`} style={{ '--work-delay': `${index * 75}ms` }} ref={visual} aria-hidden="true">
+      <div className="work-motion-stage">
+        <img className="project-photograph" src={`/project-images/${images[type]}.svg`} alt="" loading="lazy" decoding="async" />
+        <span className="work-motion-effect"><i /><i /><i /><i /></span>
+        <span className="work-motion-light" />
+      </div>
     </div>
   );
 }
@@ -521,12 +506,56 @@ function LegacySignatureHero() {
   </section>;
 }
 
+function replaySignature(event) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const signature = event.currentTarget;
+  signature.signatureAnimations?.forEach((animation) => animation.cancel());
+  signature.signatureAnimations = Array.from(signature.querySelectorAll('path'), (path, index) => {
+    const length = path.getTotalLength();
+    return path.animate(
+      [{ strokeDashoffset: length }, { strokeDashoffset: 0 }],
+      { duration: index < 3 ? 620 : 360, delay: index < 3 ? index * 160 : 480 + (index - 3) * 110, easing: 'ease-out', fill: 'both' },
+    );
+  });
+}
+
 function App() {
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme || 'dark');
   const [welcomeOpen, setWelcomeOpen] = useState(true);
   const [welcomeLeaving, setWelcomeLeaving] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [voiceOrigin, setVoiceOrigin] = useState(null);
+  const voiceTrigger = useRef(null);
+  const lastVoicePress = useRef(null);
+  const voiceOpened = useRef(false);
   const welcomeSoundArmed = useRef(false);
   useInterfaceSounds();
+
+  const openVoiceNote = (event) => {
+    if (voiceOpen || voiceOpened.current) return;
+    voiceOpened.current = true;
+    const rect = voiceTrigger.current?.getBoundingClientRect();
+    setVoiceOrigin({
+      x: event?.clientX || (rect ? rect.left + rect.width / 2 : innerWidth / 2),
+      y: event?.clientY || (rect ? rect.top + rect.height / 2 : innerHeight / 2),
+    });
+    stopWelcomeSound();
+    playVoiceNoteRevealSound();
+    setVoiceOpen(true);
+  };
+
+  const handleVoicePress = (event) => {
+    if (event.button !== 0) return;
+    const now = Date.now();
+    const last = lastVoicePress.current;
+    const maxDelay = event.pointerType === 'touch' ? 350 : 500;
+    if (last && last.pointerType === event.pointerType && now - last.time < maxDelay && Math.hypot(event.clientX - last.x, event.clientY - last.y) < 40) {
+      lastVoicePress.current = null;
+      openVoiceNote(event);
+    } else {
+      lastVoicePress.current = { time: now, x: event.clientX, y: event.clientY, pointerType: event.pointerType };
+    }
+  };
 
   const finishWelcome = () => {
     if (welcomeLeaving) return;
@@ -543,14 +572,13 @@ function App() {
   }, [welcomeOpen]);
 
   useEffect(() => {
-    prepareWelcomeSound();
+    requestWelcomeSound();
   }, []);
 
   useEffect(() => {
     if (welcomeOpen || !welcomeSoundArmed.current) return undefined;
     window.scrollTo({ top: 0, behavior: 'instant' });
-    const frame = requestAnimationFrame(requestWelcomeSound);
-    return () => cancelAnimationFrame(frame);
+    return undefined;
   }, [welcomeOpen]);
 
   useEffect(() => {
@@ -628,7 +656,11 @@ function App() {
           <div className="container">
             <SectionHeading index="01" label="Profile">A technical perspective shaped by <em>care.</em></SectionHeading>
             <div className="about-grid">
-              <p className="about-lead reveal">My work sits where machine intelligence meets practical operating knowledge.</p>
+              <figure ref={voiceTrigger} className="about-profile-sketch reveal" role="button" tabIndex={0} aria-haspopup="dialog" aria-label="Basit Bashir portrait. Double-click or double-tap to open a voice note; press Enter to open with a keyboard." data-sound="silent" onDoubleClick={openVoiceNote} onPointerUp={handleVoicePress} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openVoiceNote(event); } }} onPointerMove={(event) => { if (event.pointerType !== 'mouse') return; const rect = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--profile-tilt-x', `${((event.clientY - rect.top) / rect.height - .5) * -3}deg`); event.currentTarget.style.setProperty('--profile-tilt-y', `${((event.clientX - rect.left) / rect.width - .5) * 3}deg`); }} onPointerLeave={(event) => { event.currentTarget.style.setProperty('--profile-tilt-x', '0deg'); event.currentTarget.style.setProperty('--profile-tilt-y', '0deg'); }}>
+                <div className="about-profile-portrait"><img src="/portfolio_photo.webp" alt="Basit Bashir" loading="lazy" decoding="async" /></div>
+                <svg className="about-profile-arrows" viewBox="0 0 400 320" preserveAspectRatio="none" aria-hidden="true"><path d="M112 37 Q137 36 151 59 M143 53 L151 59 L151 49" /><path d="M290 37 Q269 37 253 59 M254 49 L253 59 L262 54" /><path d="M77 155 Q96 139 113 151 M102 148 L113 151 L108 160" /><path d="M326 158 Q307 144 287 153 M298 146 L287 153 L296 157" /><path d="M102 292 Q118 274 144 268 M133 264 L144 268 L137 277" /><path d="M308 291 Q288 275 260 267 M270 265 L260 267 L267 276" /></svg>
+                <span className="about-profile-note note-clear">Clear Thinker</span><span className="about-profile-note note-detail">Detail-Oriented</span><span className="about-profile-note note-people">People-First</span><span className="about-profile-note note-curious">Curious</span><span className="about-profile-note note-fast">Fast Learner</span><span className="about-profile-note note-consistent">Consistent</span>
+              </figure>
               <div className="about-copy reveal">
                 <p>I graduated with a Bachelor of Technology in Computer Science & Engineering from Government College of Engineering and Technology, Safapora Ganderbal, in the 2024 batch.</p>
                 <p>Technical internships at NIELIT Srinagar and Google sit alongside two years at Dar Medicate and Medical Agency. Experience with pharmaceutical products, prescription workflows, inventory and Marg ERP 9+ now informs how I approach healthcare AI.</p>
@@ -641,6 +673,19 @@ function App() {
               </aside>
             </div>
             <div className="capabilities reveal"><span>Retrieval-Augmented Generation</span><span>Clinical conversational AI</span><span>Predictive modeling</span><span>Pharmacy operations & ERP</span></div>
+          </div>
+        </section>
+
+        <section className="section education" id="education">
+          <div className="container">
+            <SectionHeading index="05" label="Education">Formal learning, <em>applied.</em></SectionHeading>
+            <div className="education-grid">
+              <article className="degree-card reveal" data-tilt><div className="degree-year">2019<span>—</span>2024</div><div><div className="degree-institution-mark"><img src="/logos/gcet-degree.svg" alt="" loading="lazy" decoding="async" /><span>GCET Kashmir<small>Safapora · Ganderbal</small></span></div><p className="mini-label">Academic degree</p><h3>Bachelor of Technology</h3><h4>Computer Science & Engineering</h4><p>Government College of Engineering and Technology (GCET), Safapora Ganderbal, Jammu & Kashmir, India.</p><div className="tag-list"><span>Algorithms & DSA</span><span>Machine learning</span><span>DBMS</span><span>Software engineering</span><span>Operating systems</span></div></div></article>
+              <div className="credentials">
+                <article className="credential reveal" data-tilt><img className="credential-logo credential-logo-michigan" src="/logos/michigan.svg" alt="University of Michigan logo" loading="lazy" decoding="async" /><div><span>University of Michigan</span><time>Jun 2024</time></div><h3>Applied Machine Learning in Python</h3><p>Applied algorithms, Scikit-Learn model creation, NumPy and Pandas preprocessing, and evaluation metrics.</p></article>
+                <article className="credential reveal" data-tilt><img className="credential-logo credential-logo-google" src="/logos/google.svg" alt="Google logo" loading="lazy" decoding="async" /><div><span>Google Digital Garage</span><time>Nov 2022</time></div><h3>The Fundamentals of Digital Marketing</h3><p>SEO practices, digital strategy, web analytics and search-performance optimization.</p><small>Credential ID: U33 RXC S8T</small></article>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -657,7 +702,7 @@ function App() {
             <div className="project-stack">
               {projects.map((project, index) => (
                 <article className="project-card reveal" key={project.title} style={{ '--index': index }} data-tilt>
-                  <ProjectVisual type={project.visual} />
+                  <ProjectVisual type={project.visual} index={index} />
                   <div className="project-copy">
                     <div className="project-meta"><span>{project.number}</span><span>{project.eyebrow}</span></div>
                     <h3>{project.title}</h3>
@@ -680,23 +725,10 @@ function App() {
           </div>
         </section>
 
-        <section className="section education" id="education">
-          <div className="container">
-            <SectionHeading index="05" label="Education">Formal learning, <em>applied.</em></SectionHeading>
-            <div className="education-grid">
-              <article className="degree-card reveal" data-tilt><div className="degree-year">2019<span>—</span>2024</div><div><div className="degree-institution-mark"><img src="/logos/gcet-degree.svg" alt="" loading="lazy" decoding="async" /><span>GCET Kashmir<small>Safapora · Ganderbal</small></span></div><p className="mini-label">Academic degree</p><h3>Bachelor of Technology</h3><h4>Computer Science & Engineering</h4><p>Government College of Engineering and Technology (GCET), Safapora Ganderbal, Jammu & Kashmir, India.</p><div className="tag-list"><span>Algorithms & DSA</span><span>Machine learning</span><span>DBMS</span><span>Software engineering</span><span>Operating systems</span></div></div></article>
-              <div className="credentials">
-                <article className="credential reveal"><img className="credential-logo credential-logo-michigan" src="/logos/michigan.svg" alt="University of Michigan logo" loading="lazy" decoding="async" /><div><span>University of Michigan</span><time>Jun 2024</time></div><h3>Applied Machine Learning in Python</h3><p>Applied algorithms, Scikit-Learn model creation, NumPy and Pandas preprocessing, and evaluation metrics.</p></article>
-                <article className="credential reveal"><img className="credential-logo credential-logo-google" src="/logos/google.svg" alt="Google logo" loading="lazy" decoding="async" /><div><span>Google Digital Garage</span><time>Nov 2022</time></div><h3>The Fundamentals of Digital Marketing</h3><p>SEO practices, digital strategy, web analytics and search-performance optimization.</p><small>Credential ID: U33 RXC S8T</small></article>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section className="contact" id="contact">
           <div className="contact-orb" aria-hidden="true" />
           <div className="container contact-grid">
-            <div className="contact-copy reveal"><p className="section-label"><span>06</span>Contact</p><h2>Let’s build something <em>useful.</em></h2><p>If you’re working on retrieval systems, healthcare AI, predictive models, or a role where practical domain thinking matters, I’d like to hear about it.</p></div>
+            <div className="contact-copy reveal"><p className="section-label"><span>06</span>Contact</p><h2>Let’s build something <em>useful.</em></h2><p>If you’re working on retrieval systems, healthcare AI, predictive models, or a role where practical domain thinking matters, I’d like to hear about <span className="contact-signature-anchor">it.<svg className="contact-signature" viewBox="0 0 150 62" role="button" tabIndex={0} aria-label="Replay Basit signature" onClick={replaySignature} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); replaySignature(event); } }}><path d="M12 51 C18 35 25 17 31 8 C35 2 47 3 49 10 C52 18 41 23 29 27 C41 22 56 24 54 34 C52 43 37 49 17 49 C32 50 47 46 57 40" /><path d="M57 40 C61 35 66 32 69 35 C72 38 68 45 62 46 C57 46 58 40 62 36 M69 36 C66 43 68 47 75 42 C79 38 83 34 87 35 C91 37 85 41 79 43 C76 46 83 47 90 41" /><path d="M90 41 C93 37 96 33 98 32 C96 37 93 43 97 44 C101 44 104 40 107 37 C111 32 115 20 118 14 C120 10 121 15 118 22 C115 31 109 40 111 43 C114 47 121 41 129 35 C133 32 137 33 140 35" /><path d="M107 29 C115 27 122 26 128 27" /><path d="M100 26 L100.5 25" /><path d="M29 55 C63 56 100 53 137 52" /></svg></span></p></div>
             <div className="contact-links reveal">
               <a href={profileLinks.linkedin} target="_blank" rel="noreferrer"><small>Start a conversation</small><strong>LinkedIn</strong><Arrow /></a>
               <a href={profileLinks.github} target="_blank" rel="noreferrer"><small>Explore the code</small><strong>GitHub</strong><Arrow /></a>
@@ -707,6 +739,7 @@ function App() {
       </main>
 
       <footer><div className="container"><span>© {new Date().getFullYear()} Basit Bashir</span><span>Computer Science Engineer · AI, Data & Healthcare</span><a href="#home">Back to top ↑</a></div></footer>
+      {voiceOpen && <VoiceNoteOverlay origin={voiceOrigin} onClosed={() => { setVoiceOpen(false); requestAnimationFrame(() => voiceTrigger.current?.focus({ preventScroll: true })); }} />}
     </>
   );
 }

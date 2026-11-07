@@ -2,6 +2,10 @@ let context;
 let output;
 let welcomePending = false;
 let welcomeStarting = false;
+let welcomeRequested = false;
+let welcomeStarted = false;
+let welcomeStopped = false;
+let touchUnlockInstalled = false;
 let welcomeAudio;
 let welcomeReady;
 
@@ -59,6 +63,16 @@ function welcomeTrack() {
   return welcomeAudio;
 }
 
+function removeTouchUnlock() {
+  if (!touchUnlockInstalled) return;
+  document.removeEventListener('pointerup', onTouchUnlock, true);
+  touchUnlockInstalled = false;
+}
+
+function onTouchUnlock(event) {
+  if (event.isTrusted && event.pointerType === 'touch') playWelcomeTrack(true);
+}
+
 export function prepareWelcomeSound() {
   const track = welcomeTrack();
   if (welcomeReady) return welcomeReady;
@@ -79,25 +93,28 @@ export function prepareWelcomeSound() {
   return welcomeReady;
 }
 
-function playWelcomeTrack() {
-  if (!welcomePending || welcomeStarting) return;
+function playWelcomeTrack(fromGesture = false) {
+  if (!welcomePending || welcomeStarted || welcomeStopped || (welcomeStarting && !fromGesture)) return;
   const track = welcomeTrack();
   welcomeStarting = true;
-  track.pause();
-  track.currentTime = 0;
-  const started = track.play();
+  let started;
+  try { started = track.play(); } catch { welcomePending = false; welcomeStarting = false; removeTouchUnlock(); return; }
   if (!started?.then) {
     welcomePending = false;
     welcomeStarting = false;
+    welcomeStarted = true;
+    removeTouchUnlock();
     return;
   }
   started.then(() => {
     welcomePending = false;
     welcomeStarting = false;
-  }).catch(() => {
+    welcomeStarted = true;
+    removeTouchUnlock();
+  }).catch((error) => {
     welcomeStarting = false;
-    // Autoplay may be blocked until a visitor taps or presses a key. Keep this
-    // queued so the exact supplied MP3 plays from that first trusted gesture.
+    // A blocked autoplay attempt stays queued for the next real input event.
+    if (error?.name !== 'NotAllowedError') { welcomePending = false; removeTouchUnlock(); }
   });
 }
 
@@ -107,14 +124,11 @@ function flushWelcome() {
 }
 
 export function unlockSound() {
-  const audio = engine();
-  if (!audio) {
-    flushWelcome();
-    return;
-  }
   // Calling media playback directly inside the input event avoids a delayed
   // retry and satisfies browsers that require a user activation for audio.
-  flushWelcome();
+  playWelcomeTrack(true);
+  const audio = engine();
+  if (!audio) return;
   if (audio.state === 'suspended') {
     audio.resume().then(flushWelcome).catch(() => {});
   } else {
@@ -123,9 +137,21 @@ export function unlockSound() {
 }
 
 export function requestWelcomeSound() {
+  if (welcomeRequested) return;
+  welcomeRequested = true;
   prepareWelcomeSound();
   welcomePending = true;
+  document.addEventListener('pointerup', onTouchUnlock, { capture: true, passive: true });
+  touchUnlockInstalled = true;
   playWelcomeTrack();
+}
+
+export function stopWelcomeSound() {
+  welcomeStopped = true;
+  welcomePending = false;
+  removeTouchUnlock();
+  welcomeAudio?.pause();
+  if (welcomeAudio) welcomeAudio.currentTime = 0;
 }
 
 function soundIdentity(control) {
@@ -149,6 +175,7 @@ function soundFamily(control, identity) {
 
 export function playControlSound(control) {
   if (!control || control.matches('[disabled], .skip-link') || control.dataset.sound === 'silent') return;
+  if (welcomePending || (welcomeStarted && welcomeAudio && !welcomeAudio.paused)) return;
   const audio = engine();
   if (!audio) return;
   if (audio.state === 'suspended') audio.resume().then(flushWelcome).catch(() => {});
