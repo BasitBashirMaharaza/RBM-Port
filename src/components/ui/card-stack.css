@@ -1,7 +1,7 @@
 /* The fan stack and every selector below belong to the Experience section. */
 .experience .section-heading { margin-bottom: clamp(30px, 4vw, 56px); }
 .experience .card-stack-experience { width: 100%; }
-.experience .card-stack-stage { position: relative; height: 402px; outline: none; }
+.experience .card-stack-stage { position: relative; height: 426px; outline: none; }
 .experience .card-stack-stage:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; border-radius: 18px; }
 .experience .card-stack-spotlight { position: absolute; top: 8%; left: 15%; width: 70%; height: 56%; border-radius: 50%; background: rgba(var(--accent-rgb), .085); filter: blur(58px); pointer-events: none; }
 .experience .card-stack-perspective { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; perspective: 1100px; }
@@ -10,6 +10,18 @@
 .experience .card-stack-card.is-active:active { cursor: grabbing; }
 .experience .card-stack-card:focus-visible { outline: 2px solid var(--accent); outline-offset: -5px; }
 .experience .card-stack-card-inner { position: relative; width: 100%; height: 100%; overflow: hidden; background: radial-gradient(circle at 62% 30%, rgba(var(--accent-rgb), .16), transparent 36%), linear-gradient(145deg, var(--surface-2), var(--bg-soft)); }
+.experience .card-stack-flip { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 760ms cubic-bezier(.22, 1, .36, 1); }
+.experience .card-stack-flip.is-flipped { transform: rotateY(180deg); }
+.experience .card-stack-card-inner, .experience .card-stack-back { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.experience .card-stack-back { display: flex; flex-direction: column; overflow: hidden; padding: 23px; color: var(--text); background: linear-gradient(145deg, var(--surface-2), var(--bg-soft)); transform: rotateY(180deg); cursor: pointer; }
+.experience .card-stack-back-scroll { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.experience .card-stack-back .card-stack-detail-heading { align-items: start; }
+.experience .card-stack-back .card-stack-detail-heading h3 { font-size: clamp(22px, 2.1vw, 30px); }
+.experience .card-stack-back .card-stack-summary { margin-top: 12px; font-size: 11px; }
+.experience .card-stack-back ul { display: grid; gap: 7px; margin: 12px 0; padding: 0; list-style: none; }
+.experience .card-stack-back li { position: relative; padding-left: 15px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+.experience .card-stack-back li::before { content: '↳'; position: absolute; left: 0; color: var(--accent); }
+.experience .card-stack-back .tag-list { gap: 6px; }
 .experience .card-stack-card-inner::after { content: ''; position: absolute; z-index: 1; inset: 0; background: linear-gradient(to top, rgba(5,10,13,.92), transparent 72%); pointer-events: none; }
 .experience .card-stack-art { position: absolute; z-index: 0; inset: 0; overflow: hidden; }
 .experience .card-stack-scene { position: absolute; inset: -4%; width: 108%; height: 108%; color: var(--accent); opacity: .72; transform: translate3d(var(--scene-x, 0px), var(--scene-y, 0px), 0) scale(1.03); transition: transform .55s cubic-bezier(.2,.75,.2,1), opacity .5s; pointer-events: none; }
@@ -54,7 +66,7 @@
 .experience .card-stack-card-copy i { width: 3px; height: 3px; border-radius: 50%; background: var(--accent); }
 .experience .card-stack-card-copy strong { max-width: 430px; color: #f4f6f1; font-size: clamp(24px, 3vw, 38px); font-weight: 500; line-height: 1; letter-spacing: -.055em; }
 .experience .card-stack-card-copy small { color: #d5ddd4; font-size: 11px; }
-.experience .card-stack-controls { display: flex; align-items: center; justify-content: center; gap: 23px; margin: 4px auto 26px; }
+.experience .card-stack-controls { display: flex; align-items: center; justify-content: center; gap: 23px; margin: 4px auto 0; }
 .experience .card-stack-controls > button { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--surface); color: var(--text); font-size: 17px; cursor: pointer; transition: background .25s, color .25s, border-color .25s, transform .25s; }
 .experience .card-stack-controls > button:hover { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); transform: scale(1.06); }
 .experience .card-stack-controls > button:active { transform: scale(.94); }
@@ -76,7 +88,7 @@
 
 @media (max-width: 700px) {
   .experience .card-stack-experience { overflow-x: clip; }
-  .experience .card-stack-stage { height: 335px; }
+  .experience .card-stack-stage { height: 355px; }
   .experience .card-stack-card { bottom: 22px; border-width: 2px; border-radius: 15px; }
   .experience .card-stack-card-copy { right: 17px; bottom: 18px; left: 17px; gap: 6px; }
   .experience .card-stack-card-copy strong { font-size: clamp(22px, 6vw, 30px); }
@@ -89,14 +101,73 @@
   .experience .card-stack-detail ul { grid-template-columns: 1fr; }
 }
 @media (max-width: 430px) {
-  .experience .card-stack-stage { height: 322px; }
+  .experience .card-stack-stage { height: 346px; }
+  .experience .card-stack-back { padding: 15px; }
+  .experience .card-stack-back .card-stack-detail-heading { flex-direction: row; gap: 10px; }
+  .experience .card-stack-back .card-stack-detail-heading h3 { font-size: 19px; }
+  .experience .card-stack-back .card-stack-detail-heading p { text-align: right; }
   .experience .card-stack-card-copy > span { font-size: 7px; }
   .experience .card-stack-controls { margin-bottom: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .experience .card-stack-flip { transition-duration: 0ms; }
   .experience .card-stack-scene { transform: none; transition: none; }
   .experience .card-stack-scene * { animation: none !important; }
   .experience .scene-analytics-trend { stroke-dashoffset: 0; }
   .experience .card-stack-controls button,
   .experience .card-stack-dots button { transition: none !important; }
+}
+
+/* The expanded Experience card keeps the same front and turns as it travels to the viewport center. */
+.experience-cinema {
+  position: fixed;
+  z-index: 100001;
+  inset: 0;
+  overflow: hidden;
+  perspective: 1600px;
+  background: rgba(5, 8, 12, 0);
+  -webkit-backdrop-filter: blur(0);
+  backdrop-filter: blur(0);
+  transition: background 760ms cubic-bezier(.22, 1, .36, 1), backdrop-filter 760ms cubic-bezier(.22, 1, .36, 1), -webkit-backdrop-filter 760ms cubic-bezier(.22, 1, .36, 1);
+}
+.experience-cinema-open { background: rgba(5, 8, 12, .42); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.experience-cinema-closing .experience-cinema-card { animation: experience-cinema-return 760ms linear both; }
+@keyframes experience-cinema-return { 0%, 84% { opacity: 1; } 100% { opacity: 0; } }
+.experience .experience-cinema-card {
+  position: fixed;
+  bottom: auto;
+  left: var(--origin-left);
+  top: var(--origin-top);
+  width: var(--origin-width);
+  height: var(--origin-height);
+  margin: 0;
+  cursor: default;
+  transform: none;
+  transition: left 760ms cubic-bezier(.22, 1, .36, 1), top 760ms cubic-bezier(.22, 1, .36, 1), width 760ms cubic-bezier(.22, 1, .36, 1), height 760ms cubic-bezier(.22, 1, .36, 1), transform 760ms cubic-bezier(.22, 1, .36, 1), box-shadow 760ms cubic-bezier(.22, 1, .36, 1);
+}
+.experience-cinema-open .experience-cinema-card {
+  left: 50%;
+  top: 50%;
+  width: min(1100px, calc(100vw - 32px));
+  height: min(700px, calc(100dvh - 32px));
+  transform: translate(-50%, -50%);
+  box-shadow: 0 35px 100px rgba(0, 0, 0, .48);
+}
+.experience-cinema .card-stack-flip { transition-duration: 760ms; }
+.experience-cinema-open .card-stack-flip { transform: rotateY(180deg); }
+.experience-cinema .card-stack-back { padding: clamp(22px, 4vw, 56px); }
+.experience-cinema .card-stack-back .card-stack-detail-heading h3 { font-size: clamp(28px, 4vw, 52px); }
+.experience-cinema .card-stack-back .card-stack-summary { max-width: 75ch; font-size: clamp(13px, 1.3vw, 17px); }
+.experience-cinema .card-stack-back ul { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px 26px; margin: 24px 0; }
+.experience-cinema .card-stack-back li { font-size: clamp(12px, 1.1vw, 15px); }
+.experience-cinema .card-stack-back-scroll { touch-action: pan-y; }
+@media (max-width: 700px) {
+  .experience-cinema .card-stack-back { padding: 22px; }
+  .experience-cinema .card-stack-back .card-stack-detail-heading { flex-direction: column; gap: 8px; }
+  .experience-cinema .card-stack-back .card-stack-detail-heading p { text-align: left; }
+  .experience-cinema .card-stack-back ul { grid-template-columns: 1fr; gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .experience-cinema, .experience .experience-cinema-card, .experience-cinema .card-stack-flip { transition-duration: 60ms; }
+  .experience-cinema-closing .experience-cinema-card { animation-duration: 60ms; }
 }

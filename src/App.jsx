@@ -72,7 +72,7 @@ const experiences = [
 const projects = [
   {
     number: '01',
-    title: 'HealthBot',
+    title: 'Digital Twin',
     eyebrow: 'Flagship · Healthcare AI',
     description: 'A conversational platform translating free-form symptom descriptions into contextual triage through adaptive, multi-turn dialogue.',
     detail: 'The architecture combines stateful clarification, ensemble prediction, urgency stratification, OCR-based prescription schedules and geospatial provider discovery.',
@@ -158,16 +158,17 @@ function ToolkitGallery() {
   return <div className="skills-grid toolkit-cards" data-expanded={active !== null}>
     {skillGroups.map(([title, ...skills], index) => {
       const open = active === index;
-      return <article className="skill-column skill-card reveal" data-open={open} key={title} onPointerMove={tiltCard} onPointerLeave={(event) => { if (event.pointerType === 'mouse') { resetCardTilt(event.currentTarget); setHovered(null); } }}>
+      return <article className="skill-column skill-card reveal" data-open={open} data-skill-theme={index} key={title} onPointerMove={tiltCard} onPointerLeave={(event) => { if (event.pointerType === 'mouse') { resetCardTilt(event.currentTarget); setHovered(null); setSelected(null); } }}>
+        <div className="skill-card-scene" aria-hidden="true"><span /><span /><span /><span /></div>
         <div className="skill-card-top"><span>0{index + 1} / 04</span><SkillIcon index={index} /></div>
         <h3>{title}</h3>
         <div id={`skill-card-panel-${index}`} className="skill-card-details" aria-hidden={!open}>
           <div className="skill-card-details-inner"><p>Working knowledge</p><ul>{skills.map((skill, skillIndex) => <li key={skill} style={{ '--skill-index': skillIndex }}>{skill}</li>)}</ul></div>
         </div>
-        <button className="skill-card-action" type="button" aria-expanded={open} aria-controls={`skill-card-panel-${index}`}
+        <button className="skill-card-action" type="button" aria-label={`${open ? 'Collapse' : 'Explore'} skills in ${title}`} title="Explore Skills" aria-expanded={open} aria-controls={`skill-card-panel-${index}`}
           onPointerEnter={(event) => { if (event.pointerType === 'mouse' && matchMedia('(hover: hover) and (pointer: fine)').matches) setHovered(index); }}
-          onClick={(event) => { if (event.detail === 0 || !matchMedia('(hover: hover) and (pointer: fine)').matches) setSelected(selected === index ? null : index); }} data-sound={`toolkit-${index + 1}`}>
-          <span>{open ? 'Show less' : 'Explore skills'}</span><span className="skill-card-action-icon" aria-hidden="true">{open ? '−' : '↗'}</span>
+          onClick={() => { setHovered(null); setSelected(selected === index ? null : index); }} data-sound={`toolkit-${index + 1}`}>
+          <span className="skill-card-action-icon" aria-hidden="true">{open ? '−' : '↗'}</span>
         </button>
       </article>;
     })}
@@ -265,6 +266,29 @@ function WelcomeScreen({ onComplete, leaving }) {
 
 function ExperienceGallery() {
   return <ExperienceStack items={experiences} />;
+}
+
+function EducationScene({ kind }) {
+  const grid = <path className="education-scene-grid" d="M0 65H520M0 145H520M0 225H520M80 0V320M200 0V320M340 0V320M460 0V320" />;
+  return <svg className={`education-scene education-scene-${kind}`} viewBox="0 0 520 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    {grid}
+    {kind === 'engineering' && <>
+      <path className="education-scene-line" d="M0 90H108V135H210L260 184H386V255H520M0 245H142V198H245L300 114H430V0" />
+      <path className="education-scene-signal" d="M0 90H108V135H210L260 184H386V255H520" />
+      <g className="education-scene-nodes"><circle cx="108" cy="90" r="5" /><circle cx="210" cy="135" r="5" /><circle cx="260" cy="184" r="5" /><circle cx="386" cy="255" r="5" /><circle cx="300" cy="114" r="5" /></g>
+    </>}
+    {kind === 'learning' && <>
+      <g className="education-scene-line"><path d="M55 70L180 48L310 85L445 46M55 70L180 150L310 85L445 145M55 220L180 150L310 235L445 145M55 220L180 260L310 235L445 270M180 48L180 150L180 260M310 85L310 235" /></g>
+      <path className="education-scene-signal" d="M55 70L180 150L310 85L445 145" />
+      <g className="education-scene-nodes"><circle cx="55" cy="70" r="6" /><circle cx="55" cy="220" r="6" /><circle cx="180" cy="48" r="7" /><circle cx="180" cy="150" r="8" /><circle cx="180" cy="260" r="7" /><circle cx="310" cy="85" r="8" /><circle cx="310" cy="235" r="8" /><circle cx="445" cy="46" r="6" /><circle cx="445" cy="145" r="7" /><circle cx="445" cy="270" r="6" /></g>
+    </>}
+    {kind === 'analytics' && <>
+      <g className="education-scene-bars"><path d="M85 265V225M145 265V202M205 265V210M265 265V162M325 265V175M385 265V118M445 265V80" /></g>
+      <path className="education-scene-line" d="M70 216L145 202L205 210L265 162L325 175L385 118L445 80" />
+      <path className="education-scene-signal" d="M70 216L145 202L205 210L265 162L325 175L385 118L445 80" />
+      <g className="education-scene-nodes"><circle cx="145" cy="202" r="5" /><circle cx="265" cy="162" r="5" /><circle cx="385" cy="118" r="5" /><circle cx="445" cy="80" r="5" /></g>
+    </>}
+  </svg>;
 }
 
 function LampSwitch({ theme, onToggle }) {
@@ -585,7 +609,6 @@ function App() {
   const [emailContactOpen, setEmailContactOpen] = useState(false);
   const [emailVisible, setEmailVisible] = useState(false);
   const [voiceOrigin, setVoiceOrigin] = useState(null);
-  const [profileHintVisible, setProfileHintVisible] = useState(false);
   const voiceTrigger = useRef(null);
   const michiganLogo = useRef(null);
   const googleLogo = useRef(null);
@@ -644,9 +667,9 @@ function App() {
   const handleVoicePress = (event) => {
     if (event.button !== 0) return;
     if (event.pointerType === 'touch') {
-      setProfileHintVisible(true);
+      event.currentTarget.classList.add('profile-hint-visible');
       window.clearTimeout(profileHintTimer.current);
-      profileHintTimer.current = window.setTimeout(() => setProfileHintVisible(false), 1800);
+      profileHintTimer.current = window.setTimeout(() => event.currentTarget.classList.remove('profile-hint-visible'), 1800);
     }
     const now = Date.now();
     const last = lastVoicePress.current;
@@ -731,13 +754,30 @@ function App() {
       const y = (event.clientY - rect.top) / rect.height - 0.5;
       card.style.setProperty('--tilt-x', `${-y * 3.5}deg`);
       card.style.setProperty('--tilt-y', `${x * 4.5}deg`);
+      if (card.closest('.education')) {
+        card.style.setProperty('--education-light-x', `${(x + .5) * 100}%`);
+        card.style.setProperty('--education-light-y', `${(y + .5) * 100}%`);
+      }
     };
     const reset = (event) => {
       event.currentTarget.style.setProperty('--tilt-x', '0deg');
       event.currentTarget.style.setProperty('--tilt-y', '0deg');
+      if (event.currentTarget.closest('.education')) {
+        event.currentTarget.style.removeProperty('--education-light-x');
+        event.currentTarget.style.removeProperty('--education-light-y');
+      }
     };
     cards.forEach((card) => { card.addEventListener('pointermove', move); card.addEventListener('pointerleave', reset); });
     return () => cards.forEach((card) => { card.removeEventListener('pointermove', move); card.removeEventListener('pointerleave', reset); });
+  }, []);
+
+  useEffect(() => {
+    const cards = document.querySelectorAll('.education .degree-card, .education .credential');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => entry.target.classList.toggle('education-in-view', entry.isIntersecting));
+    }, { rootMargin: '100px 0px' });
+    cards.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -755,7 +795,7 @@ function App() {
           <div className="container">
             <SectionHeading index="01" label="Profile">A technical perspective shaped by <em>care.</em></SectionHeading>
             <div className="about-grid">
-              <figure ref={voiceTrigger} className={`about-profile-sketch reveal${profileHintVisible ? ' profile-hint-visible' : ''}`} role="button" tabIndex={0} aria-haspopup="dialog" aria-label="Basit Bashir portrait. Double-click or double-tap to open a voice note; press Enter to open with a keyboard." data-sound="silent" onDoubleClick={openVoiceNote} onPointerUp={handleVoicePress} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openVoiceNote(event); } }} onPointerMove={(event) => { if (event.pointerType !== 'mouse') return; const rect = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--profile-tilt-x', `${((event.clientY - rect.top) / rect.height - .5) * -3}deg`); event.currentTarget.style.setProperty('--profile-tilt-y', `${((event.clientX - rect.left) / rect.width - .5) * 3}deg`); }} onPointerLeave={(event) => { event.currentTarget.style.setProperty('--profile-tilt-x', '0deg'); event.currentTarget.style.setProperty('--profile-tilt-y', '0deg'); }}>
+              <figure ref={voiceTrigger} className="about-profile-sketch reveal" role="button" tabIndex={0} aria-haspopup="dialog" aria-label="Basit Bashir portrait. Double-click or double-tap to open a voice note; press Enter to open with a keyboard." data-sound="silent" onDoubleClick={openVoiceNote} onPointerUp={handleVoicePress} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openVoiceNote(event); } }} onPointerMove={(event) => { if (event.pointerType !== 'mouse') return; const rect = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--profile-tilt-x', `${((event.clientY - rect.top) / rect.height - .5) * -3}deg`); event.currentTarget.style.setProperty('--profile-tilt-y', `${((event.clientX - rect.left) / rect.width - .5) * 3}deg`); }} onPointerLeave={(event) => { event.currentTarget.style.setProperty('--profile-tilt-x', '0deg'); event.currentTarget.style.setProperty('--profile-tilt-y', '0deg'); }}>
                 <div className="about-profile-portrait"><img src="/portfolio_photo.webp" alt="Basit Bashir" loading="lazy" decoding="async" /></div>
                 <svg className="about-profile-arrows" viewBox="0 0 400 320" preserveAspectRatio="none" aria-hidden="true"><path d="M118 24 C133 18 145 24 151 35 M141 32 L151 35 L149 25" /><path d="M282 24 C267 18 255 24 249 35 M251 25 L249 35 L259 32" /><path d="M54 148 C67 140 79 143 85 156 M75 148 L85 156 L83 145" /><path d="M346 148 C333 140 321 143 315 156 M325 148 L315 156 L317 145" /><path d="M112 308 C121 297 135 288 150 285 M137 282 L150 285 L141 294" /><path d="M288 308 C279 297 265 288 250 285 M259 294 L250 285 L263 282" /></svg>
                 <span className="about-profile-note note-clear">Clear Thinker</span><span className="about-profile-note note-detail">Detail-Oriented</span><span className="about-profile-note note-people">People-First</span><span className="about-profile-note note-curious">Curious</span><span className="about-profile-note note-fast">Fast Learner</span><span className="about-profile-note note-consistent">Consistent</span>
@@ -776,10 +816,10 @@ function App() {
           <div className="container">
             <SectionHeading index="05" label="Education">Formal learning, <em>applied.</em></SectionHeading>
             <div className="education-grid">
-              <article className="degree-card reveal" data-tilt><div className="degree-year">2019<span>—</span>2024</div><div><div className="degree-institution-mark"><img src="/logos/gcet-degree.svg" alt="" loading="lazy" decoding="async" /><span>GCET Kashmir<small>Safapora · Ganderbal</small></span></div><p className="mini-label">Academic degree</p><h3>Bachelor of Technology</h3><h4>Computer Science & Engineering</h4><p>Government College of Engineering and Technology (GCET), Safapora Ganderbal, Jammu & Kashmir, India.</p><div className="tag-list"><span>Algorithms & DSA</span><span>Machine learning</span><span>DBMS</span><span>Software engineering</span><span>Operating systems</span></div></div></article>
+              <article className="degree-card reveal" data-tilt><EducationScene kind="engineering" /><div className="degree-year">2019<span>—</span>2024</div><div><div className="degree-institution-mark"><img src="/logos/gcet-degree.svg" alt="" loading="lazy" decoding="async" /><span>GCET Kashmir<small>Safapora · Ganderbal</small></span></div><p className="mini-label">Academic degree</p><h3>Bachelor of Technology</h3><h4>Computer Science & Engineering</h4><p>Government College of Engineering and Technology (GCET), Safapora Ganderbal, Jammu & Kashmir, India.</p><div className="tag-list"><span>Algorithms & DSA</span><span>Machine learning</span><span>DBMS</span><span>Software engineering</span><span>Operating systems</span></div></div></article>
               <div className="credentials">
-                <article className="credential reveal" data-tilt><img ref={michiganLogo} className="credential-logo credential-logo-michigan" src="/logos/michigan.svg" alt="University of Michigan logo" role="button" tabIndex={0} aria-label="View University of Michigan Applied Machine Learning certificate" aria-haspopup="dialog" onClick={() => setMichiganCertificateOpen(true)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setMichiganCertificateOpen(true); } }} loading="lazy" decoding="async" /><div><span>University of Michigan</span><time>Jun 2024</time></div><h3>Applied Machine Learning in Python</h3><p>Applied algorithms, Scikit-Learn model creation, NumPy and Pandas preprocessing, and evaluation metrics.</p></article>
-                <article className="credential reveal" data-tilt><img ref={googleLogo} className="credential-logo credential-logo-google" src="/logos/google.svg" alt="Google logo" role="button" tabIndex={0} aria-label="View Google Fundamentals of Digital Marketing certificate" aria-haspopup="dialog" onClick={() => setGoogleCertificateOpen(true)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setGoogleCertificateOpen(true); } }} loading="lazy" decoding="async" /><div><span>Google Digital Garage</span><time>Nov 2022</time></div><h3>The Fundamentals of Digital Marketing</h3><p>SEO practices, digital strategy, web analytics and search-performance optimization.</p><small>Credential ID: U33 RXC S8T</small></article>
+                <article className="credential reveal" data-tilt><EducationScene kind="learning" /><img ref={michiganLogo} className="credential-logo credential-logo-michigan" src="/logos/michigan.svg" alt="University of Michigan logo" role="button" tabIndex={0} aria-label="View University of Michigan Applied Machine Learning certificate" aria-haspopup="dialog" onClick={() => setMichiganCertificateOpen(true)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setMichiganCertificateOpen(true); } }} loading="lazy" decoding="async" /><div><span>University of Michigan</span><time>Jun 2024</time></div><h3>Applied Machine Learning in Python</h3><p>Applied algorithms, Scikit-Learn model creation, NumPy and Pandas preprocessing, and evaluation metrics.</p></article>
+                <article className="credential reveal" data-tilt><EducationScene kind="analytics" /><img ref={googleLogo} className="credential-logo credential-logo-google" src="/logos/google.svg" alt="Google logo" role="button" tabIndex={0} aria-label="View Google Fundamentals of Digital Marketing certificate" aria-haspopup="dialog" onClick={() => setGoogleCertificateOpen(true)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setGoogleCertificateOpen(true); } }} loading="lazy" decoding="async" /><div><span>Google Digital Garage</span><time>Nov 2022</time></div><h3>The Fundamentals of Digital Marketing</h3><p>SEO practices, digital strategy, web analytics and search-performance optimization.</p><small>Credential ID: U33 RXC S8T</small></article>
               </div>
             </div>
           </div>

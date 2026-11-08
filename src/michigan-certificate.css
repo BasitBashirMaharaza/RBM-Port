@@ -16,8 +16,45 @@
   -webkit-backdrop-filter: blur(12px);
   animation: michigan-backdrop-in 420ms cubic-bezier(.23, 1, .32, 1) both;
 }
-.michigan-certificate-dialog { max-width: min(1100px, 100%); max-height: 100%; outline: none; animation: michigan-certificate-in 420ms cubic-bezier(.23, 1, .32, 1) both; }
-.michigan-certificate-dialog img { display: block; max-width: 100%; max-height: calc(100dvh - 36px); width: auto; height: auto; object-fit: contain; }
+.michigan-certificate-dialog {
+  position: relative;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(1100px, 100%);
+  max-height: 100%;
+  padding: clamp(15px, 2.4vw, 28px);
+  border: 2px solid #2b160f;
+  border-radius: 3px;
+  background:
+    linear-gradient(132deg, rgba(255, 222, 168, .24), transparent 13% 82%, rgba(13, 5, 3, .5)),
+    repeating-linear-gradient(91deg, transparent 0 8px, rgba(12, 5, 3, .15) 9px 10px, rgba(235, 164, 100, .11) 12px 13px, transparent 17px 25px),
+    repeating-linear-gradient(2deg, #412217 0 5px, #593020 8px 13px, #31180f 17px 22px, #70412a 25px 29px, #3b2117 34px 40px);
+  box-shadow: inset 0 0 0 2px rgba(233, 176, 114, .4), inset 0 0 0 6px rgba(28, 11, 7, .55), inset 0 0 0 9px rgba(184, 115, 65, .2), 0 28px 70px rgba(0, 0, 0, .48), 0 5px 14px rgba(0, 0, 0, .28);
+  outline: none;
+  animation: michigan-certificate-in 420ms cubic-bezier(.23, 1, .32, 1) both;
+}
+.michigan-certificate-dialog::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 5px;
+  border: 1px solid rgba(245, 200, 143, .32);
+  box-shadow: inset 0 0 0 1px rgba(18, 7, 4, .55);
+  pointer-events: none;
+}
+.michigan-certificate-dialog::after {
+  content: '';
+  position: absolute;
+  inset: calc(clamp(15px, 2.4vw, 28px) + clamp(5px, .8vw, 10px));
+  border: 1px solid rgba(255, 255, 255, .24);
+  background: linear-gradient(122deg, rgba(255, 255, 255, .08), transparent 24%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08);
+  pointer-events: none;
+}
+.michigan-certificate-dialog img { display: block; box-sizing: border-box; max-width: 100%; max-height: calc(100dvh - 120px); width: auto; height: auto; object-fit: contain; border: clamp(5px, .8vw, 10px) solid #eee8d9; box-shadow: 0 0 0 1px rgba(24, 11, 7, .75), inset 0 0 9px rgba(50, 37, 25, .18), 0 3px 10px rgba(14, 5, 3, .4); image-rendering: auto; }
+html[data-theme='light'] .michigan-certificate-dialog {
+  box-shadow: inset 0 0 0 2px rgba(233, 176, 114, .4), inset 0 0 0 6px rgba(28, 11, 7, .55), inset 0 0 0 9px rgba(184, 115, 65, .2), 0 25px 60px rgba(31, 22, 15, .34), 0 5px 14px rgba(31, 22, 15, .22);
+}
 .michigan-certificate-overlay.is-closing { animation: michigan-backdrop-out 360ms cubic-bezier(.23, 1, .32, 1) both; }
 .michigan-certificate-overlay.is-closing .michigan-certificate-dialog { animation: michigan-certificate-out 360ms cubic-bezier(.23, 1, .32, 1) both; }
 @keyframes michigan-backdrop-in { from { opacity: 0; backdrop-filter: blur(0); -webkit-backdrop-filter: blur(0); } to { opacity: 1; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); } }

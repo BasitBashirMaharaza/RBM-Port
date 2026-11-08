@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
+import { createPortal } from 'react-dom';
 import './card-stack.css';
 
 const wrap = (index, length) => ((index % length) + length) % length;
@@ -32,14 +33,67 @@ function ExperienceCardBackground({ index }) {
   </svg>;
 }
 
+function ExperienceFront({ item, index }) {
+  return <div className="card-stack-card-inner">
+    <div className="card-stack-art" aria-hidden="true"><ExperienceCardBackground index={index} /><span className="card-stack-index">0{index + 1}</span><img src={item.logo} alt="" loading="lazy" decoding="async" /></div>
+    <div className="card-stack-card-copy"><span>{item.label} <i /> {item.period}</span><strong>{item.role}</strong><small>{item.company}</small></div>
+  </div>;
+}
+
+function ExperienceBack({ item, index, length }) {
+  return <div className="card-stack-back">
+    <div className="card-stack-detail-heading"><div><span>0{index + 1} / 0{length} &nbsp;·&nbsp; {item.location}</span><h3>{item.role}</h3></div><p>{item.period}<br />{item.company}</p></div>
+    <div className="card-stack-back-scroll"><p className="card-stack-summary">{item.summary}</p><ul>{item.points.map((point) => <li key={point}>{point}</li>)}</ul><div className="tag-list">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div></div>
+  </div>;
+}
+
+let experienceSoundContext;
+function playExperienceSound(kind) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const Engine = window.AudioContext || window.webkitAudioContext;
+  if (!Engine) return;
+  try {
+    experienceSoundContext?.close().catch(() => {});
+    const ctx = new Engine();
+    experienceSoundContext = ctx;
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    const start = ctx.currentTime;
+    const note = (delay, from, to, volume, duration) => {
+      const tone = ctx.createOscillator();
+      const gain = ctx.createGain();
+      tone.type = 'sine';
+      tone.frequency.setValueAtTime(from, start + delay);
+      tone.frequency.exponentialRampToValueAtTime(to, start + delay + duration);
+      gain.gain.setValueAtTime(.0001, start + delay);
+      gain.gain.exponentialRampToValueAtTime(volume, start + delay + .05);
+      gain.gain.exponentialRampToValueAtTime(.0001, start + delay + duration);
+      tone.connect(gain).connect(ctx.destination);
+      tone.start(start + delay); tone.stop(start + delay + duration + .01);
+      return tone;
+    };
+    const finish = () => { if (experienceSoundContext === ctx) experienceSoundContext = null; ctx.close().catch(() => {}); };
+    if (kind === 'close') note(0, 420, 260, .012, .38).onended = finish;
+    else {
+      note(0, 280, 410, .013, .22);
+      note(.18, 190, 460, .013, .43);
+      note(.57, 610, 720, .009, .23).onended = finish;
+    }
+  } catch { /* The card remains usable when audio is unavailable. */ }
+}
+
 export default function ExperienceStack({ items }) {
   const reduceMotion = useReducedMotion();
   const [active, setActive] = useState(0);
+  const [cinema, setCinema] = useState(null);
   const [hovering, setHovering] = useState(false);
   const [focused, setFocused] = useState(false);
   const [stageWidth, setStageWidth] = useState(1100);
   const stage = useRef(null);
   const activeIndex = useRef(0);
+  const cardRefs = useRef([]);
+  const cinemaRef = useRef(null);
+  const closeTimer = useRef(null);
+  const pendingOpen = useRef(null);
   const length = items.length;
 
   useEffect(() => {
@@ -51,6 +105,8 @@ export default function ExperienceStack({ items }) {
   }, []);
 
   const choose = useCallback((index) => {
+    window.clearTimeout(pendingOpen.current);
+    pendingOpen.current = null;
     const next = wrap(index, length);
     activeIndex.current = next;
     setActive(next);
@@ -59,19 +115,94 @@ export default function ExperienceStack({ items }) {
   const next = useCallback(() => choose(activeIndex.current + 1), [choose]);
 
   useEffect(() => {
-    if (reduceMotion || hovering || focused || length < 2) return undefined;
+    if (reduceMotion || hovering || focused || cinema || length < 2) return undefined;
     const timer = setInterval(next, 6000);
     return () => clearInterval(timer);
-  }, [reduceMotion, hovering, focused, length, next]);
+  }, [reduceMotion, hovering, focused, cinema, length, next]);
+
+  const openCinema = (index) => {
+    if (cinemaRef.current) return;
+    const rect = cardRefs.current[index]?.getBoundingClientRect();
+    if (!rect) return;
+    const origin = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+    cinemaRef.current = { index, origin };
+    setCinema({ index, origin, phase: 'start' });
+    playExperienceSound('open');
+    requestAnimationFrame(() => requestAnimationFrame(() => setCinema((value) => value?.phase === 'start' ? { ...value, phase: 'open' } : value)));
+  };
+  const activateCard = (index, selected) => {
+    if (cinemaRef.current || pendingOpen.current) return;
+    if (selected) openCinema(index);
+    else {
+      choose(index);
+      pendingOpen.current = window.setTimeout(() => {
+        pendingOpen.current = null;
+        openCinema(index);
+      }, reduceMotion ? 0 : 360);
+    }
+  };
+
+  const closeCinema = () => {
+    if (!cinemaRef.current || cinemaRef.current.closing) return;
+    cinemaRef.current.closing = true;
+    playExperienceSound('close');
+    const rect = cardRefs.current[cinemaRef.current.index]?.getBoundingClientRect();
+    const origin = rect ? { left: rect.left, top: rect.top, width: rect.width, height: rect.height } : cinemaRef.current.origin;
+    setCinema((value) => value && { ...value, origin, phase: 'closing' });
+    window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(finishCinema, reduceMotion ? 120 : 840);
+  };
+
+  const finishCinema = () => {
+    if (!cinemaRef.current?.closing) return;
+    window.clearTimeout(closeTimer.current);
+    const index = cinemaRef.current.index;
+    cinemaRef.current = null;
+    setCinema(null);
+    requestAnimationFrame(() => cardRefs.current[index]?.focus({ preventScroll: true }));
+  };
+
+  useEffect(() => {
+    if (!cinema) return undefined;
+    const root = document.documentElement;
+    const previousOverflow = document.body.style.overflow;
+    const previousRootOverflow = root.style.overflow;
+    const previousGutter = root.style.scrollbarGutter;
+    const previousPadding = document.body.style.paddingRight;
+    const scrollbarWidth = Math.max(0, window.innerWidth - root.clientWidth);
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    if (window.CSS?.supports?.('scrollbar-gutter: stable')) root.style.scrollbarGutter = 'stable';
+    else if (scrollbarWidth) document.body.style.paddingRight = `${parseFloat(getComputedStyle(document.body).paddingRight || '0') + scrollbarWidth}px`;
+    document.body.style.overflow = 'hidden';
+    root.style.overflow = 'hidden';
+    requestAnimationFrame(() => document.querySelector('.experience-cinema-card')?.focus({ preventScroll: true }));
+    const onKey = (event) => {
+      if (event.key === 'Escape') closeCinema();
+      if (event.key === 'Tab') {
+        event.preventDefault();
+        document.querySelector('.experience-cinema-card')?.focus({ preventScroll: true });
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      root.style.overflow = previousRootOverflow;
+      root.style.scrollbarGutter = previousGutter;
+      document.body.style.paddingRight = previousPadding;
+      if (window.scrollX !== scrollX || window.scrollY !== scrollY) window.scrollTo({ left: scrollX, top: scrollY, behavior: 'instant' });
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [Boolean(cinema)]);
+  useEffect(() => () => { window.clearTimeout(closeTimer.current); window.clearTimeout(pendingOpen.current); }, []);
 
   if (!length) return null;
 
   const compact = stageWidth < 650;
-  const cardWidth = Math.min(520, compact ? stageWidth - 30 : stageWidth * .58);
-  const cardHeight = compact ? 284 : 320;
+  const cardWidth = Math.min(590, compact ? stageWidth - 20 : stageWidth * .64);
+  const cardHeight = compact ? 322 : 364;
   const cardSpacing = compact ? Math.min(92, cardWidth * .27) : cardWidth * .52;
   const fanAngle = compact ? 13 : 24;
-  const current = items[active];
 
   return (
     <div className="card-stack-experience reveal" onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)} onFocusCapture={() => setFocused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
@@ -87,11 +218,12 @@ export default function ExperienceStack({ items }) {
               <motion.div
                 className={`card-stack-card${selected ? ' is-active' : ''}`}
                 key={item.role}
+                ref={(node) => { cardRefs.current[index] = node; }}
                 style={{ width: cardWidth, height: cardHeight, zIndex: 10 - distance }}
                 initial={false}
                 animate={{ x: offset * cardSpacing, y: selected ? -20 : distance * 10, rotateZ: offset * fanAngle, rotateX: selected ? 0 : 10, scale: selected ? 1.03 : .94, opacity: 1 }}
                 transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 280, damping: 28, mass: .9 }}
-                onClick={() => { if (!selected) choose(index); }}
+                onClick={() => activateCard(index, selected)}
                 onPointerMove={(event) => {
                   if (reduceMotion || event.pointerType !== 'mouse') return;
                   const rect = event.currentTarget.getBoundingClientRect();
@@ -99,38 +231,37 @@ export default function ExperienceStack({ items }) {
                   event.currentTarget.style.setProperty('--scene-y', `${((event.clientY - rect.top) / rect.height - .5) * 12}px`);
                 }}
                 onPointerLeave={(event) => { event.currentTarget.style.setProperty('--scene-x', '0px'); event.currentTarget.style.setProperty('--scene-y', '0px'); }}
-                onDragEnd={(_event, info) => { if (reduceMotion || !selected) return; if (info.offset.x > 80 || info.velocity.x > 650) previous(); else if (info.offset.x < -80 || info.velocity.x < -650) next(); }}
-                drag={selected && !reduceMotion ? 'x' : false}
+                onDragEnd={(_event, info) => { if (reduceMotion || !selected || cinema) return; if (info.offset.x > 80 || info.velocity.x > 650) previous(); else if (info.offset.x < -80 || info.velocity.x < -650) next(); }}
+                drag={selected && !cinema && !reduceMotion ? 'x' : false}
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={.18}
-                role={selected ? 'group' : 'button'}
-                tabIndex={selected ? -1 : 0}
-                onKeyDown={(event) => { if (!selected && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); choose(index); } }}
-                aria-label={selected ? `${item.role}, selected` : `Show ${item.role}`}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activateCard(index, selected); } }}
+                aria-label={selected ? `Show details for ${item.role}` : `Select ${item.role}`}
+                aria-expanded={cinema?.index === index}
                 aria-hidden={selected ? undefined : false}
               >
-                <div className="card-stack-card-inner">
-                  <div className="card-stack-art" aria-hidden="true"><ExperienceCardBackground index={index} /><span className="card-stack-index">0{index + 1}</span><img src={item.logo} alt="" loading="lazy" decoding="async" /></div>
-                  <div className="card-stack-card-copy"><span>{item.label} <i /> {item.period}</span><strong>{item.role}</strong><small>{item.company}</small></div>
-                </div>
+                <ExperienceFront item={item} index={index} />
               </motion.div>
             );
           })}
         </div>
       </div>
       <div className="card-stack-controls">
-        <button type="button" onClick={previous} aria-label="Previous experience" data-sound="experience-previous">←</button>
         <div className="card-stack-dots" aria-label="Choose experience">
           {items.map((item, index) => <button type="button" key={item.role} className={index === active ? 'is-active' : ''} onClick={() => choose(index)} aria-label={`Go to ${item.role}`} aria-current={index === active ? 'true' : undefined} data-sound={`experience-${index + 1}`} />)}
         </div>
-        <button type="button" onClick={next} aria-label="Next experience" data-sound="experience-next">→</button>
       </div>
-      <motion.article className="card-stack-detail" key={current.role} initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .38 }} aria-live="polite">
-        <div className="card-stack-detail-heading"><div><span>0{active + 1} / 0{length} &nbsp;·&nbsp; {current.location}</span><h3>{current.role}</h3></div><p>{current.period}<br />{current.company}</p></div>
-        <p className="card-stack-summary">{current.summary}</p>
-        <ul>{current.points.map((point) => <li key={point}>{point}</li>)}</ul>
-        <div className="tag-list">{current.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-      </motion.article>
+      {cinema && createPortal(<div className={`experience experience-cinema experience-cinema-${cinema.phase}`} onPointerDown={(event) => { if (event.target === event.currentTarget) closeCinema(); }}>
+        <div className="experience-cinema-card card-stack-card" role="dialog" aria-modal="true" aria-label={`${items[cinema.index].role} experience details`} tabIndex={-1} onTransitionEnd={(event) => { if (event.target === event.currentTarget && event.propertyName === 'transform' && cinemaRef.current?.closing) finishCinema(); }}
+          style={{ '--origin-left': `${cinema.origin.left}px`, '--origin-top': `${cinema.origin.top}px`, '--origin-width': `${cinema.origin.width}px`, '--origin-height': `${cinema.origin.height}px` }}>
+          <div className="card-stack-flip">
+            <ExperienceFront item={items[cinema.index]} index={cinema.index} />
+            <ExperienceBack item={items[cinema.index]} index={cinema.index} length={length} />
+          </div>
+        </div>
+      </div>, document.body)}
     </div>
   );
 }
