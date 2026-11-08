@@ -15,6 +15,7 @@ import { playEmailSound, stopEmailSound } from './emailContactSound.js';
 import './email-contact.css';
 import MichiganCertificateOverlay from './MichiganCertificateOverlay.jsx';
 import { playVoiceNoteRevealSound } from './voiceNoteRevealSound.js';
+import IntroPoster from './IntroPoster.jsx';
 
 const profileLinks = {
   github: 'https://github.com/BasitBashirMaharaza',
@@ -353,6 +354,7 @@ function Header({ theme, onThemeToggle }) {
           <div className="header-switch-dock"><LampSwitch theme={theme} onToggle={onThemeToggle} /></div>
           <button className={`menu-button ${menuOpen ? 'open' : ''}`} type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label="Toggle navigation"><span /><span /></button>
         </div>
+        <IntroPoster />
       </header>
       <nav id="mobile-navigation" className={`mobile-menu ${menuOpen ? 'open' : ''}`} aria-label="Mobile navigation" aria-hidden={!menuOpen}>
         {['about', 'education', 'experience', 'work', 'toolkit', 'contact'].map((item, index) => <a key={item} href={`#${item}`} onClick={close}><span>0{index + 1}</span>{item}</a>)}
