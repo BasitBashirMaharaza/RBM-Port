@@ -75,6 +75,9 @@
   }
 }
 .contact-copy .contact-signature:active { transform: translateY(1px) rotate(-4deg) scale(.985); }
+@media (max-width: 600px) {
+  .contact-copy .contact-signature { right: 0; }
+}
 .contact-copy .contact-signature path { stroke-dasharray: 360; stroke-dashoffset: 360; }
 .contact-copy.visible .contact-signature path { animation: contact-signature-write .85s ease-out both; }
 .contact-copy.visible .contact-signature path:nth-child(2) { animation-delay: .35s; }

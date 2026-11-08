@@ -133,21 +133,35 @@ function ToolkitGallery() {
   const [selected, setSelected] = useState(null);
   const [hovered, setHovered] = useState(null);
   const active = hovered ?? selected;
-  return <div className="skills-grid toolkit-cards">
+  const tiltCard = (event) => {
+    if (event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const card = event.currentTarget;
+    const { left, top, width, height } = card.getBoundingClientRect();
+    const x = Math.max(-1, Math.min(1, ((event.clientX - left) / width - .5) * 2));
+    const y = Math.max(-1, Math.min(1, ((event.clientY - top) / height - .5) * 2));
+    card.style.setProperty('--toolkit-tilt-x', `${-y * 3}deg`);
+    card.style.setProperty('--toolkit-tilt-y', `${x * 3}deg`);
+    card.style.setProperty('--toolkit-light-x', `${(x + 1) * 50}%`);
+    card.style.setProperty('--toolkit-light-y', `${(y + 1) * 50}%`);
+  };
+  const resetCardTilt = (card) => {
+    card.style.removeProperty('--toolkit-tilt-x');
+    card.style.removeProperty('--toolkit-tilt-y');
+    card.style.removeProperty('--toolkit-light-x');
+    card.style.removeProperty('--toolkit-light-y');
+  };
+  return <div className="skills-grid toolkit-cards" data-expanded={active !== null}>
     {skillGroups.map(([title, ...skills], index) => {
       const open = active === index;
-      return <article className="skill-column skill-card reveal" data-open={open} key={title}
-        onPointerEnter={(event) => { if (event.pointerType === 'mouse' && matchMedia('(hover: hover) and (pointer: fine)').matches) setHovered(index); }}
-        onPointerLeave={() => setHovered(null)}
-        onFocus={(event) => { if (event.target.matches(':focus-visible')) setHovered(index); }}
-        onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setHovered(null); }}>
+      return <article className="skill-column skill-card reveal" data-open={open} key={title} onPointerMove={tiltCard} onPointerLeave={(event) => { if (event.pointerType === 'mouse') { resetCardTilt(event.currentTarget); setHovered(null); } }}>
         <div className="skill-card-top"><span>0{index + 1} / 04</span><SkillIcon index={index} /></div>
         <h3>{title}</h3>
         <div id={`skill-card-panel-${index}`} className="skill-card-details" aria-hidden={!open}>
-          <div className="skill-card-details-inner"><p>Working knowledge</p><ul>{skills.map((skill) => <li key={skill}>{skill}</li>)}</ul></div>
+          <div className="skill-card-details-inner"><p>Working knowledge</p><ul>{skills.map((skill, skillIndex) => <li key={skill} style={{ '--skill-index': skillIndex }}>{skill}</li>)}</ul></div>
         </div>
         <button className="skill-card-action" type="button" aria-expanded={open} aria-controls={`skill-card-panel-${index}`}
-          onClick={() => { setSelected(selected === index ? null : index); setHovered(null); }} data-sound={`toolkit-${index + 1}`}>
+          onPointerEnter={(event) => { if (event.pointerType === 'mouse' && matchMedia('(hover: hover) and (pointer: fine)').matches) setHovered(index); }}
+          onClick={(event) => { if (event.detail === 0 || !matchMedia('(hover: hover) and (pointer: fine)').matches) setSelected(selected === index ? null : index); }} data-sound={`toolkit-${index + 1}`}>
           <span>{open ? 'Show less' : 'Explore skills'}</span><span className="skill-card-action-icon" aria-hidden="true">{open ? '−' : '↗'}</span>
         </button>
       </article>;

@@ -502,3 +502,7 @@ footer { padding: 28px 0; background: var(--bg); border-top: 1px solid var(--lin
   .project-visual{min-height:240px}
   .project-card{min-height:0}
 }
+@media(max-width:700px){
+  .email-contact-overlay .email-contact-content input,
+  .email-contact-overlay .email-contact-content textarea{font-size:16px}
+}
