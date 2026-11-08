@@ -165,6 +165,11 @@
 .experience-cinema .card-stack-back li { font-size: clamp(12px, 1.1vw, 15px); }
 .experience-cinema .card-stack-back-scroll { touch-action: pan-y; }
 @media (max-width: 700px) {
+  .experience .experience-cinema-card { overflow: visible; }
+  .experience-cinema .card-stack-flip { border-radius: inherit; }
+  .experience-cinema .card-stack-card-inner,
+  .experience-cinema .card-stack-back { border-radius: inherit; }
+  .experience-cinema-open .card-stack-card-inner { visibility: hidden; transition: visibility 0s 760ms; }
   .experience-cinema .card-stack-back { padding: 22px; }
   .experience-cinema .card-stack-back .card-stack-detail-heading { flex-direction: column; gap: 8px; }
   .experience-cinema .card-stack-back .card-stack-detail-heading p { text-align: left; }
@@ -173,4 +178,5 @@
 @media (prefers-reduced-motion: reduce) {
   .experience-cinema, .experience .experience-cinema-card, .experience-cinema .card-stack-flip { transition-duration: 60ms; }
   .experience-cinema-closing .experience-cinema-card { animation-duration: 60ms; }
+  .experience-cinema-open .card-stack-card-inner { transition-delay: 60ms; }
 }
