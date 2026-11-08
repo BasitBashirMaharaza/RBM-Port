@@ -138,7 +138,7 @@ export default function ExperienceStack({ items }) {
       pendingOpen.current = window.setTimeout(() => {
         pendingOpen.current = null;
         openCinema(index);
-      }, reduceMotion ? 0 : 360);
+      }, reduceMotion ? 0 : compact ? 100 : 360);
     }
   };
 
@@ -219,7 +219,7 @@ export default function ExperienceStack({ items }) {
                 className={`card-stack-card${selected ? ' is-active' : ''}`}
                 key={item.role}
                 ref={(node) => { cardRefs.current[index] = node; }}
-                style={{ width: cardWidth, height: cardHeight, zIndex: 10 - distance }}
+                style={{ width: cardWidth, height: cardHeight, zIndex: 10 - distance, visibility: compact && cinema?.index === index ? 'hidden' : 'visible' }}
                 initial={false}
                 animate={{ x: offset * cardSpacing, y: selected ? -20 : distance * 10, rotateZ: offset * fanAngle, rotateX: selected ? 0 : 10, scale: selected ? 1.03 : .94, opacity: 1 }}
                 transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 280, damping: 28, mass: .9 }}

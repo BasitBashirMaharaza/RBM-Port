@@ -165,18 +165,31 @@
 .experience-cinema .card-stack-back li { font-size: clamp(12px, 1.1vw, 15px); }
 .experience-cinema .card-stack-back-scroll { touch-action: pan-y; }
 @media (max-width: 700px) {
-  .experience .experience-cinema-card { overflow: visible; }
+  .experience-cinema, .experience-cinema-open { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; transition: none; }
+  .experience-cinema::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0; background: rgba(5, 8, 12, .42); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: opacity 760ms cubic-bezier(.22, 1, .36, 1); }
+  .experience-cinema-open::before { opacity: 1; }
+  .experience .experience-cinema-card { z-index: 1; overflow: visible; }
   .experience-cinema .card-stack-flip { border-radius: inherit; }
   .experience-cinema .card-stack-card-inner,
   .experience-cinema .card-stack-back { border-radius: inherit; }
-  .experience-cinema-open .card-stack-card-inner { visibility: hidden; transition: visibility 0s 760ms; }
+  .experience-cinema .card-stack-back { opacity: 0; }
+  .experience-cinema-open .card-stack-card-inner { animation: experience-mobile-front-out 760ms linear both; }
+  .experience-cinema-open .card-stack-back { animation: experience-mobile-back-in 760ms linear both; }
+  .experience-cinema-closing .card-stack-card-inner { animation: experience-mobile-front-in 760ms linear both; }
+  .experience-cinema-closing .card-stack-back { animation: experience-mobile-back-out 760ms linear both; }
   .experience-cinema .card-stack-back { padding: 22px; }
   .experience-cinema .card-stack-back .card-stack-detail-heading { flex-direction: column; gap: 8px; }
   .experience-cinema .card-stack-back .card-stack-detail-heading p { text-align: left; }
   .experience-cinema .card-stack-back ul { grid-template-columns: 1fr; gap: 10px; }
 }
+@keyframes experience-mobile-front-out { 0%, 49.9% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes experience-mobile-back-in { 0%, 49.9% { opacity: 0; } 50%, 100% { opacity: 1; } }
+@keyframes experience-mobile-front-in { 0%, 49.9% { opacity: 0; } 50%, 100% { opacity: 1; } }
+@keyframes experience-mobile-back-out { 0%, 49.9% { opacity: 1; } 50%, 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
   .experience-cinema, .experience .experience-cinema-card, .experience-cinema .card-stack-flip { transition-duration: 60ms; }
   .experience-cinema-closing .experience-cinema-card { animation-duration: 60ms; }
-  .experience-cinema-open .card-stack-card-inner { transition-delay: 60ms; }
+  .experience-cinema::before { transition-duration: 60ms; }
+  .experience-cinema-open .card-stack-card-inner, .experience-cinema-open .card-stack-back,
+  .experience-cinema-closing .card-stack-card-inner, .experience-cinema-closing .card-stack-back { animation-duration: 60ms; }
 }
