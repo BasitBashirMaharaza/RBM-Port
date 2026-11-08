@@ -100,6 +100,9 @@
   .experience .card-stack-detail-heading p { text-align: left; }
   .experience .card-stack-detail ul { grid-template-columns: 1fr; }
 }
+@media (min-width: 701px) and (max-width: 1120px) {
+  .experience .card-stack-experience { overflow-x: clip; }
+}
 @media (max-width: 430px) {
   .experience .card-stack-stage { height: 346px; }
   .experience .card-stack-back { padding: 15px; }

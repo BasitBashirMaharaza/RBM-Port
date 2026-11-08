@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import InkRidges from './components/AuraBackground.jsx';
 import CanvasText from './components/CanvasText.jsx';
 import ExpandableTabs from './components/ExpandableTabs.jsx';
@@ -135,43 +136,44 @@ function SkillIcon({ index }) {
 }
 
 function ToolkitGallery() {
-  const [selected, setSelected] = useState(null);
-  const [hovered, setHovered] = useState(null);
-  const active = hovered ?? selected;
-  const tiltCard = (event) => {
-    if (event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const [active, setActive] = useState(0);
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const moveCard = (event) => {
+    if (event.pointerType !== 'mouse' || reducedMotion) return;
     const card = event.currentTarget;
-    const { left, top, width, height } = card.getBoundingClientRect();
-    const x = Math.max(-1, Math.min(1, ((event.clientX - left) / width - .5) * 2));
-    const y = Math.max(-1, Math.min(1, ((event.clientY - top) / height - .5) * 2));
-    card.style.setProperty('--toolkit-tilt-x', `${-y * 3}deg`);
-    card.style.setProperty('--toolkit-tilt-y', `${x * 3}deg`);
-    card.style.setProperty('--toolkit-light-x', `${(x + 1) * 50}%`);
-    card.style.setProperty('--toolkit-light-y', `${(y + 1) * 50}%`);
+    const rect = card.getBoundingClientRect();
+    const x = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - .5) * 2));
+    const y = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - .5) * 2));
+    card.style.setProperty('--feature-tilt-x', `${-y * 2.4}deg`);
+    card.style.setProperty('--feature-tilt-y', `${x * 2.4}deg`);
+    card.style.setProperty('--feature-shift-x', `${x * 4}px`);
+    card.style.setProperty('--feature-shift-y', `${y * 4}px`);
+    card.style.setProperty('--feature-light-x', `${(x + 1) * 50}%`);
+    card.style.setProperty('--feature-light-y', `${(y + 1) * 50}%`);
   };
-  const resetCardTilt = (card) => {
-    card.style.removeProperty('--toolkit-tilt-x');
-    card.style.removeProperty('--toolkit-tilt-y');
-    card.style.removeProperty('--toolkit-light-x');
-    card.style.removeProperty('--toolkit-light-y');
+  const resetCard = (event) => {
+    ['--feature-tilt-x', '--feature-tilt-y', '--feature-shift-x', '--feature-shift-y', '--feature-light-x', '--feature-light-y'].forEach((name) => event.currentTarget.style.removeProperty(name));
   };
-  return <div className="skills-grid toolkit-cards" data-expanded={active !== null}>
-    {skillGroups.map(([title, ...skills], index) => {
-      const open = active === index;
-      return <article className="skill-column skill-card reveal" data-open={open} data-skill-theme={index} key={title} onPointerMove={tiltCard} onPointerLeave={(event) => { if (event.pointerType === 'mouse') { resetCardTilt(event.currentTarget); setHovered(null); setSelected(null); } }}>
-        <div className="skill-card-scene" aria-hidden="true"><span /><span /><span /><span /></div>
-        <div className="skill-card-top"><span>0{index + 1} / 04</span><SkillIcon index={index} /></div>
-        <h3>{title}</h3>
-        <div id={`skill-card-panel-${index}`} className="skill-card-details" aria-hidden={!open}>
-          <div className="skill-card-details-inner"><p>Working knowledge</p><ul>{skills.map((skill, skillIndex) => <li key={skill} style={{ '--skill-index': skillIndex }}>{skill}</li>)}</ul></div>
-        </div>
-        <button className="skill-card-action" type="button" aria-label={`${open ? 'Collapse' : 'Explore'} skills in ${title}`} title="Explore Skills" aria-expanded={open} aria-controls={`skill-card-panel-${index}`}
-          onPointerEnter={(event) => { if (event.pointerType === 'mouse' && matchMedia('(hover: hover) and (pointer: fine)').matches) setHovered(index); }}
-          onClick={() => { setHovered(null); setSelected(selected === index ? null : index); }} data-sound={`toolkit-${index + 1}`}>
-          <span className="skill-card-action-icon" aria-hidden="true">{open ? '−' : '↗'}</span>
+  const media = (index) => <div className="toolkit-feature-media" data-skill-theme={index}>
+    <div className="toolkit-feature-art" aria-hidden="true"><span /><span /><span /><SkillIcon index={index} /></div>
+    <div className="toolkit-feature-content"><p>Working knowledge</p><ul>{skillGroups[index].slice(1).map((skill) => <li key={skill}>{skill}</li>)}</ul></div>
+  </div>;
+  return <div className="toolkit-feature-layout">
+    <div className="toolkit-feature-list" role="group" aria-label="Explore capabilities">
+      {skillGroups.map(([title], index) => <motion.div className="toolkit-feature-item" data-active={active === index} key={title}
+        initial={reducedMotion ? false : { opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        transition={{ duration: .35, delay: reducedMotion ? 0 : index * .07, ease: 'easeOut' }}>
+        <button type="button" className="toolkit-feature-choice" aria-pressed={active === index} aria-controls={`toolkit-feature-mobile-${index}`} onClick={() => setActive(index)} data-sound={`toolkit-${index + 1}`}>
+          <span className="toolkit-feature-number">{index + 1}</span><span className="toolkit-feature-title">{title}</span>
         </button>
-      </article>;
-    })}
+        <div className="toolkit-feature-mobile" id={`toolkit-feature-mobile-${index}`}>
+          <AnimatePresence initial={false}>{active === index && <motion.div key={index} initial={reducedMotion ? false : { height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: reducedMotion ? 0 : .35, ease: [.4, 0, .2, 1] }} className="toolkit-feature-mobile-inner">{media(index)}</motion.div>}</AnimatePresence>
+        </div>
+      </motion.div>)}
+    </div>
+    <div className="toolkit-feature-desktop"><div className="toolkit-feature-stage" onPointerMove={moveCard} onPointerLeave={resetCard}><AnimatePresence mode="wait" initial={false}>
+      <motion.div className="toolkit-feature-stage-inner" key={active} initial={reducedMotion ? false : { opacity: 0, y: 12, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: .98 }} transition={{ duration: reducedMotion ? 0 : .35, ease: [.4, 0, .2, 1] }}>{media(active)}</motion.div>
+    </AnimatePresence></div></div>
   </div>;
 }
 

@@ -2,8 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './voice-note-overlay.css';
 
-// Add the supplied recording path here when it is available, for example /voice-note.mp3.
-const VOICE_NOTE_SRC = '';
+const VOICE_NOTE_SRC = '/voice-note.m4a';
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds)) return '--:--';
@@ -84,7 +83,7 @@ export default function VoiceNoteOverlay({ origin, onClosed }) {
             <div className="voice-note-time"><span>{formatTime(currentTime)}</span><span>{formatTime(duration)}</span></div>
           </div>
         </div>
-        <p id="voice-note-status" className="voice-note-status">{!VOICE_NOTE_SRC ? 'Personal recording coming soon' : error ? 'Recording unavailable' : ready ? 'A personal message from Basit' : 'Loading voice note…'}</p>
+        <p id="voice-note-status" className="voice-note-status">{error ? 'Recording unavailable' : ready ? 'Voice note for you' : 'Loading voice note…'}</p>
         {VOICE_NOTE_SRC && <audio ref={audioRef} src={VOICE_NOTE_SRC} preload="metadata" onLoadedMetadata={(event) => { setDuration(event.currentTarget.duration); setReady(true); }} onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)} onEnded={close} onError={() => { setReady(false); setError(true); }} />}
       </div>
     </div>,
