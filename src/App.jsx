@@ -10,6 +10,10 @@ import './education-signature.css';
 import './toolkit-glass.css';
 import './about-profile.css';
 import VoiceNoteOverlay from './VoiceNoteOverlay.jsx';
+import EmailContactOverlay from './EmailContactOverlay.jsx';
+import { playEmailSound, stopEmailSound } from './emailContactSound.js';
+import './email-contact.css';
+import MichiganCertificateOverlay from './MichiganCertificateOverlay.jsx';
 import { playVoiceNoteRevealSound } from './voiceNoteRevealSound.js';
 
 const profileLinks = {
@@ -564,7 +568,7 @@ function replaySignature(event) {
     const length = path.getTotalLength();
     return path.animate(
       [{ strokeDashoffset: length }, { strokeDashoffset: 0 }],
-      { duration: index < 3 ? 620 : 360, delay: index < 3 ? index * 160 : 480 + (index - 3) * 110, easing: 'ease-out', fill: 'both' },
+      { duration: index < 3 ? 700 : 400, delay: index < 3 ? index * 180 : 540 + (index - 3) * 120, easing: 'ease-out', fill: 'both' },
     );
   });
 }
@@ -574,16 +578,57 @@ function App() {
   const [welcomeOpen, setWelcomeOpen] = useState(true);
   const [welcomeLeaving, setWelcomeLeaving] = useState(false);
   const [voiceOpen, setVoiceOpen] = useState(false);
+  const [michiganCertificateOpen, setMichiganCertificateOpen] = useState(false);
+  const [googleCertificateOpen, setGoogleCertificateOpen] = useState(false);
+  const [emailContactOpen, setEmailContactOpen] = useState(false);
+  const [emailVisible, setEmailVisible] = useState(false);
   const [voiceOrigin, setVoiceOrigin] = useState(null);
+  const [profileHintVisible, setProfileHintVisible] = useState(false);
   const voiceTrigger = useRef(null);
+  const michiganLogo = useRef(null);
+  const googleLogo = useRef(null);
+  const emailTrigger = useRef(null);
+  const contactSection = useRef(null);
+  const emailVisibleRef = useRef(false);
   const lastVoicePress = useRef(null);
-  const voiceOpened = useRef(false);
+  const profileHintTimer = useRef(null);
   const welcomeSoundArmed = useRef(false);
   useInterfaceSounds();
 
+  const revealEmail = () => {
+    if (emailVisibleRef.current) return;
+    emailVisibleRef.current = true;
+    setEmailVisible(true);
+    playEmailSound('reveal');
+  };
+
+  const hideEmail = () => {
+    if (!emailVisibleRef.current || emailContactOpen || contactSection.current?.contains(document.activeElement)) return;
+    emailVisibleRef.current = false;
+    setEmailVisible(false);
+    stopEmailSound();
+  };
+
+  useEffect(() => {
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) return undefined;
+    const section = contactSection.current;
+    if (!section) return undefined;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0]?.isIntersecting) revealEmail();
+    }, { threshold: .2 });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  const openEmailContact = () => {
+    if (emailContactOpen) return;
+    stopWelcomeSound();
+    playEmailSound('open');
+    setEmailContactOpen(true);
+  };
+
   const openVoiceNote = (event) => {
-    if (voiceOpen || voiceOpened.current) return;
-    voiceOpened.current = true;
+    if (voiceOpen) return;
     const rect = voiceTrigger.current?.getBoundingClientRect();
     setVoiceOrigin({
       x: event?.clientX || (rect ? rect.left + rect.width / 2 : innerWidth / 2),
@@ -596,6 +641,11 @@ function App() {
 
   const handleVoicePress = (event) => {
     if (event.button !== 0) return;
+    if (event.pointerType === 'touch') {
+      setProfileHintVisible(true);
+      window.clearTimeout(profileHintTimer.current);
+      profileHintTimer.current = window.setTimeout(() => setProfileHintVisible(false), 1800);
+    }
     const now = Date.now();
     const last = lastVoicePress.current;
     const maxDelay = event.pointerType === 'touch' ? 350 : 500;
@@ -613,6 +663,7 @@ function App() {
     window.setTimeout(() => {
       welcomeSoundArmed.current = true;
       setWelcomeOpen(false);
+      requestWelcomeSound();
     }, 480);
   };
 
@@ -620,10 +671,6 @@ function App() {
     document.body.classList.toggle('welcome-open', welcomeOpen);
     return () => document.body.classList.remove('welcome-open');
   }, [welcomeOpen]);
-
-  useEffect(() => {
-    requestWelcomeSound();
-  }, []);
 
   useEffect(() => {
     if (welcomeOpen || !welcomeSoundArmed.current) return undefined;
@@ -706,10 +753,11 @@ function App() {
           <div className="container">
             <SectionHeading index="01" label="Profile">A technical perspective shaped by <em>care.</em></SectionHeading>
             <div className="about-grid">
-              <figure ref={voiceTrigger} className="about-profile-sketch reveal" role="button" tabIndex={0} aria-haspopup="dialog" aria-label="Basit Bashir portrait. Double-click or double-tap to open a voice note; press Enter to open with a keyboard." data-sound="silent" onDoubleClick={openVoiceNote} onPointerUp={handleVoicePress} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openVoiceNote(event); } }} onPointerMove={(event) => { if (event.pointerType !== 'mouse') return; const rect = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--profile-tilt-x', `${((event.clientY - rect.top) / rect.height - .5) * -3}deg`); event.currentTarget.style.setProperty('--profile-tilt-y', `${((event.clientX - rect.left) / rect.width - .5) * 3}deg`); }} onPointerLeave={(event) => { event.currentTarget.style.setProperty('--profile-tilt-x', '0deg'); event.currentTarget.style.setProperty('--profile-tilt-y', '0deg'); }}>
+              <figure ref={voiceTrigger} className={`about-profile-sketch reveal${profileHintVisible ? ' profile-hint-visible' : ''}`} role="button" tabIndex={0} aria-haspopup="dialog" aria-label="Basit Bashir portrait. Double-click or double-tap to open a voice note; press Enter to open with a keyboard." data-sound="silent" onDoubleClick={openVoiceNote} onPointerUp={handleVoicePress} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openVoiceNote(event); } }} onPointerMove={(event) => { if (event.pointerType !== 'mouse') return; const rect = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--profile-tilt-x', `${((event.clientY - rect.top) / rect.height - .5) * -3}deg`); event.currentTarget.style.setProperty('--profile-tilt-y', `${((event.clientX - rect.left) / rect.width - .5) * 3}deg`); }} onPointerLeave={(event) => { event.currentTarget.style.setProperty('--profile-tilt-x', '0deg'); event.currentTarget.style.setProperty('--profile-tilt-y', '0deg'); }}>
                 <div className="about-profile-portrait"><img src="/portfolio_photo.webp" alt="Basit Bashir" loading="lazy" decoding="async" /></div>
-                <svg className="about-profile-arrows" viewBox="0 0 400 320" preserveAspectRatio="none" aria-hidden="true"><path d="M107 34 C126 31 140 39 148 55 M137 49 L148 55 L148 43" /><path d="M293 34 C274 31 260 39 252 55 M252 43 L252 55 L263 49" /><path d="M75 151 C89 143 101 146 108 160 M97 153 L108 160 L99 168" /><path d="M325 151 C311 143 299 146 292 160 M301 168 L292 160 L303 153" /><path d="M102 295 C113 280 128 273 144 270 M130 265 L144 270 L135 280" /><path d="M298 295 C287 280 272 273 256 270 M265 280 L256 270 L270 265" /></svg>
+                <svg className="about-profile-arrows" viewBox="0 0 400 320" preserveAspectRatio="none" aria-hidden="true"><path d="M118 24 C133 18 145 24 151 35 M141 32 L151 35 L149 25" /><path d="M282 24 C267 18 255 24 249 35 M251 25 L249 35 L259 32" /><path d="M54 148 C67 140 79 143 85 156 M75 148 L85 156 L83 145" /><path d="M346 148 C333 140 321 143 315 156 M325 148 L315 156 L317 145" /><path d="M112 308 C121 297 135 288 150 285 M137 282 L150 285 L141 294" /><path d="M288 308 C279 297 265 288 250 285 M259 294 L250 285 L263 282" /></svg>
                 <span className="about-profile-note note-clear">Clear Thinker</span><span className="about-profile-note note-detail">Detail-Oriented</span><span className="about-profile-note note-people">People-First</span><span className="about-profile-note note-curious">Curious</span><span className="about-profile-note note-fast">Fast Learner</span><span className="about-profile-note note-consistent">Consistent</span>
+                <span className="about-profile-hint" aria-hidden="true"><span className="profile-hint-desktop">Double-click to listen</span><span className="profile-hint-mobile">Double-tap to listen</span></span>
               </figure>
               <div className="about-copy reveal">
                 <p>I graduated with a Bachelor of Technology in Computer Science & Engineering from Government College of Engineering and Technology, Safapora Ganderbal, in the 2024 batch.</p>
@@ -728,8 +776,8 @@ function App() {
             <div className="education-grid">
               <article className="degree-card reveal" data-tilt><div className="degree-year">2019<span>—</span>2024</div><div><div className="degree-institution-mark"><img src="/logos/gcet-degree.svg" alt="" loading="lazy" decoding="async" /><span>GCET Kashmir<small>Safapora · Ganderbal</small></span></div><p className="mini-label">Academic degree</p><h3>Bachelor of Technology</h3><h4>Computer Science & Engineering</h4><p>Government College of Engineering and Technology (GCET), Safapora Ganderbal, Jammu & Kashmir, India.</p><div className="tag-list"><span>Algorithms & DSA</span><span>Machine learning</span><span>DBMS</span><span>Software engineering</span><span>Operating systems</span></div></div></article>
               <div className="credentials">
-                <article className="credential reveal" data-tilt><img className="credential-logo credential-logo-michigan" src="/logos/michigan.svg" alt="University of Michigan logo" loading="lazy" decoding="async" /><div><span>University of Michigan</span><time>Jun 2024</time></div><h3>Applied Machine Learning in Python</h3><p>Applied algorithms, Scikit-Learn model creation, NumPy and Pandas preprocessing, and evaluation metrics.</p></article>
-                <article className="credential reveal" data-tilt><img className="credential-logo credential-logo-google" src="/logos/google.svg" alt="Google logo" loading="lazy" decoding="async" /><div><span>Google Digital Garage</span><time>Nov 2022</time></div><h3>The Fundamentals of Digital Marketing</h3><p>SEO practices, digital strategy, web analytics and search-performance optimization.</p><small>Credential ID: U33 RXC S8T</small></article>
+                <article className="credential reveal" data-tilt><img ref={michiganLogo} className="credential-logo credential-logo-michigan" src="/logos/michigan.svg" alt="University of Michigan logo" role="button" tabIndex={0} aria-label="View University of Michigan Applied Machine Learning certificate" aria-haspopup="dialog" onClick={() => setMichiganCertificateOpen(true)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setMichiganCertificateOpen(true); } }} loading="lazy" decoding="async" /><div><span>University of Michigan</span><time>Jun 2024</time></div><h3>Applied Machine Learning in Python</h3><p>Applied algorithms, Scikit-Learn model creation, NumPy and Pandas preprocessing, and evaluation metrics.</p></article>
+                <article className="credential reveal" data-tilt><img ref={googleLogo} className="credential-logo credential-logo-google" src="/logos/google.svg" alt="Google logo" role="button" tabIndex={0} aria-label="View Google Fundamentals of Digital Marketing certificate" aria-haspopup="dialog" onClick={() => setGoogleCertificateOpen(true)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setGoogleCertificateOpen(true); } }} loading="lazy" decoding="async" /><div><span>Google Digital Garage</span><time>Nov 2022</time></div><h3>The Fundamentals of Digital Marketing</h3><p>SEO practices, digital strategy, web analytics and search-performance optimization.</p><small>Credential ID: U33 RXC S8T</small></article>
               </div>
             </div>
           </div>
@@ -769,7 +817,7 @@ function App() {
           </div>
         </section>
 
-        <section className="contact" id="contact">
+        <section ref={contactSection} className="contact" id="contact" onPointerEnter={(event) => { if (event.pointerType === 'mouse') revealEmail(); }} onPointerLeave={(event) => { if (event.pointerType === 'mouse') hideEmail(); }} onTouchStart={revealEmail} onFocusCapture={revealEmail}>
           <div className="contact-orb" aria-hidden="true" />
           <div className="container contact-grid">
             <div className="contact-copy reveal"><p className="section-label"><span>06</span>Contact</p><h2>Let’s build something <em>useful.</em></h2><p>If you’re working on retrieval systems, healthcare AI, predictive models, or a role where practical domain thinking matters, I’d like to hear about <span className="contact-signature-anchor">it.<svg className="contact-signature" viewBox="0 0 150 62" role="button" tabIndex={0} aria-label="Replay Basit signature" onClick={replaySignature} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); replaySignature(event); } }}><path d="M12 51 C18 35 25 17 31 8 C35 2 47 3 49 10 C52 18 41 23 29 27 C41 22 56 24 54 34 C52 43 37 49 17 49 C32 50 47 46 57 40" /><path d="M57 40 C61 35 66 32 69 35 C72 38 68 45 62 46 C57 46 58 40 62 36 M69 36 C66 43 68 47 75 42 C79 38 83 34 87 35 C91 37 85 41 79 43 C76 46 83 47 90 41" /><path d="M90 41 C93 37 96 33 98 32 C96 37 93 43 97 44 C101 44 104 40 107 37 C111 32 115 20 118 14 C120 10 121 15 118 22 C115 31 109 40 111 43 C114 47 121 41 129 35 C133 32 137 33 140 35" /><path d="M107 29 C115 27 122 26 128 27" /><path d="M100 26 L100.5 25" /><path d="M29 55 C63 56 100 53 137 52" /></svg></span></p></div>
@@ -779,11 +827,15 @@ function App() {
               <div className="contact-availability"><i /><span><strong>Open to opportunities</strong><small>Onsite & remote · Anantnag, India</small></span></div>
             </div>
           </div>
+          <div className={`contact-email-dock${emailVisible ? ' is-visible' : ''}`} aria-hidden={!emailVisible}><button ref={emailTrigger} className="contact-email-trigger" type="button" onClick={openEmailContact} onPointerMove={(event) => { if (event.pointerType !== 'mouse') return; const bounds = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--email-shift-x', `${((event.clientX - bounds.left) / bounds.width - .5) * 4}px`); event.currentTarget.style.setProperty('--email-shift-y', `${((event.clientY - bounds.top) / bounds.height - .5) * 3}px`); event.currentTarget.style.setProperty('--email-light-x', `${event.clientX - bounds.left}px`); event.currentTarget.style.setProperty('--email-light-y', `${event.clientY - bounds.top}px`); }} onPointerLeave={(event) => { event.currentTarget.style.removeProperty('--email-shift-x'); event.currentTarget.style.removeProperty('--email-shift-y'); }} data-sound="silent" aria-haspopup="dialog" tabIndex={emailVisible ? 0 : -1}><span aria-hidden="true">✉</span> Email me <span aria-hidden="true">↗</span></button></div>
         </section>
       </main>
 
       <footer><div className="container"><span>© {new Date().getFullYear()} Basit Bashir</span><span>Computer Science Engineer · AI, Data & Healthcare</span><a href="#home">Back to top ↑</a></div></footer>
       {voiceOpen && <VoiceNoteOverlay origin={voiceOrigin} onClosed={() => { setVoiceOpen(false); requestAnimationFrame(() => voiceTrigger.current?.focus({ preventScroll: true })); }} />}
+      {michiganCertificateOpen && <MichiganCertificateOverlay triggerRef={michiganLogo} onClosed={() => setMichiganCertificateOpen(false)} />}
+      {googleCertificateOpen && <MichiganCertificateOverlay triggerRef={googleLogo} imageSrc="/certificates/google-digital-marketing.jpg" certificateLabel="The Fundamentals of Digital Marketing certificate" imageAlt="Google Digital Unlocked Fundamentals of Digital Marketing certificate awarded to Basit Bashir Maharaza" onClosed={() => setGoogleCertificateOpen(false)} />}
+      {emailContactOpen && <EmailContactOverlay triggerRef={emailTrigger} onClosed={() => { setEmailContactOpen(false); if (contactSection.current?.matches(':hover')) revealEmail(); }} />}
     </>
   );
 }

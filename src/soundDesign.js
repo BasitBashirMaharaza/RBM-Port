@@ -5,7 +5,6 @@ let welcomeStarting = false;
 let welcomeRequested = false;
 let welcomeStarted = false;
 let welcomeStopped = false;
-let touchUnlockInstalled = false;
 let welcomeAudio;
 let welcomeReady;
 
@@ -58,19 +57,12 @@ function welcomeTrack() {
   welcomeAudio = new Audio();
   welcomeAudio.preload = 'auto';
   welcomeAudio.playsInline = true;
+  welcomeAudio.setAttribute('playsinline', '');
+  welcomeAudio.setAttribute('webkit-playsinline', '');
+  welcomeAudio.disableRemotePlayback = true;
   welcomeAudio.volume = 0.18;
   welcomeAudio.src = WELCOME_SOUND_URL;
   return welcomeAudio;
-}
-
-function removeTouchUnlock() {
-  if (!touchUnlockInstalled) return;
-  document.removeEventListener('pointerup', onTouchUnlock, true);
-  touchUnlockInstalled = false;
-}
-
-function onTouchUnlock(event) {
-  if (event.isTrusted && event.pointerType === 'touch') playWelcomeTrack(true);
 }
 
 export function prepareWelcomeSound() {
@@ -93,28 +85,26 @@ export function prepareWelcomeSound() {
   return welcomeReady;
 }
 
-function playWelcomeTrack(fromGesture = false) {
-  if (!welcomePending || welcomeStarted || welcomeStopped || (welcomeStarting && !fromGesture)) return;
+function playWelcomeTrack() {
+  if (!welcomePending || welcomeStarted || welcomeStopped || welcomeStarting) return;
   const track = welcomeTrack();
   welcomeStarting = true;
   let started;
-  try { started = track.play(); } catch { welcomePending = false; welcomeStarting = false; removeTouchUnlock(); return; }
+  try { started = track.play(); } catch { welcomePending = false; welcomeStarting = false; return; }
   if (!started?.then) {
     welcomePending = false;
     welcomeStarting = false;
     welcomeStarted = true;
-    removeTouchUnlock();
     return;
   }
   started.then(() => {
     welcomePending = false;
     welcomeStarting = false;
     welcomeStarted = true;
-    removeTouchUnlock();
   }).catch((error) => {
     welcomeStarting = false;
     // A blocked autoplay attempt stays queued for the next real input event.
-    if (error?.name !== 'NotAllowedError') { welcomePending = false; removeTouchUnlock(); }
+    if (error?.name !== 'NotAllowedError') welcomePending = false;
   });
 }
 
@@ -126,7 +116,7 @@ function flushWelcome() {
 export function unlockSound() {
   // Calling media playback directly inside the input event avoids a delayed
   // retry and satisfies browsers that require a user activation for audio.
-  playWelcomeTrack(true);
+  playWelcomeTrack();
   const audio = engine();
   if (!audio) return;
   if (audio.state === 'suspended') {
@@ -141,15 +131,12 @@ export function requestWelcomeSound() {
   welcomeRequested = true;
   prepareWelcomeSound();
   welcomePending = true;
-  document.addEventListener('pointerup', onTouchUnlock, { capture: true, passive: true });
-  touchUnlockInstalled = true;
   playWelcomeTrack();
 }
 
 export function stopWelcomeSound() {
   welcomeStopped = true;
   welcomePending = false;
-  removeTouchUnlock();
   welcomeAudio?.pause();
   if (welcomeAudio) welcomeAudio.currentTime = 0;
 }

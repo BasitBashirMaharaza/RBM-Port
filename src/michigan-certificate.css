@@ -1,0 +1,30 @@
+.education .credential-logo-michigan[role='button'], .education .credential-logo-google[role='button'] { cursor: pointer; transition: transform 180ms cubic-bezier(.23, 1, .32, 1); }
+@media (hover: hover) and (pointer: fine) {
+  .education .credential-logo-michigan[role='button']:hover, .education .credential-logo-google[role='button']:hover { transform: translateY(-2px); }
+}
+.education .credential-logo-michigan[role='button']:focus-visible, .education .credential-logo-google[role='button']:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.michigan-certificate-overlay {
+  position: fixed;
+  z-index: 100000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  background: rgba(10, 12, 17, .38);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: michigan-backdrop-in 420ms cubic-bezier(.23, 1, .32, 1) both;
+}
+.michigan-certificate-dialog { max-width: min(1100px, 100%); max-height: 100%; outline: none; animation: michigan-certificate-in 420ms cubic-bezier(.23, 1, .32, 1) both; }
+.michigan-certificate-dialog img { display: block; max-width: 100%; max-height: calc(100dvh - 36px); width: auto; height: auto; object-fit: contain; }
+.michigan-certificate-overlay.is-closing { animation: michigan-backdrop-out 360ms cubic-bezier(.23, 1, .32, 1) both; }
+.michigan-certificate-overlay.is-closing .michigan-certificate-dialog { animation: michigan-certificate-out 360ms cubic-bezier(.23, 1, .32, 1) both; }
+@keyframes michigan-backdrop-in { from { opacity: 0; backdrop-filter: blur(0); -webkit-backdrop-filter: blur(0); } to { opacity: 1; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); } }
+@keyframes michigan-backdrop-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes michigan-certificate-in { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes michigan-certificate-out { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(.97); } }
+@media (prefers-reduced-motion: reduce) {
+  .education .credential-logo-michigan[role='button'], .education .credential-logo-google[role='button'] { transition: none; }
+  .michigan-certificate-overlay, .michigan-certificate-dialog, .michigan-certificate-overlay.is-closing, .michigan-certificate-overlay.is-closing .michigan-certificate-dialog { animation-duration: 150ms; }
+}

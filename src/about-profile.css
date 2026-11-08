@@ -67,15 +67,50 @@
   transition: opacity .45s ease, transform .6s var(--ease);
 }
 
+.about .about-profile-hint {
+  position: absolute;
+  z-index: 2;
+  top: 1.25%;
+  left: 50%;
+  color: #aaa4ff;
+  font: 500 clamp(10px, .92vw, 13px)/1 'DM Mono', monospace;
+  letter-spacing: .04em;
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, -3px);
+  transition: opacity 180ms cubic-bezier(.23, 1, .32, 1), transform 180ms cubic-bezier(.23, 1, .32, 1);
+}
+
+.about .profile-hint-mobile { display: none; }
+html[data-theme='light'] .about .about-profile-hint { color: #695cb1; }
+
+@media (hover: hover) and (pointer: fine) {
+  .about .about-profile-sketch:hover .about-profile-hint {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.about .about-profile-sketch.profile-hint-visible .about-profile-hint {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .about .profile-hint-desktop { display: none; }
+  .about .profile-hint-mobile { display: inline; }
+}
+
 html[data-theme='light'] .about .about-profile-note { color: #695cb1; }
 html[data-theme='light'] .about .about-profile-arrows { stroke: #695cb1; }
 
-.about .note-clear { top: 6%; left: 6%; }
-.about .note-detail { top: 6%; right: 4%; transform: translateY(5px) rotate(2deg); }
-.about .note-people { top: 47%; left: 2%; }
-.about .note-curious { top: 47%; right: 3%; transform: translateY(5px) rotate(3deg); }
-.about .note-fast { bottom: 5%; left: 6%; }
-.about .note-consistent { bottom: 5%; right: 5%; transform: translateY(5px) rotate(2deg); }
+.about .note-clear { top: 3%; left: 16%; }
+.about .note-detail { top: 3%; right: 8%; transform: translateY(5px) rotate(2deg); }
+.about .note-people { top: 39%; left: 0; }
+.about .note-curious { top: 39%; right: 0; transform: translateY(5px) rotate(3deg); }
+.about .note-fast { bottom: 0; left: 20%; }
+.about .note-consistent { bottom: 0; right: 9%; transform: translateY(5px) rotate(2deg); }
 
 .about .about-profile-sketch.visible .about-profile-portrait { opacity: 1; transform: none; }
 .about .about-profile-sketch.visible .about-profile-arrows path { opacity: 1; }
@@ -116,6 +151,7 @@ html[data-theme='light'] .about .about-profile-arrows { stroke: #695cb1; }
   .about .about-profile-sketch .about-profile-portrait,
   .about .about-profile-sketch .about-profile-note { opacity: 1; transform: none; }
   .about .about-profile-sketch .about-profile-arrows path { opacity: 1; }
+  .about .about-profile-hint { transition: opacity 180ms ease; transform: translate(-50%, 0); }
 }
 
 /* One portrait and one editorial text column. */
