@@ -101,12 +101,12 @@ export default function EmailContactOverlay({ triggerRef, onClosed }) {
   return createPortal(
     <div className={`email-contact-overlay${closing ? ' is-closing' : ''}`} onPointerDown={(event) => { if (event.target === event.currentTarget) close(); }}>
       <div className="email-contact-dialog" ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="email-contact-title" tabIndex={-1}>
-        <div className="email-contact-titlebar"><span className="email-contact-mark" aria-hidden="true">✉</span><span>New message</span><button type="button" onClick={close} data-sound="silent" aria-label="Close email composer">×</button></div>
+        <div className="email-contact-titlebar"><span className="email-contact-mark" aria-hidden="true">✦</span><span>Discord message</span><button type="button" onClick={close} data-sound="silent" aria-label="Close message composer">×</button></div>
         <div className="email-contact-content">
           <p className="email-contact-kicker">Start a conversation</p>
-          <h2 id="email-contact-title">Write to Basit<span>.</span></h2>
+          <h2 id="email-contact-title">Send Basit a message<span>.</span></h2>
           {status === 'sent' ? (
-            <div className="email-contact-success" role="status"><span aria-hidden="true">✓</span><strong>Message Sent Successfully</strong><p>Your message was accepted by the email service. Thank you for reaching out.</p><button type="button" onClick={close} data-sound="silent">Return to portfolio <span aria-hidden="true">↗</span></button></div>
+            <div className="email-contact-success" role="status"><span aria-hidden="true">✓</span><strong>Message Sent Successfully</strong><p>Your message was delivered to Basit's Discord. Thank you for reaching out.</p><button type="button" onClick={close} data-sound="silent">Return to portfolio <span aria-hidden="true">↗</span></button></div>
           ) : (
             <form onSubmit={submit}>
               <div className="email-contact-row"><label>Name<input ref={firstFieldRef} name="name" autoComplete="name" maxLength={100} required placeholder="Your name" data-sound="silent" /></label><label>Email address<input name="email" type="email" autoComplete="email" maxLength={254} required placeholder="you@example.com" data-sound="silent" /></label></div>
@@ -114,7 +114,7 @@ export default function EmailContactOverlay({ triggerRef, onClosed }) {
               <label>Message<textarea name="message" rows="5" minLength={10} maxLength={5000} required placeholder="Tell me a little about your idea..." data-sound="silent" /></label>
               <div className="email-contact-trap" aria-hidden="true"><label>Website<input name="website" tabIndex={-1} autoComplete="off" data-sound="silent" /></label></div>
               {error && <p className="email-contact-error" role="alert">{error}</p>}
-              <div className="email-contact-actions"><span>Your email is used for replies.</span><button type="submit" disabled={status === 'sending'} data-sound="silent" aria-busy={status === 'sending'}>{status === 'sending' && <i className="email-send-spinner" aria-hidden="true" />}{status === 'sending' ? 'Sending…' : 'Send Message'} <span aria-hidden="true">↗</span></button></div>
+              <div className="email-contact-actions"><span>Your email lets Basit reply directly.</span><button type="submit" disabled={status === 'sending'} data-sound="silent" aria-busy={status === 'sending'}>{status === 'sending' && <i className="email-send-spinner" aria-hidden="true" />}{status === 'sending' ? 'Sending…' : 'Send on Discord'} <span aria-hidden="true">↗</span></button></div>
               {status === 'sending' && <div className="email-contact-progress" role="status" aria-label="Sending message"><i /></div>}
             </form>
           )}

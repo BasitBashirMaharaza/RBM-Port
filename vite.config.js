@@ -41,7 +41,7 @@ function localContactApi() {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  for (const key of ['RESEND_API_KEY', 'CONTACT_FROM_EMAIL']) {
+  for (const key of ['DISCORD_WEBHOOK_URL']) {
     if (!process.env[key] && env[key]) process.env[key] = env[key];
   }
   return {

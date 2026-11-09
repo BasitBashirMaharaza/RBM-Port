@@ -1,10 +1,18 @@
-const RECIPIENT = 'basitr82@gmail.com';
 const requests = new Map();
 const EMAIL = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
+const DISCORD_WEBHOOK = /^https:\/\/(?:canary\.|ptb\.)?discord(?:app)?\.com\/api\/webhooks\/\d+\/[\w-]+(?:\?.*)?$/i;
 
 function reply(res, status, data) {
   res.setHeader('Cache-Control', 'no-store');
   return res.status(status).json(data);
+}
+
+function discordMessageFields(message) {
+  return Array.from({ length: Math.ceil(message.length / 1024) }, (_, index) => ({
+    name: index ? 'Message (continued)' : 'Message',
+    value: message.slice(index * 1024, (index + 1) * 1024),
+    inline: false,
+  }));
 }
 
 export default async function handler(req, res) {
@@ -42,32 +50,40 @@ export default async function handler(req, res) {
     res.setHeader('Retry-After', '60');
     return reply(res, 429, { ok: false, error: 'Please wait a minute before sending another message.' });
   }
-  if (!process.env.RESEND_API_KEY || !process.env.CONTACT_FROM_EMAIL) return reply(res, 503, { ok: false, error: 'Email is not configured yet. Please try again later.' });
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  if (!webhookUrl || !DISCORD_WEBHOOK.test(webhookUrl)) return reply(res, 503, { ok: false, error: 'Discord messages are not configured yet. Please try again later.' });
 
   requests.set(ip, now);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10000);
   try {
-    const response = await fetch('https://api.resend.com/emails', {
+    const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
         'Content-Type': 'application/json',
       },
       signal: controller.signal,
       body: JSON.stringify({
-        from: process.env.CONTACT_FROM_EMAIL,
-        to: [RECIPIENT],
-        reply_to: email,
-        subject: `Portfolio contact: ${subject}`,
-        text: `From: ${name} <${email}>\n\n${message}`,
+        username: 'Basit Bashir Portfolio',
+        allowed_mentions: { parse: [] },
+        embeds: [{
+          title: 'New portfolio message',
+          color: 11500918,
+          fields: [
+            { name: 'From', value: name, inline: true },
+            { name: 'Email', value: email, inline: true },
+            { name: 'Subject', value: subject, inline: false },
+            ...discordMessageFields(message),
+          ],
+          footer: { text: 'Portfolio contact form' },
+          timestamp: new Date().toISOString(),
+        }],
       }),
     });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok || !result.id) {
+    if (!response.ok) {
       requests.delete(ip);
-      console.error('Contact email provider rejected the request', response.status, result?.name || '');
-      return reply(res, response.status === 401 || response.status === 403 ? 503 : 502, { ok: false, error: response.status === 401 || response.status === 403 ? 'Email service configuration needs attention. Please try again later.' : 'The email service could not accept your message. Please try again.' });
+      console.error('Discord webhook rejected the request', response.status);
+      return reply(res, response.status === 401 || response.status === 403 || response.status === 404 ? 503 : 502, { ok: false, error: response.status === 401 || response.status === 403 || response.status === 404 ? 'Discord configuration needs attention. Please try again later.' : 'Discord could not accept your message. Please try again.' });
     }
     return reply(res, 200, { ok: true });
   } catch {
