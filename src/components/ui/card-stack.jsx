@@ -255,7 +255,7 @@ export default function ExperienceStack({ items }) {
       </div>
       {cinema && createPortal(<div className={`experience experience-cinema experience-cinema-${cinema.phase}`} onPointerDown={(event) => { if (event.target === event.currentTarget) closeCinema(); }}>
         <div className="experience-cinema-card card-stack-card" role="dialog" aria-modal="true" aria-label={`${items[cinema.index].role} experience details`} tabIndex={-1} onTransitionEnd={(event) => { if (event.target === event.currentTarget && event.propertyName === 'transform' && cinemaRef.current?.closing) finishCinema(); }}
-          style={{ '--origin-left': `${cinema.origin.left}px`, '--origin-top': `${cinema.origin.top}px`, '--origin-width': `${cinema.origin.width}px`, '--origin-height': `${cinema.origin.height}px` }}>
+          style={{ '--origin-left': `${cinema.origin.left}px`, '--origin-top': `${cinema.origin.top}px`, '--origin-width': `${cinema.origin.width}px`, '--origin-height': `${cinema.origin.height}px`, '--origin-dx': `${cinema.origin.left + cinema.origin.width / 2 - document.documentElement.clientWidth / 2}px`, '--origin-dy': `${cinema.origin.top + cinema.origin.height / 2 - window.innerHeight / 2}px`, '--origin-scale-x': cinema.origin.width / Math.min(1100, document.documentElement.clientWidth - 32), '--origin-scale-y': cinema.origin.height / Math.min(700, window.innerHeight - 32) }}>
           <div className="card-stack-flip">
             <ExperienceFront item={items[cinema.index]} index={cinema.index} />
             <ExperienceBack item={items[cinema.index]} index={cinema.index} length={length} />

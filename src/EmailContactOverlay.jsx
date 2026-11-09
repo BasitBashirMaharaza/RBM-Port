@@ -53,15 +53,14 @@ export default function EmailContactOverlay({ triggerRef, onClosed }) {
   const immersive = morphPhase !== 'idle';
   return createPortal(<div className={`email-contact-overlay email-contact-orb-overlay${closing ? ' is-closing' : ''}${immersive ? ' is-morphing' : ''}`} onPointerDown={(event) => { if (event.target === event.currentTarget && !sending) close(); }}>
     <div className="email-contact-dialog email-contact-orb-dialog" role="dialog" aria-modal="true" aria-labelledby="email-contact-title">
-      <div className="email-contact-titlebar"><span className="email-contact-mark" aria-hidden="true">✦</span><span>Discord message</span></div>
+      <div className="email-contact-titlebar"><button type="button" onClick={close} data-sound="silent"><span aria-hidden="true">✦</span> Discard message</button></div>
       <div className="email-contact-content">
-        <p className="email-contact-kicker">Start a conversation</p><h2 id="email-contact-title">Send Basit a message<span>.</span></h2>
+        <h2 id="email-contact-title">Send Basit a message<span>.</span></h2>
         <div className="email-contact-fields" aria-hidden={sending}>
           <div className="email-contact-row"><label>Name<input ref={firstFieldRef} value={fields.name} onChange={update('name')} autoComplete="name" maxLength="100" placeholder="Your name" disabled={sending} /></label><label>Email address<input value={fields.email} onChange={update('email')} type="email" autoComplete="email" maxLength="254" placeholder="you@example.com" disabled={sending} /></label></div>
           <label>Subject<input value={fields.subject} onChange={update('subject')} maxLength="160" placeholder="What would you like to discuss?" disabled={sending} /></label>
-          <p className="email-contact-message-label">Message</p>
         </div>
-        <MorphOrb value={fields.message} onChange={(message) => setFields((current) => ({ ...current, message }))} onValidate={validate} onSubmit={deliver} onFailure={failed} onPhaseChange={setMorphPhase} disabled={sending} />
+        <MorphOrb value={fields.message} onChange={(message) => setFields((current) => ({ ...current, message }))} onValidate={validate} onSubmit={deliver} onFailure={failed} onPhaseChange={setMorphPhase} onClose={close} disabled={sending} />
         {error && <p className="email-contact-error" role="alert">{error}</p>}
         <p className="email-contact-note">Your email lets Basit reply directly. Message delivery is handled securely through Discord.</p>
       </div>

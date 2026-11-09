@@ -168,7 +168,17 @@
   .experience-cinema, .experience-cinema-open { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; transition: none; }
   .experience-cinema::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0; background: rgba(5, 8, 12, .42); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: opacity 760ms cubic-bezier(.22, 1, .36, 1); }
   .experience-cinema-open::before { opacity: 1; }
-  .experience .experience-cinema-card { z-index: 1; overflow: visible; }
+  .experience .experience-cinema-card {
+    z-index: 1;
+    overflow: visible;
+    left: 50%;
+    top: 50%;
+    width: min(1100px, calc(100vw - 32px));
+    height: min(700px, calc(100dvh - 32px));
+    transform: translate(-50%, -50%) translate3d(var(--origin-dx), var(--origin-dy), 0) scale(var(--origin-scale-x), var(--origin-scale-y));
+    transition: transform 760ms cubic-bezier(.22, 1, .36, 1);
+  }
+  .experience-cinema-open .experience-cinema-card { transform: translate(-50%, -50%) translate3d(0, 0, 0) scale(1); }
   .experience-cinema .card-stack-flip { border-radius: inherit; }
   .experience-cinema .card-stack-card-inner,
   .experience-cinema .card-stack-back { border-radius: inherit; }
