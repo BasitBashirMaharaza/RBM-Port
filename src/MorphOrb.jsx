@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import './morph-orb.css';
 
-// Adapted directly from the supplied MorphOrb reference: the same launch →
-// assemble → thinking → resolve → condense → completion sequence and easing.
-const labels = ['Thinking', 'Searching', 'Analyzing', 'Composing'];
+// Keep the send sequence calm and explicit: the user only needs to know that
+// the message is being sent while the orb resolves in the background.
+const sendingLabel = 'Sending message';
 const ease = (t) => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 4);
 const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 const TAU = Math.PI * 2;
@@ -24,7 +24,7 @@ const referenceDots = (() => {
 
 export default function MorphOrb({ value, onChange, onValidate, onSubmit, onFailure, onPhaseChange, onClose, disabled }) {
   const [phase, setPhase] = useState('idle');
-  const [label, setLabel] = useState(labels[0]);
+  const [label, setLabel] = useState(sendingLabel);
   const [answer, setAnswer] = useState('');
   const [shake, setShake] = useState(false);
   const canvasRef = useRef(null);
@@ -88,23 +88,19 @@ export default function MorphOrb({ value, onChange, onValidate, onSubmit, onFail
     await wait(1000);
     if (abortRef.current) return;
     setPhase('think');
-    let labelIndex = 0;
-    const labelTimer = window.setInterval(() => { labelIndex = (labelIndex + 1) % labels.length; setLabel(labels[labelIndex]); }, 1150);
     try {
       const [result] = await Promise.all([onSubmit(text), wait(3450)]);
-      window.clearInterval(labelTimer);
       if (abortRef.current) return;
-      setLabel('Done'); setPhase('resolve'); await wait(900);
+      setPhase('resolve'); await wait(900);
       setPhase('condense'); await wait(800);
       setAnswer(result || 'Message Sent Successfully'); setPhase('unfold'); await wait(850);
       setPhase('answered');
     } catch (error) {
-      window.clearInterval(labelTimer);
       if (!abortRef.current) { setPhase('idle'); onFailure?.(error); }
     }
   };
 
-  const reset = () => { setAnswer(''); setLabel(labels[0]); setPhase('idle'); };
+  const reset = () => { setAnswer(''); setLabel(sendingLabel); setPhase('idle'); };
   return <div className="mo-root" data-phase={phase} ref={rootRef}>
     <div className="mo-halo" aria-hidden="true" />
     <div className={`mo-mover ${shake ? 'is-shaking' : ''}`}>
@@ -118,10 +114,10 @@ export default function MorphOrb({ value, onChange, onValidate, onSubmit, onFail
           <button type="submit" className="mo-send" aria-label="Send message" disabled={disabled || busy}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M12 19V5"/><path d="M5.5 11.5L12 5l6.5 6.5"/></svg></button>
         </form>
         <canvas className="mo-orb" ref={canvasRef} aria-hidden="true" />
-        <div className="mo-answer" role="status" aria-live="polite"><span className="mo-answer-dot" /><strong>Message Sent Successfully</strong><p>Your message has been delivered.</p></div>
+        <div className="mo-answer" role="status" aria-live="polite"><span className="mo-answer-dot" /><strong>Message Sent Successfully</strong><p>Your message has been delivered.</p>{phase === 'answered' && <button className="mo-back mo-back-inline" type="button" onClick={onClose}>Back to Portfolio <span aria-hidden="true">↗</span></button>}</div>
       </div>
     </div>
     <div className="mo-status" aria-live="polite">{['think', 'resolve'].includes(phase) && <><span>{label}</span>{label !== 'Done' && <i className="mo-dots">•••</i>}</>}</div>
-    {phase === 'answered' && <div className="mo-completion-actions"><button className="mo-back" type="button" onClick={onClose}>Back to Portfolio</button><button className="mo-reset" type="button" onClick={reset}>New message</button></div>}
+    {phase === 'answered' && <div className="mo-completion-actions"><button className="mo-reset" type="button" onClick={reset}>New message</button></div>}
   </div>;
 }
