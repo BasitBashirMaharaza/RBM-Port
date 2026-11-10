@@ -53,7 +53,7 @@ export default function EmailContactOverlay({ triggerRef, onClosed }) {
   const immersive = morphPhase !== 'idle';
   return createPortal(<div className={`email-contact-overlay email-contact-orb-overlay${closing ? ' is-closing' : ''}${immersive ? ' is-morphing' : ''}`} onPointerDown={(event) => { if (event.target === event.currentTarget && !sending) close(); }}>
     <div className="email-contact-dialog email-contact-orb-dialog" role="dialog" aria-modal="true" aria-labelledby="email-contact-title">
-      <div className="email-contact-titlebar"><button type="button" onClick={close} data-sound="silent"><span aria-hidden="true">✦</span> Discard message</button></div>
+      <div className="email-contact-titlebar"><span className="email-contact-mark" aria-hidden="true">✦</span><span>Message</span><button className="email-contact-close" type="button" onClick={close} data-sound="silent" aria-label="Close message form"><span aria-hidden="true">×</span></button></div>
       <div className="email-contact-content">
         <h2 id="email-contact-title">Send Basit a message<span>.</span></h2>
         <div className="email-contact-fields" aria-hidden={sending}>
