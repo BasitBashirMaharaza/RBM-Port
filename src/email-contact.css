@@ -119,3 +119,6 @@ html[data-theme='light'] .email-contact-content input:focus { border-color: #628
 .email-contact-content input:focus { border-color: var(--accent); background: var(--surface-2); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .14); }
 .email-contact-content label:focus-within { color: var(--text); text-shadow: none; }
 .email-contact-note { color: var(--quiet); }
+html[data-theme='light'] .email-contact-orb-dialog { background: var(--surface); }
+html[data-theme='light'] .email-contact-content input { background: color-mix(in srgb, var(--surface) 88%, var(--bg)); border-color: var(--line-strong); }
+html[data-theme='light'] .email-contact-content input:focus { background: var(--surface); border-color: var(--accent); }

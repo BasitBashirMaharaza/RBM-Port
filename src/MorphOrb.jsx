@@ -77,10 +77,10 @@ export default function MorphOrb({ value, onChange, onValidate, onSubmit, onFail
     setPhase('sending');
     try {
       // Keep the sphere legible long enough to read as a deliberate delivery state.
-      await Promise.all([request, wait(2650)]);
+      await Promise.all([request, wait(2350)]);
       if (aborted.current) return;
       setPhase('success-transition');
-      await wait(660);
+      await wait(650);
       if (!aborted.current) setPhase('success');
     } catch (error) {
       if (!aborted.current) { setPhase('idle'); onFailure?.(error); }
@@ -97,8 +97,8 @@ export default function MorphOrb({ value, onChange, onValidate, onSubmit, onFail
       <DeliverySphere phase={phase} />
       {phase === 'sending' && <p className="delivery-status">Sending message<span aria-hidden="true">…</span></p>}
       {phase === 'success' && <article className="delivery-success-card">
-        <span className="delivery-check" aria-hidden="true">✓</span><small>received</small><h3>Message sent</h3>
-        <p>Your message has been delivered. Basit will reply using the email you provided.</p>
+        <span className="delivery-message-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="m4.5 7 7.5 5.7L19.5 7"/></svg></span><small>message received</small><h3>Message sent</h3>
+        <p>Your note is safely on its way to Basit. A reply will go to the email you shared.</p>
         <button type="button" onClick={() => setPhase('idle')}>Send another message</button>
         <button className="delivery-dismiss" type="button" onClick={onClose}>Back to portfolio <span aria-hidden="true">↗</span></button>
       </article>}
