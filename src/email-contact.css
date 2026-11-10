@@ -106,3 +106,16 @@ html[data-theme='light'] .email-contact-content input:focus { border-color: #628
 @media (prefers-reduced-motion: reduce) { .contact-email-dock, .contact-email-dock.is-visible { transform: translate3d(-50%,0,0); transition: opacity 150ms ease; } .contact-email-trigger, .email-contact-titlebar button, .email-contact-content input, .email-contact-content textarea, .email-contact-actions button, .email-contact-success button { transition-duration: .01ms; } .contact-email-trigger:hover, .contact-email-trigger:focus-visible { transform: none; } .email-contact-overlay, .email-contact-dialog, .email-contact-success > span, .email-contact-overlay::before { animation-duration: .12s !important; } .email-contact-dialog { animation-name: email-backdrop-in !important; } .email-contact-overlay.is-closing .email-contact-dialog { animation-name: email-backdrop-out !important; } .email-contact-progress i { animation: none; width: 100%; opacity: .7; } }
 @media (prefers-reduced-motion: reduce) { .email-contact-orb-dialog::before { animation: none; } }
 @media (max-width: 700px) and (prefers-reduced-motion: reduce) { .contact-email-dock, .contact-email-dock.is-visible { transform: none; } }
+
+/* Final composer tokens: keep every editable value readable in either theme. */
+.email-contact-orb-dialog { background: var(--surface); color: var(--text); border-color: var(--line-strong); box-shadow: var(--shadow); }
+.email-contact-orb-dialog::before { opacity: .16; }
+.email-contact-titlebar { color: var(--muted); border-bottom-color: var(--line); }
+.email-contact-titlebar button, .email-contact-titlebar button:hover { color: var(--text); }
+.email-contact-content h2 { color: var(--text); font-size: clamp(27px, 4vw, 38px); }
+.email-contact-content label { color: var(--muted); }
+.email-contact-content input { min-height: 44px; padding: 10px 12px; border-color: var(--line-strong); background: var(--surface-2); color: var(--text); box-shadow: none; }
+.email-contact-content input::placeholder, .mo-field::placeholder { color: var(--quiet); }
+.email-contact-content input:focus { border-color: var(--accent); background: var(--surface-2); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .14); }
+.email-contact-content label:focus-within { color: var(--text); text-shadow: none; }
+.email-contact-note { color: var(--quiet); }
