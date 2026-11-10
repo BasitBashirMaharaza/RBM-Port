@@ -1,5 +1,7 @@
 @keyframes delivery-ellipsis { 0%, 20% { opacity: .18; } 55% { opacity: 1; } 100% { opacity: .18; } }
-@keyframes delivery-card-in { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+@keyframes delivery-card-in { from { opacity: 0; transform: scale(.94) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes delivery-signal { 0%, 100% { opacity: .3; transform: scale(.75); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes delivery-route { from { transform: translateX(-12px); opacity: .15; } 50% { opacity: 1; } to { transform: translateX(12px); opacity: .15; } }
 @keyframes mo-shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
 
 .mo-root { position: relative; min-height: 48px; margin-top: 24px; }
@@ -14,10 +16,12 @@
 .delivery-stage { position: fixed; z-index: 100001; inset: 0; display: grid; place-items: center; overflow: hidden; background: var(--bg); color: var(--text); isolation: isolate; }
 .delivery-stage::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .35; background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%); }
 .delivery-sphere-canvas { position: relative; z-index: 1; transform: translateZ(0); }
-.delivery-status { position: absolute; z-index: 2; top: calc(50% + min(19vw, 148px)); margin: 0; color: var(--muted); font: 500 10px/1 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; }
+.delivery-status { position: absolute; z-index: 2; top: calc(50% + min(19vw, 148px)); display: inline-flex; align-items: center; gap: 9px; margin: 0; color: var(--muted); font: 500 10px/1 'DM Mono', monospace; letter-spacing: .14em; text-transform: uppercase; }
 .delivery-status span { display: inline-block; animation: delivery-ellipsis 1.15s ease-in-out infinite; }
+.delivery-status > i { display: inline-flex; gap: 3px; }.delivery-status b { display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--delivery-highlight); animation: delivery-signal .85s ease-in-out infinite; }.delivery-status b:nth-child(2) { animation-delay: .12s; }.delivery-status b:nth-child(3) { animation-delay: .24s; }
 .delivery-success-card { position: absolute; z-index: 3; width: min(calc(100% - 40px), 380px); display: grid; justify-items: center; gap: 10px; padding: 24px 28px 22px; border: 1px solid var(--line-strong); border-radius: 16px; background: color-mix(in srgb, var(--surface) 95%, var(--bg)); color: var(--text); text-align: center; box-shadow: 0 18px 52px rgba(0,0,0,.12), inset 0 1px 0 color-mix(in srgb, white 16%, transparent); animation: delivery-card-in 360ms cubic-bezier(.23,1,.32,1) both; }
 .delivery-message-mark { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid color-mix(in srgb, var(--accent) 68%, transparent); border-radius: 12px; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }.delivery-message-mark svg { width: 20px; }
+.delivery-route { display: flex; gap: 5px; height: 5px; }.delivery-route i { display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: delivery-route 1.3s ease-in-out infinite; }.delivery-route i:nth-child(2) { animation-delay: .16s; }.delivery-route i:nth-child(3) { animation-delay: .32s; }
 .delivery-success-card small { color: var(--accent); font: 500 15px/1 Caveat, cursive; }
 .delivery-success-card h3 { margin: 0; font-size: 24px; letter-spacing: -.04em; }.delivery-success-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
 .delivery-success-card button { min-height: 42px; padding: 0 16px; border: 1px solid color-mix(in srgb, var(--accent) 70%, transparent); border-radius: 999px; background: var(--accent); color: var(--accent-ink); font: 600 11px/1 inherit; cursor: pointer; transition: transform 160ms cubic-bezier(.23,1,.32,1), filter 160ms ease; }
@@ -25,4 +29,4 @@
 .delivery-success-card .delivery-dismiss { min-height: 28px; padding: 0; border: 0; background: transparent; color: var(--muted); }.delivery-dismiss span { color: var(--accent); }
 
 @media (max-width: 520px) { .mo-send { width: 40px; min-height: 40px; }.email-contact-content .mo-input { min-height: 50px; }.mo-field { height: 38px; font-size: 16px; }.delivery-status { top: calc(50% + min(28vw, 124px)); } }
-@media (prefers-reduced-motion: reduce) { .delivery-status span, .delivery-success-card, .mo-root.is-shaking .mo-input { animation: none; }.delivery-success-card { transition: opacity 150ms ease; }.delivery-sphere-canvas { opacity: .9; } }
+@media (prefers-reduced-motion: reduce) { .delivery-status span, .delivery-status b, .delivery-route i, .delivery-success-card, .mo-root.is-shaking .mo-input { animation: none; }.delivery-success-card { transition: opacity 150ms ease; }.delivery-sphere-canvas { opacity: .9; } }

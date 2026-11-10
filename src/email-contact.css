@@ -122,3 +122,9 @@ html[data-theme='light'] .email-contact-content input:focus { border-color: #628
 html[data-theme='light'] .email-contact-orb-dialog { background: var(--surface); }
 html[data-theme='light'] .email-contact-content input { background: color-mix(in srgb, var(--surface) 88%, var(--bg)); border-color: var(--line-strong); }
 html[data-theme='light'] .email-contact-content input:focus { background: var(--surface); border-color: var(--accent); }
+/* Theme-specific controls need matching selector strength to override legacy overlay skinning. */
+html[data-theme='dark'] .email-contact-orb-dialog { background: var(--surface); color: var(--text); border-color: var(--line-strong); }
+html[data-theme='dark'] .email-contact-content h2, html[data-theme='dark'] .email-contact-titlebar, html[data-theme='dark'] .email-contact-titlebar button { color: var(--text); }
+html[data-theme='dark'] .email-contact-content input, html[data-theme='dark'] .email-contact-content textarea.mo-field { background: var(--surface-2); color: var(--text); border-color: var(--line-strong); }
+html[data-theme='light'] .email-contact-content textarea.mo-field { background: transparent; color: var(--text); }
+.email-contact-content textarea.mo-field { border: 0; box-shadow: none; background: transparent; color: var(--text); }

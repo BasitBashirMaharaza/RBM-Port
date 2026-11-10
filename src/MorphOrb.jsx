@@ -31,14 +31,14 @@ function DeliverySphere({ phase }) {
       const elapsed = reduced ? 0 : (now - started) / 1000;
       const success = phase === 'success-transition' || phase === 'success';
       const contraction = phase === 'success-transition' ? Math.max(.035, 1 - Math.min(1, (now - started) / 640)) : phase === 'success' ? .035 : 1;
-      const theta = elapsed * .48;
-      const phi = .48 + Math.sin(elapsed * .22) * .1;
+      const theta = elapsed * 1.05;
+      const phi = .48 + Math.sin(elapsed * .42) * .12;
       const rendered = spherePoints.map((point) => {
         const x1 = point.x * Math.cos(theta) - point.z * Math.sin(theta);
         const z1 = point.x * Math.sin(theta) + point.z * Math.cos(theta);
         const y1 = point.y * Math.cos(phi) - z1 * Math.sin(phi);
         const z2 = point.y * Math.sin(phi) + z1 * Math.cos(phi);
-        return { x: x1, y: y1, depth: (z2 + 1) / 2, wave: Math.sin(point.y * 10 + elapsed * 3.1 + point.id * .09) };
+        return { x: x1, y: y1, depth: (z2 + 1) / 2, wave: Math.sin(point.y * 10 + elapsed * 5.2 + point.id * .09) };
       }).sort((a, b) => a.depth - b.depth);
       context.clearRect(0, 0, size, size);
       rendered.forEach((point) => {
@@ -95,9 +95,9 @@ export default function MorphOrb({ value, onChange, onValidate, onSubmit, onFail
     </form>
     {phase !== 'idle' && <section className="delivery-stage" aria-live="polite">
       <DeliverySphere phase={phase} />
-      {phase === 'sending' && <p className="delivery-status">Sending message<span aria-hidden="true">…</span></p>}
+      {phase === 'sending' && <p className="delivery-status"><i aria-hidden="true"><b /><b /><b /></i>Sending message<span aria-hidden="true">…</span></p>}
       {phase === 'success' && <article className="delivery-success-card">
-        <span className="delivery-message-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="m4.5 7 7.5 5.7L19.5 7"/></svg></span><small>message received</small><h3>Message sent</h3>
+        <span className="delivery-message-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="m4.5 7 7.5 5.7L19.5 7"/></svg></span><span className="delivery-route" aria-hidden="true"><i /><i /><i /></span><small>message received</small><h3>Message sent</h3>
         <p>Your note is safely on its way to Basit. A reply will go to the email you shared.</p>
         <button type="button" onClick={() => setPhase('idle')}>Send another message</button>
         <button className="delivery-dismiss" type="button" onClick={onClose}>Back to portfolio <span aria-hidden="true">↗</span></button>
