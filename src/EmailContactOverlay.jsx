@@ -23,12 +23,12 @@ export default function EmailContactOverlay({ triggerRef, onClosed }) {
     window.setTimeout(onClosed, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 120 : 320);
   };
   useEffect(() => {
-    const root = document.getElementById('root'); const wasInert = root?.inert; const overflow = document.body.style.overflow;
-    if (root) root.inert = true; document.body.style.overflow = 'hidden';
+    const root = document.getElementById('root'); const wasInert = root?.inert; const bodyOverflow = document.body.style.overflow; const documentOverflow = document.documentElement.style.overflow;
+    if (root) root.inert = true; document.body.style.overflow = 'hidden'; document.documentElement.style.overflow = 'hidden';
     window.setTimeout(() => firstFieldRef.current?.focus({ preventScroll: true }), 30);
     const onKey = (event) => { if (event.key === 'Escape') { event.preventDefault(); close(); } };
     document.addEventListener('keydown', onKey);
-    return () => { document.removeEventListener('keydown', onKey); abortRef.current?.abort(); if (root) root.inert = wasInert; document.body.style.overflow = overflow; requestAnimationFrame(() => triggerRef.current?.focus({ preventScroll: true })); };
+    return () => { document.removeEventListener('keydown', onKey); abortRef.current?.abort(); if (root) root.inert = wasInert; document.body.style.overflow = bodyOverflow; document.documentElement.style.overflow = documentOverflow; requestAnimationFrame(() => triggerRef.current?.focus({ preventScroll: true })); };
   }, []);
 
   const update = (key) => (event) => setFields((current) => ({ ...current, [key]: event.target.value }));

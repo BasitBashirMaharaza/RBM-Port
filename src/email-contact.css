@@ -44,6 +44,14 @@
 .email-contact-titlebar button { color: #4d4770; }
 .email-contact-titlebar button:hover { background: rgba(134,117,202,.1); color: #28213e; }
 .email-contact-titlebar .email-contact-close { margin-left: auto; }
+:root { --delivery-success: #2f9d65; --delivery-highlight: #ffffff; }
+html[data-theme='light'] { --delivery-highlight: var(--accent); }
+.email-contact-orb-overlay.is-morphing { display: block; padding: 0; overflow: hidden; background: var(--bg); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.email-contact-orb-overlay.is-morphing::before { display: none; }
+.email-contact-orb-overlay.is-morphing .email-contact-orb-dialog { width: 0; height: 0; max-width: none; max-height: none; overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; animation: none; }
+.email-contact-orb-overlay.is-morphing .email-contact-content { width: 0; padding: 0; }
+.email-contact-orb-overlay.is-morphing .email-contact-titlebar, .email-contact-orb-overlay.is-morphing .email-contact-fields, .email-contact-orb-overlay.is-morphing .email-contact-content > h2, .email-contact-orb-overlay.is-morphing .email-contact-note, .email-contact-orb-overlay.is-morphing .email-contact-error { display: none; }
+.email-contact-orb-overlay.is-morphing .mo-root { position: static; }
 .email-contact-content h2 { color: #1c1b24; }
 .email-contact-kicker { background-image: linear-gradient(100deg, #7160b6 0%, #2f2c41 45%, #7160b6 90%); }
 .email-contact-fields { display: grid; gap: 14px; }
