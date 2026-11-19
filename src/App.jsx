@@ -6,7 +6,7 @@ import ExpandableTabs from './components/ExpandableTabs.jsx';
 import SignatureHero from './components/SignalHero.jsx';
 import { playControlSound, requestWelcomeSound, stopWelcomeSound, unlockSound } from './soundDesign.js';
 import './project-motion.css';
-import ExperienceStack from './components/ui/card-stack.jsx';
+import ExperienceStack from './components/ExperienceJournal.jsx';
 import './education-signature.css';
 import './toolkit-glass.css';
 import './about-profile.css';
