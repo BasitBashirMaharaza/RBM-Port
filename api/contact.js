@@ -1,4 +1,3 @@
-const requests = new Map();
 const EMAIL = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 const DISCORD_WEBHOOK = /^https:\/\/(?:canary\.|ptb\.)?discord(?:app)?\.com\/api\/webhooks\/\d+\/[\w-]+(?:\?.*)?$/i;
 
@@ -43,17 +42,9 @@ export default async function handler(req, res) {
   if (!Number.isFinite(startedAt) || Date.now() - startedAt < 1200 || Date.now() - startedAt > 86400000) {
     return reply(res, 400, { ok: false, error: 'Please reopen the form and try again.' });
   }
-  const ip = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim();
-  const now = Date.now();
-  for (const [key, value] of requests) if (now - value > 60000) requests.delete(key);
-  if (requests.has(ip)) {
-    res.setHeader('Retry-After', '60');
-    return reply(res, 429, { ok: false, error: 'Please wait a minute before sending another message.' });
-  }
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   if (!webhookUrl || !DISCORD_WEBHOOK.test(webhookUrl)) return reply(res, 503, { ok: false, error: 'Discord messages are not configured yet. Please try again later.' });
 
-  requests.set(ip, now);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10000);
   try {
@@ -81,13 +72,11 @@ export default async function handler(req, res) {
       }),
     });
     if (!response.ok) {
-      requests.delete(ip);
       console.error('Discord webhook rejected the request', response.status);
       return reply(res, response.status === 401 || response.status === 403 || response.status === 404 ? 503 : 502, { ok: false, error: response.status === 401 || response.status === 403 || response.status === 404 ? 'Discord configuration needs attention. Please try again later.' : 'Discord could not accept your message. Please try again.' });
     }
     return reply(res, 200, { ok: true });
   } catch {
-    requests.delete(ip);
     return reply(res, 502, { ok: false, error: 'The email service is temporarily unavailable. Please try again.' });
   } finally {
     clearTimeout(timeout);

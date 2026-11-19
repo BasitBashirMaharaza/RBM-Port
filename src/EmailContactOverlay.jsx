@@ -23,12 +23,12 @@ export default function EmailContactOverlay({ triggerRef, onClosed }) {
     window.setTimeout(onClosed, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 120 : 320);
   };
   useEffect(() => {
-    const root = document.getElementById('root'); const wasInert = root?.inert; const overflow = document.body.style.overflow;
-    if (root) root.inert = true; document.body.style.overflow = 'hidden';
+    const root = document.getElementById('root'); const wasInert = root?.inert; const bodyOverflow = document.body.style.overflow; const documentOverflow = document.documentElement.style.overflow;
+    if (root) root.inert = true; document.body.style.overflow = 'hidden'; document.documentElement.style.overflow = 'hidden';
     window.setTimeout(() => firstFieldRef.current?.focus({ preventScroll: true }), 30);
     const onKey = (event) => { if (event.key === 'Escape') { event.preventDefault(); close(); } };
     document.addEventListener('keydown', onKey);
-    return () => { document.removeEventListener('keydown', onKey); abortRef.current?.abort(); if (root) root.inert = wasInert; document.body.style.overflow = overflow; requestAnimationFrame(() => triggerRef.current?.focus({ preventScroll: true })); };
+    return () => { document.removeEventListener('keydown', onKey); abortRef.current?.abort(); if (root) root.inert = wasInert; document.body.style.overflow = bodyOverflow; document.documentElement.style.overflow = documentOverflow; requestAnimationFrame(() => triggerRef.current?.focus({ preventScroll: true })); };
   }, []);
 
   const update = (key) => (event) => setFields((current) => ({ ...current, [key]: event.target.value }));
@@ -53,7 +53,7 @@ export default function EmailContactOverlay({ triggerRef, onClosed }) {
   const immersive = morphPhase !== 'idle';
   return createPortal(<div className={`email-contact-overlay email-contact-orb-overlay${closing ? ' is-closing' : ''}${immersive ? ' is-morphing' : ''}`} onPointerDown={(event) => { if (event.target === event.currentTarget && !sending) close(); }}>
     <div className="email-contact-dialog email-contact-orb-dialog" role="dialog" aria-modal="true" aria-labelledby="email-contact-title">
-      <div className="email-contact-titlebar"><button type="button" onClick={close} data-sound="silent"><span aria-hidden="true">✦</span> Discard message</button></div>
+      <div className="email-contact-titlebar"><span className="email-contact-mark" aria-hidden="true">✦</span><span>Message</span><button className="email-contact-close" type="button" onClick={close} data-sound="silent" aria-label="Close message form"><span aria-hidden="true">×</span></button></div>
       <div className="email-contact-content">
         <h2 id="email-contact-title">Send Basit a message<span>.</span></h2>
         <div className="email-contact-fields" aria-hidden={sending}>
