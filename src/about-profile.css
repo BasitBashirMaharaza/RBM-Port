@@ -204,3 +204,48 @@ html[data-theme='light'] .about .about-profile-arrows { stroke: #695cb1; }
   .about .about-focus { gap: 14px; margin-top: 27px; padding-top: 19px; }
   .about .about-focus strong { font-size: 11px; }
 }
+
+/* Profile-only typography and motion; annotation anchors remain unchanged. */
+.about .section-heading { display:flex;flex-direction:column;align-items:flex-start;gap:16px; }
+.about .section-heading > .section-label { margin:0; }
+.about .section-heading h2 { max-width:100%;font-size:clamp(23px,5.2vw,72px); }
+.about .profile-tagline { display:inline-flex;flex-direction:row;align-items:center;flex-wrap:nowrap;max-width:100%;gap:.18em;white-space:nowrap; }
+.about .profile-tagline > span:first-child { white-space:nowrap; }
+.about .profile-tagline-rotator { font-size:1em;flex-shrink:0;letter-spacing:-.055em;line-height:1.15;min-height:1.35em; }
+.about .profile-tagline-mask { overflow:hidden;padding-bottom:.04em; }
+.about .about-copy > p strong { color:var(--text);font-weight:600; }
+.about .profile-cycling-note,.about .profile-cycling-arrows path { transition:none!important; }
+.about .about-profile-sketch .profile-cycling-note { transform:rotate(-3deg); }
+.about .about-profile-sketch .profile-cycling-note.note-detail,
+.about .about-profile-sketch .profile-cycling-note.note-curious,
+.about .about-profile-sketch .profile-cycling-note.note-consistent { transform:rotate(2deg); }
+.about .profile-skills-loop { display:block;overflow:hidden; }
+.about .profile-skills-track { display:flex;width:max-content;animation:profile-skills-travel 38s linear infinite;animation-play-state:paused; }
+.about .profile-skills-loop[data-playing='true'] .profile-skills-track { animation-play-state:running; }
+.about .profile-skills-group { display:flex;flex:none; }
+.about .profile-skills-group > span { display:flex;align-items:center;justify-content:center;flex:none;width:clamp(260px,25vw,340px);padding:23px 20px;border:0;border-right:1px solid var(--line);color:var(--text);font:600 clamp(11px,.85vw,13px)/1.5 Manrope,system-ui,sans-serif;letter-spacing:.065em;text-transform:uppercase; }
+@keyframes profile-skills-travel { to { transform:translateX(-50%); } }
+@media(prefers-reduced-motion:reduce) {
+ .about .profile-skills-track { animation:none;width:100%; }
+ .about .profile-skills-group { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%; }
+ .about .profile-skills-group[aria-hidden='true'] { display:none; }
+ .about .profile-skills-group > span { width:auto; }
+}
+
+.about .profile-hello { position:relative;display:block;padding-bottom:30px;width:max-content;max-width:100%;margin:0 0 25px;color:var(--text);font:700 clamp(76px,8vw,116px)/.85 Georgia,'Times New Roman',serif;letter-spacing:-.065em; }
+.about .profile-hello svg { position:absolute;left:0;bottom:0;display:block;width:100%;max-width:100%;height:21px;margin:0;stroke:#9b92ff;stroke-width:1.8;overflow:visible; }
+html[data-theme='light'] .about .profile-hello svg { stroke:#695cb1; }
+@media(max-width:560px) { .about .profile-hello { font-size:82px;margin-bottom:24px; }.about .profile-skills-group > span { padding-block:20px; } }
+
+
+
+/* A continuous, stationary gradient frame replaces the orbiting light. */
+.about .about-profile-portrait { border-color:transparent;background:linear-gradient(var(--bg-soft),var(--bg-soft)) padding-box,linear-gradient(135deg,#ddd7ff 0%,#9d96ff 32%,#b5d4cf 64%,#8075ca 100%) border-box; }
+html[data-theme='light'] .about .about-profile-portrait { background:linear-gradient(var(--bg-soft),var(--bg-soft)) padding-box,linear-gradient(135deg,#8d80bf 0%,#695cb1 34%,#769e96 65%,#a395cd 100%) border-box; }
+@media(hover:hover) and (pointer:fine) { .about .about-profile-sketch:hover .about-profile-portrait { border-color:transparent; } }
+
+.about .about-copy { min-width:0; }
+
+/* Wrapped words keep their own underline fragments instead of one long rule. */
+.about .about-copy > p strong { padding-bottom:.08em;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'%3E%3Cpath d='M2 9Q145 0 298 6' fill='none' stroke='%239b92ff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:left bottom;background-size:100% .3em;box-decoration-break:clone;-webkit-box-decoration-break:clone; }
+html[data-theme='light'] .about .about-copy > p strong { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'%3E%3Cpath d='M2 9Q145 0 298 6' fill='none' stroke='%23695cb1' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); }

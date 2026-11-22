@@ -204,3 +204,21 @@ export function playControlSound(control) {
   }
 }
 
+
+
+let lastNavbarCollapse=-Infinity;
+export function playNavbarCollapse() {
+  if(document.hidden||!context||!output||context.state!=='running'||welcomePending||(welcomeStarted&&welcomeAudio&&!welcomeAudio.paused))return false;
+  if(context.currentTime-lastNavbarCollapse<.9)return false;
+  lastNavbarCollapse=context.currentTime;
+  try {
+    const start=context.currentTime+.09;
+    const oscillator=context.createOscillator(),gain=context.createGain(),filter=context.createBiquadFilter();
+    oscillator.type='sine';oscillator.frequency.setValueAtTime(310,start);oscillator.frequency.exponentialRampToValueAtTime(145,start+.38);
+    filter.type='lowpass';filter.frequency.value=850;
+    gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(.008,start+.065);gain.gain.exponentialRampToValueAtTime(.0001,start+.4);
+    oscillator.connect(filter).connect(gain).connect(output);oscillator.start(start);oscillator.stop(start+.42);
+    oscillator.onended=()=>{oscillator.disconnect();filter.disconnect();gain.disconnect();};
+    return true;
+  }catch{return false;}
+}

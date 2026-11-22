@@ -1,0 +1,69 @@
+/* A physical handheld library and small, raised game cartridges. */
+.bcv-cover-art.cover-games:not(.is-back-cover){background:color-mix(in srgb,var(--bg) 82%,#79908c);color:var(--text)}
+.bcv-cover-art.cover-games:not(.is-back-cover) .bcv-cover-grain{opacity:.09}
+.bcv-game-jacket{position:absolute;inset:0;overflow:hidden;background:linear-gradient(145deg,#a8bbc00d,transparent 55%,#918cb51c);isolation:isolate}
+.bcv-handheld{position:absolute;inset:7% 7% 23%;border-radius:12px 12px 26px 12px;padding:6% 5% 18%;background:linear-gradient(130deg,#c8cec9,#888f91 50%,#60676c);border:1px solid #ffffff63;box-shadow:2px 4px 0 #535e63,5px 12px 22px #0006,inset 0 1px 0 #fff9;transform:perspective(900px) rotateY(-8deg) rotateZ(-5deg)}
+.bcv-handheld-screen{height:100%;border:4px solid #40484c;border-radius:6px;background:linear-gradient(140deg,#151e23,#111318);box-shadow:inset 0 2px 8px #0009,0 1px 0 #d5dedb66;overflow:hidden;padding:6% 5%}
+.bcv-game-cover-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(5,minmax(0,1fr));gap:7% 6%;height:100%;align-items:center}
+.bcv-game-cover-cartridge{position:relative;display:block;height:100%;min-width:0;transform:rotate(var(--slot-angle));animation:bcv-cartridge-cover-drift 7s ease-in-out infinite alternate;animation-play-state:paused}
+.bcv-game-cover-cartridge:nth-child(3n+2){animation-delay:-3s}
+.bcv-game-cover-cartridge:last-child{grid-column:2}
+.bcv-game-cover-cartridge .bcv-cartridge-case{width:100%;height:100%;padding:8% 4% 12%;border-radius:2px;box-shadow:1px 2px 0 #4e595f,2px 4px 5px #0006}
+.bcv-game-cover-cartridge .bcv-cartridge-grip{height:4%;top:3%}
+.bcv-game-cover-cartridge .bcv-cartridge-contacts{height:7%;bottom:2%}
+.bcv-game-cover-cartridge .bcv-cartridge-led{width:2px;height:2px;right:3%;top:2px}
+.bcv-handheld-dpad{position:absolute;bottom:5%;left:10%;width:17%;aspect-ratio:1;border-radius:5px;background:linear-gradient(140deg,#3b4448,#19242c);clip-path:polygon(33% 0,67% 0,67% 33%,100% 33%,100% 67%,67% 67%,67% 100%,33% 100%,33% 67%,0 67%,0 33%,33% 33%);box-shadow:inset 0 1px 0 #ffffff55}
+.bcv-handheld-buttons{position:absolute;right:10%;bottom:5%;width:20%;aspect-ratio:1;transform:rotate(-20deg)}
+.bcv-handheld-buttons i{position:absolute;width:35%;height:35%;border-radius:50%;background:linear-gradient(135deg,#c7b3dc,#66647f);border:1px solid #d7cce4;box-shadow:1px 2px 2px #2f354b66}
+.bcv-handheld-buttons i:nth-child(1){top:0;left:32%}.bcv-handheld-buttons i:nth-child(2){top:32%;left:0}.bcv-handheld-buttons i:nth-child(3){bottom:0;left:32%}.bcv-handheld-buttons i:nth-child(4){top:32%;right:0}
+.bcv-handheld-speaker{position:absolute;left:42%;bottom:8%;width:17%;height:6%;background:repeating-linear-gradient(90deg,#3f4b4f 0 2px,transparent 2px 5px);opacity:.65;transform:rotate(-9deg)}
+.bcv-game-cover-quote{position:absolute;left:7%;right:7%;bottom:5%;text-align:center;margin:0;color:var(--text);font:500 clamp(18px,7.4cqw,28px)/1.08 Newsreader,Georgia,serif;letter-spacing:-.025em}
+.bcv-game-cover-quote em{font-style:italic;color:var(--muted)}
+.bcv-cartridge-case{display:block;position:relative;box-sizing:border-box;padding:8px 6px 13px;border-radius:6px 6px 10px 6px;border:1px solid #aab9ba;background:linear-gradient(135deg,#cbd4ce,#899b9c 55%,#61767e);box-shadow:1px 3px 0 #68767c,3px 6px 0 #40515c66,5px 11px 14px #060c1838;overflow:hidden}
+.bcv-cartridge-grip{position:absolute;left:24%;right:24%;top:3px;height:3px;border-top:1px solid #3b4e5266;border-bottom:1px solid #e6efdf55;border-radius:3px}
+.bcv-cartridge-screen{position:relative;display:block;width:100%;height:100%;border:1px solid #32434b;border-radius:2px;background:#131922;overflow:hidden}
+.bcv-cartridge-screen img{display:block;width:100%;height:100%;object-fit:contain}
+.bcv-cartridge-screen>i{position:absolute;inset:0;pointer-events:none;background:linear-gradient(125deg,#ffffff25,transparent 40% 75%,#ffffff09)}
+.bcv-cartridge-screen>i::after{content:'';position:absolute;inset:-30%;background:linear-gradient(115deg,transparent 30%,#ffffff3a 50%,transparent 67%);transform:translateX(-110%);animation:bcv-game-screen-sheen 9s ease-in-out infinite;animation-play-state:paused}
+.bcv-cartridge-contacts{position:absolute;bottom:3px;left:33%;right:20%;height:5px;background:repeating-linear-gradient(90deg,#c4b47f 0 4px,#54646b 4px 6px);border-radius:1px;box-shadow:inset 0 1px 0 #ffffff40}
+.bcv-cartridge-led{position:absolute;top:3px;right:6px;width:3px;height:3px;border-radius:50%;background:#d0e3bc;box-shadow:0 0 3px #d0e3bc66;animation:bcv-game-led 4s ease-in-out infinite alternate;animation-play-state:paused}
+.bcv-game-cartridge{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-width:0;min-height:44px;background:none;border:0;padding:0;color:var(--text);cursor:pointer;touch-action:manipulation;container-type:size}
+.bcv-game-cartridge>.bcv-cartridge-case{width:min(98cqw,calc((100cqh - 25px)*1.7));height:calc(min(98cqw,calc((100cqh - 25px)*1.7))*.59);flex:none;transform:perspective(600px) rotateY(-8deg) rotateZ(-3deg);animation:bcv-game-cartridge-float 7s ease-in-out infinite alternate;animation-play-state:paused;pointer-events:none;transition:transform 240ms cubic-bezier(.22,1,.36,1)}
+.bcv-game-cartridge:nth-child(even)>.bcv-cartridge-case{transform:perspective(600px) rotateY(8deg) rotateZ(3deg);animation-delay:-3s}
+.bcv-cartridge-caption{display:flex;align-items:center;gap:4px;max-width:100%;font:600 clamp(8px,.9vw,12px)/1.3 Manrope,sans-serif;pointer-events:none}
+.bcv-cartridge-caption small{font:500 clamp(6px,.6vw,8px)/1 'DM Mono',monospace;color:var(--muted);flex:none}
+.bcv-cartridge-caption strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.bcv-game-cartridge:focus-visible{outline:2px solid var(--accent);outline-offset:5px;border-radius:7px}
+.bcv-game-cartridge:disabled{cursor:default}
+.bcv-game-jacket[data-running] .bcv-game-cover-cartridge,.bcv-game-jacket[data-running] .bcv-cartridge-led,.bcv-game-jacket[data-running] .bcv-cartridge-screen>i::after,.bcv-gaming-page[data-running] .bcv-cartridge-case,.bcv-gaming-page[data-running] .bcv-cartridge-led,.bcv-gaming-page[data-running] .bcv-cartridge-screen>i::after{animation-play-state:running}
+@keyframes bcv-cartridge-cover-drift{from{translate:0 -1px}to{translate:0 1px}}
+@keyframes bcv-game-cartridge-float{from{translate:0 -1px}to{translate:0 2px}}
+@keyframes bcv-game-led{from{opacity:.45}to{opacity:1}}
+@keyframes bcv-game-screen-sheen{0%,70%{transform:translateX(-110%)}90%,100%{transform:translateX(110%)}}
+@media(hover:hover) and (pointer:fine){.bcv-game-cartridge:not(:disabled):hover>.bcv-cartridge-case{transform:perspective(600px) rotateY(0) rotateZ(0) translateY(-2px)}}
+@media(max-width:600px){.bcv-game-cartridge{gap:6px}.bcv-game-cartridge>.bcv-cartridge-case{padding:5px 4px 8px}.bcv-cartridge-caption{font-size:8px}.bcv-cartridge-caption small{font-size:6px}.bcv-game-cartridge .bcv-cartridge-contacts{height:3px;bottom:2px}.bcv-game-cartridge .bcv-cartridge-led{right:3px;top:2px;width:2px;height:2px}}
+@media(prefers-reduced-motion:reduce){.bcv-game-cover-cartridge,.bcv-cartridge-case,.bcv-cartridge-led,.bcv-cartridge-screen>i::after{animation:none!important;transition:none!important}}
+/* Centre the final two cartridges without changing the size of the other slots. */
+.bcv-game-cover-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+.bcv-game-cover-cartridge{grid-column:span 2}
+.bcv-game-cover-cartridge:nth-last-child(2){grid-column:2/span 2}
+.bcv-game-cover-cartridge:last-child{grid-column:4/span 2}
+/* Cover-only choreography: suspended hardware, screen wake and a single glass reflection. */
+.bcv-game-jacket .bcv-handheld{animation:bcv-handheld-suspend 8s ease-in-out infinite alternate;animation-play-state:paused;transform-origin:50% 58%}
+.bcv-game-jacket .bcv-handheld-screen{position:relative;isolation:isolate}
+.bcv-game-jacket .bcv-handheld-screen::after{content:'';position:absolute;inset:-35%;z-index:2;pointer-events:none;background:linear-gradient(112deg,transparent 33%,#e4f0ff28 48%,#ffffff0b 53%,transparent 65%);transform:translateX(-110%);animation:bcv-handheld-glass-pass 10s cubic-bezier(.22,1,.36,1) infinite;animation-play-state:paused}
+.bcv-game-jacket .bcv-handheld-screen::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;z-index:2;pointer-events:none;background:linear-gradient(90deg,transparent,#d2e8d18c,transparent);opacity:0;animation:bcv-handheld-screen-sync 10s ease-in-out infinite;animation-play-state:paused}
+.bcv-game-jacket .bcv-handheld-buttons i{animation:bcv-handheld-button-press 12s ease-in-out infinite;animation-play-state:paused}
+.bcv-game-jacket .bcv-handheld-buttons i:nth-child(2){animation-delay:-3s}
+.bcv-game-jacket .bcv-handheld-buttons i:nth-child(3){animation-delay:-6s}
+.bcv-game-jacket .bcv-handheld-buttons i:nth-child(4){animation-delay:-9s}
+.bcv-game-jacket .bcv-cartridge-screen>i::after{animation:none;opacity:0}
+.bcv-game-jacket[data-running] .bcv-handheld,.bcv-game-jacket[data-running] .bcv-handheld-screen::before,.bcv-game-jacket[data-running] .bcv-handheld-screen::after,.bcv-game-jacket[data-running] .bcv-handheld-buttons i{animation-play-state:running}
+.bcv-game-jacket[data-running] .bcv-game-cover-grid{animation:bcv-handheld-power-on 700ms cubic-bezier(.22,1,.36,1) both}
+@keyframes bcv-handheld-suspend{from{transform:perspective(900px) rotateY(-8deg) rotateX(0) rotateZ(-5deg) translateY(1px)}to{transform:perspective(900px) rotateY(-3deg) rotateX(2deg) rotateZ(-3deg) translateY(-4px)}}
+@keyframes bcv-handheld-glass-pass{0%{transform:translateX(-110%)}25%,100%{transform:translateX(110%)}}
+@keyframes bcv-handheld-screen-sync{0%{opacity:0;translate:0 0}4%{opacity:.5}24%,100%{opacity:0;translate:0 280px}}
+@keyframes bcv-handheld-button-press{0%,80%,96%,100%{transform:translateY(0) scale(1)}87%{transform:translateY(1.5px) scale(.96)}}
+@keyframes bcv-handheld-power-on{from{opacity:.3;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.bcv-game-jacket .bcv-handheld,.bcv-game-jacket .bcv-handheld-screen::before,.bcv-game-jacket .bcv-handheld-screen::after,.bcv-game-jacket .bcv-handheld-buttons i,.bcv-game-jacket[data-running] .bcv-game-cover-grid{animation:none!important}.bcv-game-jacket .bcv-handheld-screen::before,.bcv-game-jacket .bcv-handheld-screen::after{opacity:0}}
+

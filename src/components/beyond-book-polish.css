@@ -1,0 +1,34 @@
+/* The invitation is attached to the closed book, outside its page-turn layers. */
+.bcv-explore-cue{position:absolute;left:calc(50% + var(--leaf-width)*.5 + 28px);top:calc(50% - var(--leaf-height)*.41);width:72px;color:var(--bcv-accent);z-index:10;pointer-events:none;transform:rotate(8deg);animation:bcv-invitation-in .55s ease-out both}
+.bcv-explore-cue>span{font:500 20px/1 Caveat,'Segoe Print',cursive;display:block;transform:rotate(-9deg)}
+.bcv-explore-cue svg{display:block;width:64px;height:48px;margin:0;transform:rotate(32deg) scaleX(-1);overflow:visible}
+.bcv-explore-cue path{stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;animation:bcv-invitation-draw .8s ease-out both,bcv-invitation-breathe 3s ease-in-out 1s infinite}
+.bcv-control-deck>button{position:relative;overflow:hidden;transition:translate 180ms ease,box-shadow 180ms ease,background-color 180ms ease}
+.bcv-control-deck>button:active:not(:disabled){translate:0 2px;box-shadow:inset 0 1px 4px #24301d55}
+.bcv-control-deck>button::after{content:'';position:absolute;left:8%;right:8%;bottom:3px;height:2px;background:#425b34;transform-origin:left;transform:scaleX(0);border-radius:2px;opacity:0}
+.bcv-dialog[data-turn-control='back'] .bcv-control-deck>button:not(.bcv-deck-forward)::after,.bcv-dialog[data-turn-control='play'] .bcv-deck-forward::after,.bcv-dialog[data-turn-control='next'] .bcv-deck-forward::after{opacity:1;animation:bcv-control-load .88s cubic-bezier(.65,0,.35,1) both}
+.bcv-dialog[data-turn-control] .bcv-control-deck[aria-busy='true']>button:disabled{opacity:.75}
+.bcv-deck-display{position:relative;overflow:hidden}
+.bcv-deck-display::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,#dcffb722 50%,transparent 75%);transform:translateX(-110%);pointer-events:none}
+.bcv-control-deck[aria-busy='true'] .bcv-deck-display::after{animation:bcv-deck-scan 1.04s linear infinite}
+.bcv-book-header>button .bcv-power-rocker{position:relative;min-width:44px;padding-top:19px;transform:perspective(160px) rotateX(-10deg) rotateZ(2deg);transform-origin:50% 50%;transition:transform 260ms ease,box-shadow 260ms ease;animation:bcv-power-on .45s cubic-bezier(.22,1,.36,1) both}
+.bcv-power-rocker b{position:absolute;left:calc(50% - 2px);top:7px;width:4px;height:4px;border-radius:50%;background:#c3dc9b;box-shadow:0 0 5px #c3dc9b88;transition:background-color 180ms ease,box-shadow 180ms ease}
+.bcv-dialog[data-power='off'] .bcv-book-header>button .bcv-power-rocker{animation:none;transform:perspective(160px) rotateX(12deg) rotateZ(2deg);box-shadow:inset 0 2px 4px #0007,0 1px 2px #0003}
+.bcv-dialog[data-power='off'] .bcv-power-rocker b{background:#8d6f55;box-shadow:none}
+.bcv-book-header>button:disabled{cursor:default}
+@keyframes bcv-control-load{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes bcv-deck-scan{to{transform:translateX(110%)}}
+@keyframes bcv-power-on{from{transform:perspective(160px) rotateX(12deg) rotateZ(2deg)}to{transform:perspective(160px) rotateX(-10deg) rotateZ(2deg)}}
+@keyframes bcv-invitation-in{from{opacity:0;translate:0 5px}to{opacity:1;translate:0 0}}
+@keyframes bcv-invitation-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes bcv-invitation-breathe{0%,100%{translate:0 0}50%{translate:0 3px}}
+@media(max-width:600px){.bcv-explore-cue{left:calc(50% + var(--leaf-width)*.25);top:calc(50% - var(--leaf-height)*.5 - 78px);width:70px}.bcv-explore-cue>span{font-size:18px}.bcv-explore-cue svg{width:49px;height:36px;margin-left:0;transform:rotate(10deg) scaleX(-1)}}
+@media(prefers-reduced-motion:reduce){.bcv-explore-cue,.bcv-explore-cue path,.bcv-book-header>button .bcv-power-rocker,.bcv-control-deck>button::after,.bcv-deck-display::after{animation:none!important}.bcv-power-rocker,.bcv-control-deck>button{transition:none!important}}
+
+/* A single full-sized paper layer, with no independently moving tiles. */
+.bcv-continuous-leaf .bcv-page-strip{width:100%;backface-visibility:visible}
+.bcv-continuous-leaf .bcv-strip-face{backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:translateZ(.05px)}
+.bcv-continuous-leaf .bcv-strip-back{transform:rotateY(180deg) translateZ(.05px)}
+.bcv-continuous-leaf .bcv-strip-content{width:100%!important;left:0!important}
+.bcv-dialog .bcv-music-mosaic .bcv-album-row,.bcv-dialog .bcv-music-art *{animation-play-state:paused!important}
+

@@ -1,0 +1,163 @@
+/* A field journal: personal film, archival photographs, contour lines and quiet brass details. */
+.bcv-trail-jacket{position:absolute;inset:0;overflow:hidden;background:#25483e;color:#f8f1de;isolation:isolate}
+.bcv-trail-jacket>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-3}
+.bcv-trail-jacket-shade{position:absolute;inset:0;z-index:-2;background:linear-gradient(180deg,#0a251c55,#0f251a18 24%,#10271e65 50%,#0b2019ee)}
+.bcv-trail-contours{position:absolute;inset:0;width:100%;height:100%;stroke:#f7e6b0;stroke-width:.6;opacity:.2;pointer-events:none}
+.bcv-trail-jacket-top{position:absolute;top:7%;left:9%;right:9%;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.bcv-trail-jacket-top>span{font:500 clamp(5px,2cqw,9px)/1.5 'DM Mono',monospace;letter-spacing:.11em}
+.bcv-trail-jacket-top>i{font:400 clamp(23px,9cqw,40px)/1 Georgia,serif;font-style:normal}
+.bcv-trail-jacket-copy{position:absolute;left:9%;right:7%;bottom:22%}
+.bcv-trail-jacket-copy>span{font:500 clamp(5px,2.1cqw,9px)/1.5 'DM Mono',monospace;letter-spacing:.16em;color:#e2d5ab}
+.bcv-cover-art .bcv-trail-jacket-copy h3{margin:8% 0 5%;font:400 clamp(29px,15cqw,64px)/.94 Newsreader,Georgia,serif;letter-spacing:-.04em;color:#fff9e9}
+.bcv-trail-jacket-copy h3 em{font-weight:400;color:#e2dbb2}
+.bcv-trail-jacket-copy p{margin:0;font:400 clamp(8px,3.25cqw,14px)/1.6 'DM Sans',sans-serif;color:#eee9dc}
+.bcv-trail-jacket-foot{position:absolute;bottom:6%;left:9%;right:9%;display:flex;gap:7%;align-items:center;border-top:1px solid #e9e6cc55;padding-top:6%}
+.bcv-trail-jacket-foot>svg{width:16%;fill:none;stroke:#e5dba7;stroke-width:1}
+.bcv-trail-jacket-foot>span{font:500 clamp(6px,2.1cqw,10px)/1.8 'DM Mono',monospace;letter-spacing:.04em}
+.bcv-trail-jacket-foot b{font-size:.65em;font-weight:400;color:#d8d8ba}
+.bcv-trail-page.bcv-paper-page{padding:6% 7% 5%;display:flex;flex-direction:column;gap:2.2%;background:linear-gradient(110deg,#e9e8da,#f5f1e5);color:#263f35}
+.bcv-trail-page-top{display:flex;align-items:center;justify-content:space-between;gap:6px;font:500 clamp(5px,1.8cqw,8px)/1.4 'DM Mono',monospace;letter-spacing:.08em;color:#5e705d}
+.bcv-trail-page-top>b{font-weight:500;white-space:nowrap}
+.bcv-trail-photo{position:relative;flex:0 0 35%;width:100%;padding:0;border:1px solid #50694f4d;background:#bcc6b2;overflow:hidden;box-shadow:0 4px 9px #273c3220;cursor:pointer;isolation:isolate;color:#fff8e7;transition:transform 200ms ease,box-shadow 200ms ease}
+.bcv-trail-photo>img{width:100%;height:100%;object-fit:cover;object-position:center 60%;display:block;transition:transform 500ms cubic-bezier(.23,1,.32,1)}
+.bcv-trail-photo>i{position:absolute;left:5%;top:6%;padding:3% 4%;font:500 clamp(5px,1.8cqw,8px)/1 'DM Mono',monospace;font-style:normal;letter-spacing:.09em;background:#1e3629d9;border:1px solid #d8dfb83b}
+.bcv-trail-photo-open{position:absolute;bottom:0;left:0;right:0;padding:8% 5% 4%;text-align:right;background:linear-gradient(transparent,#10271bc9);font:500 clamp(6px,1.9cqw,9px)/1.5 'DM Mono',monospace;letter-spacing:.07em}
+.bcv-trail-photo:disabled{cursor:default}
+.bcv-trail-heading>span{font:500 clamp(6px,2.2cqw,10px)/1.4 'DM Mono',monospace;color:#5f7464}
+.bcv-trail-page .bcv-trail-heading h3{margin:3% 0 2%;font:400 clamp(17px,8.3cqw,35px)/1.02 Newsreader,Georgia,serif;letter-spacing:-.035em;color:#233d31}
+.bcv-trail-heading>p{margin:0;font:500 clamp(9px,3.7cqw,16px)/1.2 Caveat,'Segoe Print',cursive;color:var(--trail-accent)}
+.bcv-trail-stats{display:grid;grid-template-columns:1fr 1fr;gap:6%;padding:3% 0;border-block:1px solid #51644733}
+.bcv-trail-stats>span{display:flex;flex-direction:column;gap:5px;font:500 clamp(7px,2.5cqw,11px)/1.4 'DM Sans',sans-serif;overflow-wrap:anywhere}
+.bcv-trail-stats small{font:500 clamp(5px,1.65cqw,8px)/1.3 'DM Mono',monospace;letter-spacing:.08em;color:#63745f}
+.bcv-trail-description{margin:0;font:400 clamp(8px,2.9cqw,12px)/1.55 'DM Sans',sans-serif;color:#3e5043}
+.bcv-trail-route{margin-top:auto}
+.bcv-trail-route>span{font:500 clamp(5px,1.7cqw,8px)/1.3 'DM Mono',monospace;letter-spacing:.1em;color:#617459}
+.bcv-trail-route p{margin:5px 0 0;display:flex;gap:4px;flex-wrap:wrap;font:500 clamp(6px,2.1cqw,10px)/1.5 'DM Sans',sans-serif}
+.bcv-trail-route p>span{display:inline-flex;gap:4px}
+.bcv-trail-route i{font-style:normal;color:#8e9c70}
+.bcv-trail-page-foot{margin-top:auto;display:flex;justify-content:space-between;gap:5px;align-items:center;border-top:1px solid #52643d33;padding-top:3%;font:500 clamp(4px,1.5cqw,7px)/1.5 'DM Mono',monospace;letter-spacing:.02em}
+.bcv-trail-page-foot a{color:#365b44;text-underline-offset:3px;text-decoration-color:#789169;white-space:nowrap;padding:4px 0}
+.bcv-trail-camp{position:relative;width:100%;height:100%;background:linear-gradient(#c2ceba,#e5e0c9);overflow:hidden;display:grid;align-items:end}
+.bcv-trail-camp>svg{width:100%;height:100%;object-fit:contain}
+.bcv-trail-camp>span{position:absolute;left:5%;bottom:4%;font:500 clamp(5px,2cqw,9px)/1.3 'DM Mono',monospace;color:#edf0d4;letter-spacing:.12em}
+.bcv-trail-camp-cloud{animation:bcv-trail-clouds 12s ease-in-out infinite alternate;animation-play-state:paused}
+.bcv-trail-page[data-running] .bcv-trail-camp-cloud{animation-play-state:running}
+@keyframes bcv-trail-clouds{from{transform:translateX(-6px)}to{transform:translateX(12px)}}
+/* Detail windows retain the original photograph's full composition. */
+.bcv-trail-preview{position:fixed;inset:0;width:min(560px,calc(100vw - 24px));max-width:none;max-height:calc(100dvh - 32px);margin:auto;padding:0;border:1px solid color-mix(in srgb,var(--text) 18%,transparent);border-radius:13px;overflow:auto;overscroll-behavior:contain;background:var(--bg-soft);color:var(--text);box-shadow:0 24px 90px #07130f66;animation:bcv-trail-detail-in 260ms cubic-bezier(.23,1,.32,1) both;scrollbar-width:thin;scrollbar-color:#778a6955 transparent}
+.bcv-trail-preview::backdrop{background:#071c1673;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+.bcv-trail-preview.is-closing{animation:bcv-trail-detail-out 180ms ease both}
+.bcv-trail-dossier{position:relative;overflow:hidden}
+.bcv-trail-dossier-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-bottom:1px solid var(--line);background:var(--surface)}
+.bcv-trail-dossier-bar>span{font:500 9px/1.5 'DM Mono',monospace;letter-spacing:.13em;color:var(--muted)}
+.bcv-trail-dossier-bar>button{display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:5px;background:none;color:var(--text);font:400 25px/1 sans-serif;cursor:pointer;transition:background-color 180ms ease}
+.bcv-trail-dossier-photo{position:relative;background:#1d3028;padding:10px}
+.bcv-trail-dossier-photo>img{display:block;width:100%;height:min(36dvh,340px);object-fit:contain}
+.bcv-trail-dossier-photo>.bcv-trail-camp{height:min(32dvh,260px)}
+.bcv-trail-dossier-photo>span{position:absolute;bottom:18px;left:18px;background:#183126e6;color:#edf0df;padding:6px 9px;font:500 8px/1.3 'DM Mono',monospace;letter-spacing:.13em}
+.bcv-trail-dossier-copy{padding:24px 28px 28px}
+.bcv-trail-dossier-copy>span{font:500 10px/1.5 'DM Mono',monospace;color:var(--muted)}
+.bcv-trail-dossier-copy h3{margin:8px 0;font:400 38px/1.05 Newsreader,Georgia,serif;letter-spacing:-.03em}
+.bcv-trail-dossier-copy>p{font:400 14px/1.75 'DM Sans',sans-serif;color:var(--text)}
+.bcv-trail-dossier-copy>.bcv-trail-dossier-subtitle{margin:0 0 18px;font:500 23px/1.2 Caveat,'Segoe Print',cursive;color:var(--muted)}
+.bcv-trail-dossier .bcv-trail-stats{padding:13px 0;border-color:var(--line)}
+.bcv-trail-dossier .bcv-trail-stats>span{font-size:12px}.bcv-trail-dossier .bcv-trail-stats small{font-size:8px;color:var(--muted)}
+.bcv-trail-dossier .bcv-trail-route>span{font-size:9px;color:var(--muted)}.bcv-trail-dossier .bcv-trail-route p{font-size:12px;margin-block:8px 18px}
+.bcv-trail-reference{display:inline-block;font:500 11px/1.6 'DM Sans',sans-serif;color:var(--text);text-underline-offset:4px;padding-block:6px}
+.bcv-trail-extra{margin:20px 0 0}.bcv-trail-extra img{display:block;width:100%;max-height:350px;object-fit:contain;background:#20372d;border-radius:4px}.bcv-trail-extra figcaption{font:500 11px/1.6 'DM Sans',sans-serif;color:var(--muted);padding:8px 0}
+.bcv-trail-film{margin-top:22px;border-top:1px solid var(--line)}
+.bcv-trail-film summary{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:48px;padding:9px 0;font:500 13px/1.5 'DM Sans',sans-serif}.bcv-trail-film summary>span{font:500 8px/1.5 'DM Mono',monospace;letter-spacing:.07em;color:var(--muted)}
+.bcv-trail-film video{display:block;width:100%;max-height:400px;background:#13271e;border-radius:5px}.bcv-trail-film p{font:400 11px/1.5 'DM Sans',sans-serif;color:var(--muted)}
+.bcv-trail-preview :is(button,a,summary):focus-visible{outline:2px solid #739b65;outline-offset:3px}
+@keyframes bcv-trail-detail-in{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes bcv-trail-detail-out{to{opacity:0;transform:translateY(4px) scale(.98)}}
+@media(hover:hover) and (pointer:fine){.bcv-trail-photo:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 7px 13px #273c3230}.bcv-trail-photo:not(:disabled):hover>img{transform:scale(1.025)}.bcv-trail-dossier-bar>button:hover{background:var(--surface-2)}.bcv-trail-reference:hover{color:#75966a}}
+@media(max-width:600px){.bcv-trail-page.bcv-paper-page{padding:6% 7% 5%;gap:2%}.bcv-trail-page .bcv-trail-heading h3{font-size:clamp(16px,9cqw,23px);margin:3% 0}.bcv-trail-description{line-height:1.45;font-size:8px}.bcv-trail-stats{gap:5%;padding-block:4%}.bcv-trail-stats>span{font-size:7px;gap:3px}.bcv-trail-photo{flex-basis:31%}.bcv-trail-page-foot>span{display:none}.bcv-trail-page-foot{justify-content:flex-end}.bcv-trail-dossier-copy{padding:20px}.bcv-trail-dossier-copy h3{font-size:32px}.bcv-trail-preview{max-height:calc(100dvh - 24px)}}
+@media(max-height:560px){.bcv-trail-description{display:none}.bcv-trail-page .bcv-trail-heading h3{font-size:clamp(13px,8cqw,24px)}.bcv-trail-page-foot{display:none}}
+@media(prefers-reduced-motion:reduce){.bcv-trail-camp-cloud,.bcv-trail-preview,.bcv-trail-preview.is-closing{animation:none!important}.bcv-trail-photo,.bcv-trail-photo>img{transition:none}}
+
+@media(max-width:600px){.bcv-dialog[data-book-theme="trails"]{--leaf-height:calc(var(--leaf-width)*1.9)}}
+
+.bcv-trail-page .bcv-trail-summary{display:none}
+@media(max-width:600px){.bcv-trail-page.bcv-paper-page{gap:1.5%}.bcv-trail-page>.bcv-trail-description:not(.bcv-trail-summary){display:none}.bcv-trail-page .bcv-trail-summary{display:block}.bcv-trail-photo{flex-basis:30%}}
+
+/* Reserve the image row after fitting the text; never clip a page's last line. */
+.bcv-trail-page.bcv-paper-page{display:grid;grid-template-rows:auto minmax(44px,1fr) auto auto auto auto auto;gap:2%}
+.bcv-trail-page .bcv-trail-photo{min-height:0;height:100%;width:100%}
+.bcv-trail-page .bcv-trail-route,.bcv-trail-page .bcv-trail-page-foot{margin-top:0}
+.bcv-trail-page .bcv-trail-page-foot a{margin:0;padding:3px 0;font:inherit;color:#365b44;line-height:1.5}
+@media(max-width:900px){.bcv-trail-page .bcv-trail-description:not(.bcv-trail-summary){display:none}.bcv-trail-page .bcv-trail-summary{display:block}.bcv-trail-page.bcv-paper-page{gap:1.5%}.bcv-trail-page .bcv-trail-heading h3{margin:3% 0;font-size:clamp(16px,7.7cqw,28px)}.bcv-trail-route p{margin-top:3px;gap:2px}}
+@media(max-width:360px){.bcv-trail-page .bcv-trail-summary{display:none}.bcv-trail-page.bcv-paper-page{grid-template-rows:auto minmax(44px,1fr) auto auto auto auto}.bcv-trail-page .bcv-trail-route>span{display:none}.bcv-trail-page .bcv-trail-stats{padding-block:2%}.bcv-trail-page .bcv-trail-heading>p{font-size:9px}}
+
+.bcv-trail-dossier .bcv-trail-reference{min-height:44px;display:inline-flex;align-items:center}
+
+.bcv-trail-page .bcv-trail-page-foot{font-size:clamp(6px,1.5cqw,7px);line-height:1.6}
+
+/* Trek details: a clean expedition notebook, with restrained canvas and cartography. */
+.bcv-trail-preview{--trail-paper:color-mix(in srgb,var(--bg-soft) 88%,#6b8266);--trail-ink:var(--text);--trail-secondary:var(--muted);--trail-rule:color-mix(in srgb,var(--text) 15%,transparent);width:min(580px,calc(100vw - 28px));border-radius:9px;border-color:var(--trail-rule);background:var(--trail-paper);color:var(--trail-ink);box-shadow:0 26px 90px #0b20186b}
+.bcv-trail-dossier{background:linear-gradient(110deg,#c3b58c08,transparent 40%),var(--trail-paper);isolation:isolate}
+.bcv-trail-dossier>.bcv-trail-contours{z-index:-1;stroke:var(--trail-secondary);opacity:.055;height:100%;min-height:700px;transform:rotate(8deg)}
+.bcv-trail-dossier-bar{padding:12px 22px;border-color:var(--trail-rule);background:transparent}
+.bcv-trail-log-mark{display:flex;align-items:center;gap:10px}
+.bcv-trail-log-mark>svg{width:32px;height:32px;stroke:var(--trail-secondary);stroke-width:.9;flex:none}
+.bcv-trail-log-mark>span{font:500 10px/1.6 'DM Mono',monospace;letter-spacing:.09em;color:var(--trail-ink)}
+.bcv-trail-log-mark small{display:block;font:400 8px/1.6 'DM Mono',monospace;letter-spacing:.12em;color:var(--trail-secondary)}
+.bcv-trail-dossier-bar>button{border:1px solid var(--trail-rule);width:36px;height:36px;min-width:44px;min-height:44px;border-radius:50%;font-size:22px;color:var(--trail-ink)}
+.bcv-trail-dossier-photo{margin:8px 22px 0;padding:10px 10px 27px;background:color-mix(in srgb,var(--trail-paper) 80%,#73846a);border:1px solid var(--trail-rule);box-shadow:0 4px 12px #102a1812;border-radius:3px}
+.bcv-trail-dossier-photo>img{height:min(34dvh,320px);width:100%;object-fit:contain;background:color-mix(in srgb,var(--trail-paper) 65%,#58715c)}
+.bcv-trail-dossier-photo>span{background:none;padding:0;bottom:8px;left:10px;font:400 7px/1.4 'DM Mono',monospace;color:var(--trail-secondary);letter-spacing:.11em}
+.bcv-trail-dossier-copy{padding:26px 30px 30px}
+.bcv-trail-dossier-copy>span{font:500 9px/1.6 'DM Mono',monospace;color:var(--trail-secondary);text-transform:uppercase;letter-spacing:.13em}
+.bcv-trail-dossier-copy h3{margin:8px 0 6px;font:400 42px/1.05 Newsreader,Georgia,serif;letter-spacing:-.035em;color:var(--trail-ink)}
+.bcv-trail-dossier-copy>.bcv-trail-dossier-subtitle{font:500 23px/1.4 Caveat,'Segoe Print',cursive;color:var(--trail-secondary);margin-bottom:22px}
+.bcv-trail-dossier .bcv-trail-stats{padding:16px 0;border-color:var(--trail-rule);gap:20px}
+.bcv-trail-dossier .bcv-trail-stats>span{font:500 12px/1.5 'DM Sans',sans-serif;gap:6px;color:var(--trail-ink)}
+.bcv-trail-dossier .bcv-trail-stats small{font:500 8px/1.4 'DM Mono',monospace;letter-spacing:.11em;color:var(--trail-secondary)}
+.bcv-trail-field-notes{padding:24px 0 10px}
+.bcv-trail-field-notes h4{margin:0 0 12px;font:400 25px/1.2 Newsreader,Georgia,serif;letter-spacing:-.02em;color:var(--trail-ink)}
+.bcv-trail-field-notes p{margin:0 0 14px;font:400 15px/1.75 'DM Sans',sans-serif;color:var(--trail-ink);text-wrap:pretty}
+.bcv-trail-dossier .bcv-trail-route{padding:16px 0 12px;border-top:1px dashed var(--trail-rule)}
+.bcv-trail-dossier .bcv-trail-route>span{font:500 8px/1.5 'DM Mono',monospace;color:var(--trail-secondary);letter-spacing:.12em}
+.bcv-trail-dossier .bcv-trail-route ol{display:flex;flex-wrap:wrap;gap:10px 0;list-style:none;padding:0;margin:15px 0 0}
+.bcv-trail-dossier .bcv-trail-route li{position:relative;padding:0 18px 0 15px;font:500 11px/1.6 'DM Sans',sans-serif;color:var(--trail-ink)}
+.bcv-trail-dossier .bcv-trail-route li:before{content:'';position:absolute;left:0;top:6px;width:5px;height:5px;border:1px solid #839d73;border-radius:50%;background:var(--trail-paper)}
+.bcv-trail-dossier .bcv-trail-route li:not(:last-child):after{content:'';position:absolute;right:5px;top:9px;width:8px;border-top:1px dashed var(--trail-secondary);opacity:.55}
+.bcv-trail-dossier .bcv-trail-reference{margin-top:4px;font:500 10px/1.6 'DM Mono',monospace;color:var(--trail-secondary);text-decoration-thickness:1px;text-decoration-color:var(--trail-rule)}
+.bcv-trail-dossier .bcv-trail-extra{padding:10px;background:color-mix(in srgb,var(--trail-paper) 80%,#73846a);border:1px solid var(--trail-rule);border-radius:3px}
+.bcv-trail-dossier .bcv-trail-extra img{max-height:290px;background:transparent;border-radius:0}
+.bcv-trail-dossier .bcv-trail-extra figcaption{padding:9px 0 0;font:500 11px/1.5 Caveat,'Segoe Print',cursive;color:var(--trail-secondary)}
+.bcv-trail-dossier .bcv-trail-film{border-color:var(--trail-rule);padding-top:5px}
+.bcv-trail-dossier .bcv-trail-film summary{font:400 21px/1.4 Newsreader,Georgia,serif;color:var(--trail-ink)}
+.bcv-trail-dossier .bcv-trail-film summary>span{font-size:8px;color:var(--trail-secondary)}
+html[data-theme='light'] .bcv-trail-preview{--trail-paper:#eeeddf;--trail-ink:#263f32;--trail-secondary:#596c55;--trail-rule:#3e5b3930}
+.bcv-trail-jacket-top>span{font-size:clamp(6px,2.1cqw,9px);letter-spacing:.18em}
+.bcv-trail-jacket-copy>span{font-size:clamp(5px,1.8cqw,8px);letter-spacing:.16em}
+.bcv-cover-art .bcv-trail-jacket-copy h3{font-size:clamp(29px,15cqw,62px);line-height:.95;margin:8% 0 6%;font-weight:400}
+.bcv-trail-jacket-copy p{font:400 clamp(8px,3.1cqw,13px)/1.6 'DM Sans',sans-serif;letter-spacing:.01em}
+.bcv-trail-jacket-foot>span{font-size:clamp(6px,2cqw,9px);letter-spacing:.08em}.bcv-trail-jacket-foot b{font-size:.7em;letter-spacing:.02em}
+@media(max-width:600px){.bcv-trail-dossier-bar{padding:10px 16px}.bcv-trail-dossier-photo{margin:6px 14px 0;padding:8px 8px 25px}.bcv-trail-dossier-copy{padding:22px}.bcv-trail-dossier-copy h3{font-size:35px}.bcv-trail-field-notes p{font-size:14px;line-height:1.75}.bcv-trail-dossier .bcv-trail-film summary{font-size:19px}.bcv-trail-dossier .bcv-trail-film summary>span{font-size:7px}}
+
+/* Interior typography: expedition labels, editorial place names, handwritten observations. */
+.bcv-trail-page .bcv-trail-page-top{font-size:clamp(6px,1.8cqw,8px);letter-spacing:.12em;padding-bottom:2%;border-bottom:1px solid #63775829}
+.bcv-trail-page .bcv-trail-heading>span{font:500 clamp(6px,2cqw,9px)/1.5 'DM Mono',monospace;letter-spacing:.07em;text-transform:uppercase;color:#5e7158}
+.bcv-trail-page .bcv-trail-heading h3{font-family:Newsreader,Georgia,serif;font-weight:400;line-height:1.08;letter-spacing:-.025em;color:#284b38;text-wrap:balance}
+.bcv-trail-page .bcv-trail-heading>p{font-family:Caveat,'Segoe Print',cursive;font-weight:500;line-height:1.3;color:#647c54}
+.bcv-trail-page .bcv-trail-stats{border-color:#627c4e30;background:linear-gradient(90deg,#79875c08,transparent)}
+.bcv-trail-page .bcv-trail-stats small{color:#627452;letter-spacing:.1em}
+.bcv-trail-page .bcv-trail-stats>span{font-family:'DM Sans',sans-serif;font-weight:500;color:#344b38}
+.bcv-trail-page .bcv-trail-description{font:400 clamp(10px,3.4cqw,14px)/1.5 Newsreader,Georgia,serif;color:#3e503e;text-wrap:pretty}
+.bcv-trail-page .bcv-trail-route>span{letter-spacing:.12em;color:#60744e}
+.bcv-trail-page .bcv-trail-route p{font-family:'DM Sans',sans-serif;color:#40563b}
+.bcv-trail-page .bcv-trail-route p>span{align-items:center}
+.bcv-trail-page .bcv-trail-route i{font-family:Caveat,'Segoe Print',cursive;font-size:1.35em;color:#71825a}
+.bcv-trail-page .bcv-trail-photo{border:3px solid #f6f1e4;outline:1px solid #7d8a6755;outline-offset:0;box-shadow:0 4px 9px #273c3220}
+.bcv-trail-photo-image{display:block;position:absolute;inset:0;overflow:hidden}
+.bcv-trail-photo-image>img{width:100%;height:100%;object-fit:cover;object-position:center 65%;display:block;animation:bcv-trail-photo-drift 18s ease-in-out infinite alternate;animation-play-state:paused}
+.bcv-trail-page[data-running] .bcv-trail-photo-image>img{animation-play-state:running}
+.bcv-trail-photo-image:after{content:'';position:absolute;inset:0;background:linear-gradient(125deg,#fff5e318,transparent 40%);pointer-events:none}
+.bcv-trail-photo>i{background:#294131e6;letter-spacing:.1em;border-color:#e4e7ca45}
+.bcv-trail-photo-open{font-family:'DM Mono',monospace;font-weight:400;letter-spacing:.09em}
+@keyframes bcv-trail-photo-drift{from{transform:scale(1.015) translateY(.3%)}to{transform:scale(1.045) translateY(-.5%)}}
+@media(hover:hover) and (pointer:fine){.bcv-trail-page .bcv-trail-photo:not(:disabled):hover{transform:translateY(-2px);outline-color:#667b4b;box-shadow:0 7px 13px #273c3230}.bcv-trail-page .bcv-trail-photo:not(:disabled):hover .bcv-trail-photo-open{text-decoration:underline;text-underline-offset:3px}}
+@media(max-width:900px){.bcv-trail-page .bcv-trail-description{font-size:clamp(9px,3.3cqw,12px);line-height:1.45}.bcv-trail-page .bcv-trail-heading h3{font-size:clamp(16px,7.5cqw,28px)}.bcv-trail-page .bcv-trail-photo{border-width:2px}}
+@media(prefers-reduced-motion:reduce){.bcv-trail-photo-image>img{animation:none;transform:none}}

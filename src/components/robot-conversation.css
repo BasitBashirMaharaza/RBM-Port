@@ -1,0 +1,80 @@
+/* Robot conversation surfaces inherit the portfolio's existing materials. */
+.hero-robot-chat{position:absolute;bottom:77px;left:var(--robot-chat-left,-78px);translate:0 0;box-sizing:border-box;width:228px;max-width:calc(100vw - 24px);padding:17px 16px 15px;border:1px solid var(--line-strong);border-radius:16px;background:color-mix(in srgb,var(--surface) 96%,transparent);color:var(--text);box-shadow:var(--shadow);white-space:normal;text-align:left;pointer-events:auto;font:400 11px/1.6 Manrope,sans-serif;animation:robot-chat-enter 200ms var(--ease) both}
+.hero-robot-chat::after{content:'';position:absolute;bottom:-5px;left:var(--robot-chat-tail,109px);width:9px;height:9px;background:var(--surface);border-right:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong);rotate:45deg}
+.hero-robot-chat>small{display:block;margin-bottom:8px;color:var(--muted);font:500 7px/1.5 'DM Mono',monospace;letter-spacing:.13em}
+.hero-robot-chat>strong{display:block;margin-bottom:5px;font:600 16px/1.3 Manrope,sans-serif;letter-spacing:-.025em}
+.hero-robot-chat>span{display:block;color:var(--muted)}
+.hero-chat-dismiss{position:absolute;top:7px;right:7px;display:grid;place-items:center;width:27px;height:27px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:17px;cursor:pointer}
+.hero-chat-choices{display:flex;gap:7px;margin-top:13px}
+.hero-chat-choices button{display:flex;align-items:center;justify-content:space-between;gap:7px;flex:1;min-height:40px;padding:8px;border:1px solid var(--line-strong);border-radius:9px;background:var(--surface-2);color:var(--text);font:600 10px/1.4 Manrope,sans-serif;cursor:pointer;transition:background 180ms ease,border-color 180ms ease}
+.hero-chat-choices i{font-style:normal;color:var(--accent)}
+.hero-chat-choices button:hover,.hero-chat-choices button:focus-visible{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.hero-robot-chat button:focus-visible,.robot-quote-close:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* A compact bronze/titanium projector display, matching the supplied robot. */
+.robot-quote-dialog{--robot-metal:color-mix(in srgb,var(--text) 25%,#aa8565);--robot-light:color-mix(in srgb,var(--accent) 30%,#efc17e);position:fixed;inset:0;width:100%;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;overflow:hidden;background:transparent;color:var(--text);box-sizing:border-box}
+.robot-quote-dialog::backdrop{background:color-mix(in srgb,var(--bg) 48%,transparent);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);animation:robot-display-backdrop 900ms var(--ease) both}
+.robot-projection-avatar{position:fixed;z-index:2;pointer-events:none;transition:opacity 220ms ease}
+.robot-quote-projection{position:absolute;z-index:1;inset:0;pointer-events:none;overflow:visible;transition:opacity 240ms ease}
+.robot-eye-ray,.robot-eye-ray-halo{stroke:var(--robot-light);stroke-linecap:round;stroke-dasharray:1;animation:robot-laser-draw 550ms var(--ease) both,robot-laser-settle 1800ms ease 550ms forwards}
+.robot-eye-ray{stroke-width:1.25;stroke-opacity:.9}
+.robot-eye-ray-halo{stroke-width:5;stroke-opacity:.15}
+.robot-quote-card{position:absolute;z-index:3;box-sizing:border-box;width:min(440px,calc(100% - 48px));padding:13px;border:1px solid var(--robot-metal);border-radius:23px;background:repeating-linear-gradient(95deg,transparent 0 2px,color-mix(in srgb,var(--text) 2%,transparent) 2px 3px),linear-gradient(135deg,color-mix(in srgb,var(--surface-2) 82%,#b39b7d),var(--surface) 38%,color-mix(in srgb,var(--surface-2) 88%,#816c55));box-shadow:var(--shadow),inset 0 1px 0 color-mix(in srgb,var(--text) 25%,transparent),inset 0 -1px 0 #0003;transform-origin:var(--projection-pivot-x,50%) var(--projection-pivot-y,50%);opacity:0;clip-path:inset(48% 0 48% 0 round 22px);transform:perspective(900px) rotateX(7deg) translateY(8px) scale(.97);transition:clip-path 650ms cubic-bezier(.22,1,.36,1),transform 600ms cubic-bezier(.22,1,.36,1),opacity 220ms ease}
+.robot-quote-dialog[data-revealed='true'] .robot-quote-card{opacity:1;clip-path:inset(0 0 0 0 round 22px);transform:perspective(900px) rotateX(0) translateY(0) scale(1)}
+.robot-quote-hardware{display:flex;align-items:center;gap:11px;padding:2px 44px 13px 4px;min-height:42px}
+.robot-quote-hardware>svg{width:34px;height:28px;flex:none;stroke:var(--robot-metal);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.robot-quote-hardware>span{font:600 8px/1.5 'DM Mono',monospace;letter-spacing:.11em;color:var(--text)}
+.robot-quote-hardware small{display:block;font:400 10px/1.5 Manrope,sans-serif;letter-spacing:0;color:var(--muted);margin-top:2px}
+.robot-quote-close{position:absolute;top:15px;right:15px;width:36px;height:36px;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--robot-metal) 60%,transparent);border-radius:11px;background:linear-gradient(135deg,var(--surface),var(--surface-2));box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 12%,transparent);color:var(--text);font-size:20px;cursor:pointer}
+.robot-quote-screen{position:relative;padding:27px 25px 19px;border:1px solid color-mix(in srgb,var(--robot-metal) 48%,transparent);border-radius:13px;background:radial-gradient(ellipse at 10% 0,color-mix(in srgb,var(--robot-light) 7%,transparent),transparent 65%),var(--bg-soft);box-shadow:inset 0 2px 8px #00000012,inset 0 0 0 2px color-mix(in srgb,var(--surface) 60%,transparent);max-height:calc(100dvh - 140px);overflow:auto;overscroll-behavior:contain}
+.robot-quote-screen::before{content:'';position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--robot-light),transparent);opacity:.55;pointer-events:none}
+.robot-quote-label{display:flex;gap:8px;align-items:center;color:var(--muted);font:500 7px/1.6 'DM Mono',monospace;letter-spacing:.14em}
+.robot-quote-label i{width:5px;height:5px;border-radius:50%;background:var(--robot-light);box-shadow:0 0 7px color-mix(in srgb,var(--robot-light) 40%,transparent)}
+.robot-quote-screen blockquote{margin:26px 0 20px;color:var(--text);font:600 clamp(23px,4vw,30px)/1.3 Manrope,sans-serif;letter-spacing:-.04em;text-wrap:balance}
+.robot-quote-screen>p{margin:0 0 23px;font:600 11px/1.6 Manrope,sans-serif;color:var(--text)}
+.robot-quote-screen>p span{display:block;margin-top:3px;color:var(--muted);font-weight:400;font-size:10px}
+.robot-quote-footer{display:flex;align-items:center;gap:7px;padding-top:15px;border-top:1px solid var(--line);color:var(--muted);font:400 7px/1.6 'DM Mono',monospace;letter-spacing:.1em}
+.robot-quote-footer b{color:var(--robot-light);font-size:10px}
+.robot-quote-label,.robot-quote-screen blockquote,.robot-quote-screen>p,.robot-quote-footer{opacity:0;transition:opacity 420ms ease 220ms}
+.robot-quote-dialog[data-revealed='true'] .robot-quote-screen>*{opacity:1}
+.robot-case-screw{position:absolute;bottom:5px;width:4px;height:4px;border-radius:50%;background:linear-gradient(130deg,var(--text),var(--robot-metal));opacity:.4}.screw-left{left:17px}.screw-right{right:17px}
+.robot-quote-dialog[data-closing='true'] .robot-quote-card{opacity:0;transform:perspective(900px) rotateX(4deg) scale(.98);clip-path:inset(45% 0 45% 0 round 22px);transition-duration:220ms}
+.robot-quote-dialog[data-closing='true'] .robot-quote-projection,.robot-quote-dialog[data-closing='true'] .robot-projection-avatar{opacity:0}
+@keyframes robot-chat-enter{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes robot-laser-draw{from{stroke-dashoffset:1;opacity:0}to{stroke-dashoffset:0;opacity:1}}
+@keyframes robot-laser-settle{to{opacity:.22}}
+@keyframes robot-display-backdrop{from{background:transparent;backdrop-filter:blur(0);-webkit-backdrop-filter:blur(0)}to{background:color-mix(in srgb,var(--bg) 48%,transparent);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}}
+@media(max-width:600px){.hero-robot-chat{left:var(--robot-chat-left,50%);translate:0 0;width:208px}.hero-robot-chat::after{left:var(--robot-chat-tail,24px)}.robot-quote-card{padding:11px;border-radius:20px}.robot-quote-screen{padding:23px 19px 16px}.robot-quote-hardware{padding-left:3px;gap:8px}.robot-quote-hardware>span{font-size:7px}.robot-quote-hardware small{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.hero-robot-chat,.robot-quote-dialog::backdrop,.robot-eye-ray,.robot-eye-ray-halo{animation:none}.robot-quote-projection{display:none}.robot-quote-card,.robot-quote-dialog[data-revealed='true'] .robot-quote-card{clip-path:none;transform:none;transition:opacity 120ms ease}.robot-quote-label,.robot-quote-screen blockquote,.robot-quote-screen>p,.robot-quote-footer{transition:opacity 120ms ease}}
+
+/* The greeting and choices use the same materials as the projector window. */
+.hero-robot-chat{--robot-metal:color-mix(in srgb,var(--text) 25%,#aa8565);--robot-light:color-mix(in srgb,var(--accent) 30%,#efc17e);padding:10px;border-color:var(--robot-metal);border-radius:17px;background:repeating-linear-gradient(95deg,transparent 0 2px,color-mix(in srgb,var(--text) 2%,transparent) 2px 3px),linear-gradient(135deg,color-mix(in srgb,var(--surface-2) 82%,#b39b7d),var(--surface) 38%,color-mix(in srgb,var(--surface-2) 88%,#816c55));box-shadow:var(--shadow),inset 0 1px 0 color-mix(in srgb,var(--text) 22%,transparent),inset 0 -1px 0 #0002}
+.hero-robot-chat::after{background:color-mix(in srgb,var(--surface-2) 88%,#816c55);border-color:var(--robot-metal)}
+.hero-robot-chat>.hero-chat-identity{display:flex;align-items:center;gap:7px;padding:1px 21px 10px 1px;color:var(--text)}
+.hero-chat-identity svg{flex:none;width:25px;height:21px;stroke:var(--robot-metal);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.hero-chat-identity small{font:600 6px/1.5 'DM Mono',monospace;letter-spacing:.1em}
+.hero-robot-chat>.hero-chat-readout{display:block;padding:12px 11px 11px;border:1px solid color-mix(in srgb,var(--robot-metal) 48%,transparent);border-radius:10px;background:radial-gradient(ellipse at 0 0,color-mix(in srgb,var(--robot-light) 6%,transparent),transparent 70%),var(--bg-soft);box-shadow:inset 0 1px 4px #00000010;color:var(--text)}
+.hero-chat-readout>strong{display:block;margin:0 0 6px;font:600 15px/1.35 Manrope,sans-serif;letter-spacing:-.025em}
+.hero-chat-readout>span{display:block;color:var(--muted);font-size:10px;line-height:1.65}
+.hero-chat-dismiss{top:7px;right:7px;width:24px;height:24px;border:1px solid color-mix(in srgb,var(--robot-metal) 35%,transparent);border-radius:7px;background:var(--surface-2);font-size:15px}
+.hero-chat-dismiss::before{content:'';position:absolute;inset:-5px}
+.hero-chat-choices{gap:6px;margin-top:12px}
+.hero-chat-choices button{padding:7px;gap:4px;border-color:color-mix(in srgb,var(--robot-metal) 60%,transparent);border-radius:8px;background:linear-gradient(140deg,var(--surface),var(--surface-2));font-size:9px;box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 10%,transparent)}
+.hero-chat-choices i{color:var(--robot-light)}
+.hero-chat-choices button:hover,.hero-chat-choices button:focus-visible{border-color:var(--robot-light);background:color-mix(in srgb,var(--robot-light) 10%,var(--surface))}
+
+/* Crisp, restrained readout typography and one-shot text effects. */
+.hero-chat-readout>strong{font-family:Syne,Manrope,sans-serif;font-weight:600;font-size:15px;letter-spacing:-.015em}
+.hero-chat-readout>span{font-family:'DM Mono',monospace;font-size:9px;line-height:1.8;letter-spacing:-.025em}
+.hero-chat-choices button{font-family:'DM Mono',monospace;font-size:9px;font-weight:500}
+.robot-quote-screen blockquote{font-family:Syne,Manrope,sans-serif;font-weight:600;letter-spacing:-.035em;line-height:1.35}
+.robot-quote-screen>p{font-family:'DM Mono',monospace;font-size:10px;line-height:1.8;font-weight:400;letter-spacing:-.025em}
+.robot-quote-screen>p span{font-size:9px}
+.robot-display-text{position:relative}
+.robot-display-word{display:inline-block;white-space:pre-wrap;animation:robot-readout-resolve 360ms cubic-bezier(.22,1,.36,1) both;animation-delay:calc(var(--word-index)*32ms)}
+.robot-quote-screen .robot-display-word{animation-play-state:paused;animation-delay:calc(260ms + var(--word-index)*32ms)}
+.robot-quote-dialog[data-revealed='true'] .robot-display-word{animation-play-state:running}
+.hero-chat-readout>strong::after{content:'';display:inline-block;width:3px;height:.7em;margin-left:5px;background:var(--robot-light);animation:robot-readout-cursor 600ms steps(1,end) 3 both}
+@keyframes robot-readout-resolve{from{opacity:0;transform:translateY(3px);clip-path:inset(0 0 80% 0)}to{opacity:1;transform:translateY(0);clip-path:inset(0)}}
+@keyframes robot-readout-cursor{0%,50%{opacity:.75}51%,100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.robot-display-word,.robot-quote-screen .robot-display-word,.hero-chat-readout>strong::after{animation:none}.hero-chat-readout>strong::after{display:none}}

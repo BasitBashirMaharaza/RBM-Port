@@ -1,0 +1,102 @@
+/* Warm molded casings and dark CRT bezels echo the opening computer. */
+.lg-monitor{--monitor-shell:color-mix(in srgb,#c8c6b8 88%,var(--surface));--monitor-edge:color-mix(in srgb,#8b8c81 82%,var(--text));position:relative;width:100%;height:100%;isolation:isolate;pointer-events:auto;transition:transform .24s var(--ease);text-align:left}
+.lg-monitor-casing{position:absolute;z-index:-1;inset:-14px -14px -30px;border:1px solid var(--monitor-edge);border-radius:25px 25px 21px 21px;background:linear-gradient(132deg,color-mix(in srgb,var(--monitor-shell) 78%,#fff),var(--monitor-shell) 28%,color-mix(in srgb,var(--monitor-shell) 88%,#858779) 86%);box-shadow:inset 1px 2px 1px #ffffff9c,inset -2px -3px 2px #454b4152,0 8px 0 -2px var(--monitor-edge),0 22px 36px #00000024;pointer-events:none}
+.lg-monitor-casing::before{content:'';position:absolute;inset:8px 8px 24px;border:6px solid #343734;border-radius:21px;background:#343734;box-shadow:inset 2px 3px 6px #000b,0 -1px 0 #6d71668c,0 1px 0 #ffffff73}
+.lg-monitor-screen{position:relative;width:100%;height:100%;border-radius:12px;isolation:isolate}
+.lg-monitor .lg-card-body{border-radius:12px;border-color:#34373466;box-shadow:inset 0 1px 2px #ffffffa8,0 0 0 1px #0a110f30;transform:none!important}
+.lg-monitor .lg-card-body::before{border-radius:12px;padding:1px;opacity:.42}
+.lg-monitor .lg-card-body::after{border-radius:9px;inset:2px;border-color:#ffffff2b}
+.lg-monitor-vents{position:absolute;left:21px;bottom:13px;width:45px;height:5px;border-radius:1px;background:repeating-linear-gradient(90deg,#4f574c99 0 1px,transparent 1px 4px);box-shadow:0 1px 0 #fff5}
+.lg-monitor-name{position:absolute;bottom:11px;left:50%;translate:-50% 0;color:#4d564a;white-space:nowrap;font:500 6px/1.5 'DM Mono',monospace;letter-spacing:.17em;text-shadow:0 1px #ffffff75}
+.lg-monitor-power{position:absolute;right:26px;bottom:13px;width:5px;height:5px;border-radius:50%;background:#7c9365;box-shadow:inset 0 1px 1px #23321f,0 1px 0 #ffffff61;opacity:.5;transition:opacity 250ms ease}
+.lg-monitor[data-active='true'] .lg-monitor-power{opacity:1;background:color-mix(in srgb,var(--accent) 70%,#b3cf7c);box-shadow:0 0 7px color-mix(in srgb,var(--accent) 30%,transparent),inset 0 1px 0 #f1fdd488}
+.lg-monitor-button{position:absolute;right:42px;bottom:10px;width:10px;height:10px;border:1px solid #70796a;border-radius:50%;background:linear-gradient(140deg,#d9dacc,#959d8d);box-shadow:inset 0 1px 1px #ffffff90,0 1px 1px #505a474d}
+.lg-monitor-foot{position:absolute;z-index:-2;left:35%;right:35%;top:calc(100% + 29px);height:9px;border:1px solid var(--monitor-edge);border-radius:0 0 6px 6px;background:linear-gradient(var(--monitor-edge),var(--monitor-shell));box-shadow:0 5px 7px #00000018;pointer-events:none}
+.lg-monitor-startup{position:absolute;z-index:7;inset:1px;overflow:hidden;border-radius:12px;pointer-events:none;opacity:0;background:linear-gradient(180deg,transparent 38%,#d4ecd929 49%,#f0fff54d 50%,#d4ecd91a 51%,transparent 63%);transform-origin:center;mix-blend-mode:soft-light}
+.lg-monitor[data-active='true'] .lg-monitor-startup{animation:lg-monitor-screen-on 700ms cubic-bezier(.22,1,.36,1) both}
+.learning-gallery-section:not([data-in-view]) .lg-monitor-startup{animation-play-state:paused}
+.lg-card:has(>.lg-monitor)>.lg-card-caption{margin-top:48px}
+.lg-card.lg-intro{height:550px;min-height:0;padding:0}
+.lg-overview-screen{padding:24px 25px;background:radial-gradient(ellipse at 0 0,color-mix(in srgb,var(--accent) 5%,transparent),transparent 60%),var(--bg-soft)!important;color:var(--text)!important;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+.lg-overview-screen .lg-intro-identity{margin-bottom:20px}
+.lg-overview-screen .lg-intro-description{font-size:18px;line-height:1.65;margin-bottom:18px}
+.lg-overview-screen .lg-intro-identity>img{width:65px;height:78px}
+.lg-overview-screen .lg-directory{font-size:12px}
+.lg-overview-screen .lg-folder-detail{font-size:8px}
+html[data-theme='light'] .lg-monitor{--monitor-shell:#d9d8cb;--monitor-edge:#9ba18f}
+html[data-theme='light'] .lg-monitor-casing{box-shadow:inset 1px 2px 1px #ffffffbd,inset -2px -3px 2px #5d66543b,0 8px 0 -2px var(--monitor-edge),0 22px 36px #34452c21}
+@keyframes lg-monitor-screen-on{0%{opacity:0;transform:scaleY(.03)}15%{opacity:.7;transform:scaleY(.05)}60%{opacity:.35;transform:scaleY(1)}100%{opacity:0;transform:scaleY(1)}}
+@media(max-width:600px){
+ .lg-monitor-casing{inset:-10px -10px -24px;border-radius:21px 21px 17px 17px;box-shadow:inset 1px 1px 1px #ffffff8c,inset -2px -2px 2px #454b413d,0 6px 0 -1px var(--monitor-edge),0 16px 24px #00000020}
+ .lg-monitor-casing::before{inset:5px 5px 19px;border-radius:17px;border-width:5px}
+ .lg-monitor-vents{left:17px;bottom:10px;width:34px;height:4px}.lg-monitor-name{bottom:8px;font-size:5px}.lg-monitor-power{right:20px;bottom:10px;width:4px;height:4px}.lg-monitor-button{right:33px;bottom:7px}
+ .lg-monitor-foot{top:calc(100% + 24px);height:7px}
+ .lg-card:has(>.lg-monitor)>.lg-card-caption{margin-top:37px}
+ .lg-card.lg-intro{height:430px}
+ .lg-overview-screen{padding:19px 18px}
+ .lg-overview-screen .lg-intro-identity{gap:11px;margin-bottom:17px}.lg-overview-screen .lg-intro-identity>img{width:47px;height:58px}.lg-overview-screen .lg-intro-identity h3{font-size:21px}.lg-overview-screen .lg-intro-identity p{font-size:8px}
+ .lg-overview-screen .lg-intro-description{font-size:15px;line-height:1.65;margin-bottom:17px}.lg-overview-screen .lg-directory{font-size:9px}.lg-overview-screen .lg-directory-row{min-height:23px}
+}
+@media(prefers-reduced-motion:reduce){.lg-monitor,.lg-monitor-power{transition:none}.lg-monitor[data-active='true'] .lg-monitor-startup{animation:none}}
+.learning-gallery-section[data-entrance='booting'] .lg-monitor-startup{animation-play-state:paused}
+
+/* The monitor is stationary: hover feedback is confined to its displayed content. */
+.learning-gallery-section .lg-monitor{transform:none!important;transition:none!important}
+.learning-gallery-section .lg-monitor .lg-card-body{transform:none!important;box-shadow:inset 0 1px 2px #ffffffa8,0 0 0 1px #0a110f30}
+.lg-monitor-glass{position:absolute;inset:1px;z-index:6;pointer-events:none;border-radius:12px;overflow:hidden;background:linear-gradient(125deg,#ffffff0b,transparent 32%,transparent 75%,#ffffff09);box-shadow:inset 0 0 15px #213c2a0a,inset 0 1px 0 #ffffff2e}
+.lg-monitor-glass::before{content:'';position:absolute;inset:0;border-radius:inherit;opacity:.035;background:repeating-linear-gradient(0deg,transparent 0 3px,#15241b 3px 4px);pointer-events:none}
+.lg-monitor .lg-degree-topics>span,.lg-monitor .lg-skill-content li,.lg-monitor .lg-directory-row>button,.lg-monitor .lg-intro-description>span{transform:none!important}
+.lg-monitor .lg-tag-label,.lg-monitor .lg-skill-label{display:inline-block;transition:transform 180ms cubic-bezier(.23,1,.32,1),color 180ms ease}
+.lg-monitor .lg-degree-content h3,.lg-monitor .lg-skill-content h3,.lg-monitor .lg-credential-content h3{transition:text-shadow 200ms ease}
+.lg-monitor .lg-certificate-image{transform:none!important;overflow:hidden}
+.lg-monitor .lg-certificate-image::before{content:'';position:absolute;z-index:2;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 38%,#ffffff2e 49%,transparent 60%);transform:translateX(-120%);opacity:0}
+@media(hover:hover) and (pointer:fine){
+ .lg-monitor .lg-degree-topics>span:hover .lg-tag-label,.lg-monitor .lg-skill-content li:hover .lg-skill-label{transform:translateY(-1px);color:#334f38}
+ .lg-monitor .lg-degree-content h3:hover,.lg-monitor .lg-skill-content h3:hover,.lg-monitor .lg-credential-content h3:hover{text-shadow:0 0 12px #86ac6a20}
+ .lg-monitor .lg-directory-row>button:hover{background:color-mix(in srgb,var(--accent) 6%,transparent);border-radius:3px}
+ .lg-monitor .lg-certificate-trigger:hover .lg-certificate-image::before{animation:lg-crt-glass-sweep 650ms cubic-bezier(.23,1,.32,1) both}
+}
+/* A single subdued signal acquisition, never a full-screen flashing effect. */
+.lg-monitor-startup{background:linear-gradient(180deg,transparent 15%,#80b7a330 15% 15.6%,transparent 15.6% 38%,#c2b0ce28 38% 38.5%,transparent 38.5% 76%,#9fba8c30 76% 76.5%,transparent 76.5%);mix-blend-mode:normal}
+.lg-monitor[data-active='true'] .lg-monitor-startup{animation:lg-crt-signal-lock 540ms steps(1,end) both}
+.lg-monitor-sync{position:absolute;right:13px;bottom:12px;padding:5px 7px;border:1px solid #6e89794d;border-radius:3px;background:#edf2e9e8;color:#405a48;font:500 7px/1.4 'DM Mono',monospace;letter-spacing:.08em;box-shadow:0 2px 8px #223d2910}
+.lg-monitor-sync i{display:block;height:1px;margin-top:4px;background:#79996d;transform-origin:left;animation:lg-crt-sync-progress 500ms linear both}
+.lg-monitor:not([data-active='true']) .lg-monitor-sync i{animation:none}
+.lg-slider-well input{touch-action:none;cursor:ew-resize}
+.lg-slider-stops button{transition:color 160ms ease,background-color 160ms ease,box-shadow 160ms ease;transform:none!important}
+.lg-slider-stops button[aria-current='true']{color:var(--text);background:color-mix(in srgb,var(--accent) 9%,var(--surface));border-radius:8px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 20%,transparent);text-shadow:none}
+@keyframes lg-crt-signal-lock{0%{opacity:0;transform:translateX(0)}8%{opacity:.55;transform:translateX(-1px)}19%{opacity:.3;transform:translateX(1px)}31%{opacity:.48;transform:translateX(0)}48%{opacity:.24;transform:translateX(0)}78%{opacity:.15;transform:translateX(0)}100%{opacity:0;transform:translateX(0)}}
+@keyframes lg-crt-sync-progress{from{transform:scaleX(.03)}to{transform:scaleX(1)}}
+@keyframes lg-crt-glass-sweep{0%{opacity:0;transform:translateX(-120%)}25%{opacity:1}100%{opacity:0;transform:translateX(120%)}}
+@media(prefers-reduced-motion:reduce){.lg-monitor[data-active='true'] .lg-monitor-startup,.lg-monitor-sync i,.lg-monitor .lg-certificate-trigger:hover .lg-certificate-image::before{animation:none}.lg-monitor .lg-tag-label,.lg-monitor .lg-skill-label{transform:none!important;transition:none}}
+/* Folder details float over the display instead of pushing other hover targets. */
+.lg-overview-screen .lg-folder-detail{position:absolute;z-index:8;left:20px;top:calc(100% - 2px);max-width:calc(100% - 25px);padding:5px 7px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--text);box-shadow:0 4px 12px #00000012;white-space:normal;pointer-events:none}
+.learning-gallery-section[data-entrance='booting'] .lg-monitor[data-active='true'] .lg-monitor-startup,
+.learning-gallery-section:not([data-in-view]) .lg-monitor[data-active='true'] .lg-monitor-startup,
+.learning-gallery-section[data-entrance='booting'] .lg-monitor-sync i,
+.learning-gallery-section:not([data-in-view]) .lg-monitor-sync i{animation-play-state:paused}
+
+/* Physical power switches keep a generous invisible touch target. */
+.lg-monitor>.lg-monitor-button{z-index:12;right:28px;bottom:-20px;padding:0;cursor:pointer;pointer-events:auto}
+.lg-monitor>.lg-monitor-button::before{content:'';position:absolute;inset:-17px;border-radius:50%}
+.lg-monitor>.lg-monitor-button:focus-visible{outline:2px solid var(--accent);outline-offset:8px}
+.lg-monitor>.lg-monitor-button:disabled{cursor:default;pointer-events:none}
+.lg-monitor[data-mode='screensaver'] .lg-monitor-power,.lg-monitor[data-mode='powering-off'] .lg-monitor-power{background:#d0a56b;box-shadow:0 0 5px #d0a56b33;opacity:.8}
+.lg-monitor-content{position:relative;width:100%;height:100%;border-radius:12px;opacity:1;clip-path:inset(0 round 12px);transition:clip-path 260ms cubic-bezier(.77,0,.175,1),opacity 220ms ease}
+.lg-monitor[data-mode='powering-off'] .lg-monitor-content,.lg-monitor[data-mode='screensaver'] .lg-monitor-content{clip-path:inset(49.7% 0 49.7% 0 round 12px);opacity:0}
+.lg-monitor[data-mode='screensaver'] .lg-monitor-content{visibility:hidden}
+.lg-monitor[data-mode='powering-on'] .lg-monitor-content{transition-duration:400ms}
+.lg-monitor-standby{position:absolute;inset:0;z-index:2;border-radius:12px;pointer-events:none;background:#090d0d;opacity:0;transition:opacity 240ms ease}
+.lg-monitor[data-mode='powering-off'] .lg-monitor-standby,.lg-monitor[data-mode='screensaver'] .lg-monitor-standby{opacity:1}
+.lg-screen-saver{position:absolute;inset:0;z-index:3;overflow:hidden;border-radius:12px;background:radial-gradient(ellipse at 50% 45%,#17201d50,transparent 75%),#090d0d;animation:lg-saver-on 180ms ease both;pointer-events:none}
+.lg-saver-logo{position:absolute;left:0;top:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:110px;height:90px;padding:7px;box-sizing:border-box;will-change:transform}
+.lg-saver-brand{display:block;width:83px;height:54px;background:currentColor;mask-repeat:no-repeat;mask-position:center;mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center;-webkit-mask-size:contain}
+.lg-saver-logo svg{display:block;width:76px;height:54px;overflow:visible}
+.lg-saver-logo>span:last-child{font:500 6px/1.4 'DM Mono',monospace;letter-spacing:.08em;text-align:center;text-transform:uppercase}
+.lg-saver-monogram{font:700 42px/1 Syne,Manrope,sans-serif;letter-spacing:-.08em}
+.lg-monitor[data-mode='screensaver'] .lg-monitor-startup,.lg-monitor[data-mode='powering-off'] .lg-monitor-startup{display:none}
+.lg-monitor[data-mode='powering-off'] .lg-monitor-glass::after{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:#deefdf;animation:lg-crt-last-line 270ms ease both}
+@keyframes lg-crt-last-line{0%{opacity:0;transform:scaleX(1)}35%{opacity:.75;transform:scaleX(1)}100%{opacity:0;transform:scaleX(.05)}}
+@keyframes lg-saver-on{from{opacity:0}to{opacity:1}}
+@media(max-width:600px){.lg-monitor>.lg-monitor-button{right:23px;bottom:-17px}.lg-saver-logo{width:94px;height:78px}.lg-saver-brand{width:70px;height:45px}.lg-saver-logo svg{width:66px;height:44px}.lg-saver-logo>span:last-child{font-size:5px}.lg-saver-monogram{font-size:35px}}
+@media(prefers-reduced-motion:reduce){.lg-monitor-content,.lg-monitor-standby{transition:none}.lg-screen-saver,.lg-monitor[data-mode='powering-off'] .lg-monitor-glass::after{animation:none}.lg-saver-logo{will-change:auto}}

@@ -1,0 +1,15 @@
+.section-heading > .section-label,
+.contact-copy > .section-label {
+ display:inline-flex;align-items:center;gap:12px;justify-self:start;
+ font:600 10px/1.7 Manrope,system-ui,sans-serif;
+ letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+}
+.section-heading > .section-label::before,
+.contact-copy > .section-label::before {
+ content:'';display:block;flex:0 0 24px;height:1px;
+ background:linear-gradient(90deg,currentColor,transparent);opacity:.8;
+}
+.contact-copy > .section-label { color:var(--accent-ink); }
+@media(max-width:600px) {
+ .section-heading > .section-label,.contact-copy > .section-label { font-size:10px;gap:10px;letter-spacing:.16em; }
+}

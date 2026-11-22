@@ -1,0 +1,136 @@
+/* One personal social book, with a different physical surface for each platform. */
+.bcv-cover-art.cover-social:not(.is-back-cover){background:color-mix(in srgb,var(--bg) 83%,#b2a5be);color:var(--text)}
+.bcv-cover-art.cover-social:not(.is-back-cover) .bcv-cover-grain{opacity:.1}
+.bcv-social-jacket{position:absolute;inset:0;overflow:hidden;background:linear-gradient(145deg,#c2aac918,transparent 60%,#96aba615)}
+.bcv-social-cover-scene{position:absolute;inset:12% 7% 25%;perspective:900px}
+.bcv-social-cover-photo{position:absolute;inset:12% 14% 8%;padding:5% 5% 14%;border:1px solid #ffffff70;border-radius:5px;background:linear-gradient(130deg,#ede8df,#c9c7d3);box-shadow:3px 5px 0 #8c84944d,8px 14px 25px #15101c42;transform:rotate(-7deg) rotateY(-8deg);animation:bcv-social-photo-drift 8s ease-in-out infinite alternate;animation-play-state:paused}
+.bcv-social-cover-photo img{display:block;width:100%;height:100%;object-fit:cover;border:1px solid #4c455249;border-radius:2px}
+.bcv-social-cover-photo>i{position:absolute;inset:0;background:linear-gradient(125deg,#ffffff20,transparent 35% 75%,#ffffff0a);pointer-events:none}
+.bcv-social-cover-badge{position:absolute;display:grid;place-items:center;width:24%;aspect-ratio:1;border:1px solid #ffffff77;border-radius:23%;color:color-mix(in srgb,var(--social-accent) 45%,var(--text));background:linear-gradient(135deg,color-mix(in srgb,var(--bg) 65%,var(--social-accent)),color-mix(in srgb,var(--bg) 85%,var(--social-accent)));box-shadow:1px 3px 0 #78818c66,3px 8px 12px #14122340,inset 0 1px 0 #ffffff66;transform:perspective(500px) rotateY(-10deg) rotateZ(-5deg);animation:bcv-social-badge-drift 7s ease-in-out infinite alternate;animation-play-state:paused}
+.bcv-social-cover-badge svg{width:53%;height:53%}
+.bcv-social-cover-badge.badge-instagram{left:0;top:0}.bcv-social-cover-badge.badge-youtube{right:0;top:23%;animation-delay:-2s}.bcv-social-cover-badge.badge-x{left:0;bottom:0;animation-delay:-4s}.bcv-social-cover-badge.badge-snapchat{right:3%;bottom:-6%;animation-delay:-6s}
+.bcv-social-jacket svg,.bcv-social-artwork svg,.bcv-social-preview svg{stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.bcv-social-cover-quote{position:absolute;bottom:5%;left:7%;right:7%;margin:0;text-align:center;font:500 clamp(18px,7.5cqw,29px)/1.08 Newsreader,Georgia,serif;letter-spacing:-.025em;color:var(--text)}
+.bcv-social-cover-quote em{font-style:italic;color:var(--muted)}
+.bcv-social-jacket[data-running] .bcv-social-cover-photo,.bcv-social-jacket[data-running] .bcv-social-cover-badge{animation-play-state:running}
+.bcv-paper-page.bcv-social-page{display:flex;flex-direction:column;padding:10% 9% 6%;background:linear-gradient(100deg,#ede6dc,#fbf5ed);color:#3e3544;--social-ink:#3e3544}
+.bcv-social-page-heading{flex:none;margin-bottom:7%}
+.bcv-social-page-heading .bcv-page-eyebrow{font-size:clamp(5px,1.5cqw,8px);color:#85738a;letter-spacing:.08em}
+.bcv-social-page .bcv-social-page-heading h3{font:500 clamp(23px,8cqw,36px)/1 Newsreader,Georgia,serif;letter-spacing:-.03em;margin:8px 0;color:#3e3544}
+.bcv-social-page-heading p{font:400 clamp(9px,2.8cqw,12px)/1.5 Manrope,sans-serif;color:#7e6c81;margin:0}
+.bcv-social-profile-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;position:relative;flex:1;min-height:44px;min-width:0;border:0;background:none;color:var(--social-ink);padding:0;cursor:pointer;container-type:size;touch-action:manipulation}
+.bcv-social-artwork{position:relative;display:block;box-sizing:border-box;width:min(88cqw,calc((100cqh - 38px)*.8));height:calc(min(88cqw,calc((100cqh - 38px)*.8))*1.25);border:1px solid #a299ad;border-radius:10px;background:linear-gradient(140deg,#e8e0ec,#c8bacd);box-shadow:2px 4px 0 #c1b6c7,5px 10px 17px #40324b2d;transform:perspective(600px) rotateY(-7deg) rotateZ(-3deg);animation:bcv-social-badge-drift 8s ease-in-out infinite alternate;animation-play-state:paused;pointer-events:none;overflow:hidden}
+.bcv-social-artwork>img{width:100%;height:100%;object-fit:cover;display:block}
+.bcv-social-platform-mark{position:absolute;right:10%;bottom:8%;width:24%;aspect-ratio:1;border-radius:25%;display:grid;place-items:center;background:color-mix(in srgb,var(--social-accent) 22%,#faf7ef);color:#55455b;border:1px solid #fff9;box-shadow:0 3px 8px #20172d40}
+.bcv-social-platform-mark svg{width:58%;height:58%}
+.bcv-social-artwork>i{position:absolute;inset:0;background:linear-gradient(130deg,#ffffff22,transparent 35% 70%,#ffffff06);pointer-events:none}
+.social-art-instagram{padding:6% 6% 17%;border-radius:6px;background:#f9f6ed}
+.social-art-instagram>.bcv-social-platform-mark{right:9%;bottom:4%;width:15%;background:none;border:0;box-shadow:none;color:#a36f9a}
+.social-art-youtube{width:min(98cqw,calc((100cqh - 38px)*1.35));height:calc(min(98cqw,calc((100cqh - 38px)*1.35))*.74);padding:5%;border-radius:9px;background:linear-gradient(135deg,#b9b3b8,#6b646f)}
+.social-art-youtube>img{object-fit:contain;background:#17151c;border-radius:4px}
+.social-art-youtube>.bcv-social-platform-mark{left:calc(50% - 16%);top:calc(50% - 20%);width:32%;height:40%;bottom:auto;right:auto;background:#a7585be6;color:#fff3e9;border-radius:22%}
+.social-art-x{padding:9%;background:linear-gradient(135deg,#e2e7e5,#cacfd6);transform:perspective(600px) rotateY(7deg) rotateZ(3deg)}
+.social-art-x>img{width:31%;height:auto;aspect-ratio:1;border-radius:50%;object-fit:cover;border:2px solid #f8f6ec}
+.bcv-social-thought{display:block;margin-top:14%;font:500 clamp(12px,4cqw,23px)/1.1 Newsreader,Georgia,serif;letter-spacing:-.025em;color:#34414d}
+.bcv-social-thought em{font-style:italic;color:#72808a}
+.social-art-x>.bcv-social-platform-mark{right:8%;top:8%;bottom:auto;background:none;border:0;box-shadow:none;width:17%;color:#34414d}
+.social-art-snapchat{display:grid;place-items:center;padding:12%;background:linear-gradient(145deg,#eee6bd,#c4b989);border-radius:18px;transform:perspective(600px) rotateY(7deg) rotateZ(4deg)}
+.social-art-snapchat>img{width:92%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:50%;border:5px solid #f8f3d7;box-shadow:0 5px 14px #5f51323b}
+.social-art-snapchat>.bcv-social-platform-mark{bottom:7%;right:7%;background:#eee5b8;color:#4c462b}
+.bcv-social-profile-handle{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:100%;font:600 clamp(10px,3.3cqw,15px)/1.3 Manrope,sans-serif;color:#52435b;pointer-events:none}
+.bcv-social-profile-handle i{font-style:normal;color:#9b819e}
+.bcv-social-page-note{flex:none;margin:7% 0 0;font:500 clamp(12px,4cqw,18px)/1.2 Caveat,'Segoe Print',cursive;color:#7b647f}
+.bcv-social-page-footer{display:flex;justify-content:space-between;gap:6px;flex:none;padding-top:7%;font:500 clamp(5px,1.4cqw,7px)/1.5 'DM Mono',monospace;color:#948197}
+.bcv-social-profile-tile:focus-visible{outline:2px solid #9a7aa1;outline-offset:5px;border-radius:7px}
+.bcv-social-page[data-running] .bcv-social-artwork{animation-play-state:running}
+.bcv-social-preview{box-sizing:border-box;position:fixed;inset:auto;margin:0;width:min(304px,calc(100vw - 24px));max-width:none;max-height:calc(100dvh - 24px);padding:0;overflow-x:hidden;overflow-y:auto;scrollbar-width:none;background:color-mix(in srgb,var(--bg) 92%,#af9cb8);color:var(--text);border:1px solid color-mix(in srgb,var(--text) 20%,transparent);border-radius:17px;box-shadow:0 20px 45px #19112750,inset 0 1px 0 #ffffff33;animation:bcv-social-preview-in 280ms cubic-bezier(.22,1,.36,1) both}
+.bcv-social-preview::-webkit-scrollbar{display:none}.bcv-social-preview::backdrop{background:#0c091316;backdrop-filter:none}
+.bcv-social-preview-card{position:relative;padding:0 18px 18px}
+.bcv-social-preview-banner{height:72px;margin:0 -18px;display:flex;align-items:center;gap:8px;padding:0 48px 0 18px;background:linear-gradient(120deg,color-mix(in srgb,var(--social-accent) 23%,transparent),color-mix(in srgb,var(--social-accent) 5%,transparent));border-bottom:1px solid color-mix(in srgb,var(--text) 10%,transparent);color:var(--muted);font:500 7px/1.3 'DM Mono',monospace;letter-spacing:.12em}
+.bcv-social-preview-banner>svg{width:18px;height:18px;color:var(--social-accent)}
+.bcv-social-preview-close{position:absolute;right:3px;top:4px;width:44px;height:44px;border:0;border-radius:10px;color:var(--text);background:none;font:400 22px/1 Manrope,sans-serif;cursor:pointer}
+.bcv-social-preview-identity{position:relative;width:65px;height:65px;margin-top:-21px}
+.bcv-social-preview-identity>img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%;border:4px solid var(--bg);box-shadow:0 3px 8px #0002}
+.bcv-social-preview-identity>span{position:absolute;right:-3px;bottom:0;width:24px;height:24px;padding:4px;box-sizing:border-box;border:1px solid #ffffff60;border-radius:7px;background:color-mix(in srgb,var(--bg) 70%,var(--social-accent));color:var(--text)}
+.bcv-social-preview-identity svg{display:block;width:100%;height:100%}
+.bcv-social-preview-copy{padding:12px 0 16px;min-width:0}
+.bcv-social-preview-platform{font:500 8px/1.5 'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.bcv-social-preview-copy h3{font:500 25px/1.1 Newsreader,Georgia,serif;letter-spacing:-.02em;margin:6px 0 10px;overflow-wrap:anywhere;color:var(--text)}
+.bcv-social-preview-copy p{font:400 11px/1.6 Manrope,sans-serif;color:var(--muted);margin:0}
+.bcv-social-visit{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;box-sizing:border-box;padding:11px 13px;border:1px solid color-mix(in srgb,var(--text) 18%,transparent);border-radius:8px;color:var(--text);background:color-mix(in srgb,var(--social-accent) 13%,transparent);text-decoration:none;font:600 11px/1.5 Manrope,sans-serif;transition:background-color 180ms ease,translate 180ms ease}
+.bcv-social-preview-close:focus-visible,.bcv-social-visit:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.bcv-social-preview.is-closing{animation:bcv-social-preview-out 180ms ease-out both}
+@keyframes bcv-social-photo-drift{from{translate:0 1px}to{translate:0 -3px}}
+@keyframes bcv-social-badge-drift{from{translate:0 -1px}to{translate:0 2px}}
+@keyframes bcv-social-preview-in{from{opacity:0;transform:scale(.97) translateY(3px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes bcv-social-preview-out{to{opacity:0;transform:scale(.98)}}
+@media(hover:hover) and (pointer:fine){.bcv-social-visit:hover{background:color-mix(in srgb,var(--social-accent) 22%,transparent);translate:0 -1px}}
+@media(max-width:600px){.bcv-paper-page.bcv-social-page{padding:10% 7% 6%}.bcv-social-page .bcv-social-page-heading h3{font-size:22px;margin:5px 0}.bcv-social-page-heading p{font-size:8px}.bcv-social-profile-tile{gap:8px}.bcv-social-profile-handle{font-size:10px;gap:6px}.bcv-social-page-note{font-size:12px}.bcv-social-page-footer{font-size:5px}.bcv-social-page-footer>span:last-child{display:none}}
+@media(max-height:520px){.bcv-social-page-heading,.bcv-social-page-note,.bcv-social-page-footer{display:none}.bcv-social-profile-tile{gap:5px}.bcv-social-profile-handle{font-size:7px}}
+@media(prefers-reduced-motion:reduce){.bcv-social-cover-photo,.bcv-social-cover-badge,.bcv-social-artwork,.bcv-social-preview,.bcv-social-preview.is-closing{animation:none!important}.bcv-social-visit{transition:none}}
+/* Keep the social artwork legible when the book is scaled down on phones. */
+.bcv-social-thought{font-size:clamp(10px,6cqw,23px);overflow-wrap:anywhere}
+.social-art-snapchat>img{position:absolute;left:50%;top:50%;width:78%;height:auto;aspect-ratio:1;transform:translate(-50%,-50%);border-width:4px}
+/* A living platform network replaces all portrait-based social artwork. */
+.bcv-social-cover-signals{position:absolute;inset:0;width:100%;height:100%;stroke:color-mix(in srgb,var(--text) 28%,var(--accent));stroke-width:1;opacity:.65}
+.bcv-social-cover-signals path{stroke-dasharray:5 13;animation:bcv-social-signal-flow 5s linear infinite;animation-play-state:paused}
+.bcv-social-cover-signals circle{stroke-dasharray:8 5;transform-origin:150px 165px;animation:bcv-social-hub-orbit 34s linear infinite;animation-play-state:paused}
+.bcv-social-cover-hub{position:absolute;left:32%;top:34%;width:37%;aspect-ratio:1;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--text) 30%,transparent);border-radius:29%;background:linear-gradient(135deg,color-mix(in srgb,var(--bg) 65%,#c8bbd7),color-mix(in srgb,var(--bg) 87%,#a6b5bc));box-shadow:2px 4px 0 #6f708d40,6px 12px 20px #15101d35,inset 0 1px 0 #ffffff70;transform:perspective(500px) rotateY(-9deg) rotateZ(-7deg);animation:bcv-social-hub-drift 8s ease-in-out infinite alternate;animation-play-state:paused;color:var(--text)}
+.bcv-social-cover-hub svg{width:58%;height:58%;stroke-width:1.3}
+.bcv-social-jacket .bcv-social-cover-badge{animation:bcv-social-cover-platform 9s ease-in-out infinite alternate;animation-play-state:paused;overflow:hidden}
+.bcv-social-cover-badge::after{content:'';position:absolute;inset:-25%;background:linear-gradient(120deg,transparent 35%,#ffffff35 50%,transparent 65%);transform:translateX(-110%);animation:bcv-social-glass-light 9s ease-in-out infinite;animation-play-state:paused}
+.bcv-social-jacket[data-running] .bcv-social-cover-hub,.bcv-social-jacket[data-running] .bcv-social-cover-badge,.bcv-social-jacket[data-running] .bcv-social-cover-badge::after,.bcv-social-jacket[data-running] .bcv-social-cover-signals path,.bcv-social-jacket[data-running] .bcv-social-cover-signals circle{animation-play-state:running}
+.bcv-social-profile-tile{gap:10px}
+.bcv-social-artwork{width:min(88cqw,calc((100cqh - 78px)*.8));height:calc(min(88cqw,calc((100cqh - 78px)*.8))*1.25)}
+.social-art-youtube{width:min(98cqw,calc((100cqh - 78px)*1.35));height:calc(min(98cqw,calc((100cqh - 78px)*1.35))*.74);background:linear-gradient(135deg,#c7b7c5,#7f6a7a)}
+.bcv-social-tile-description{display:block;max-width:95%;font:400 clamp(9px,3cqw,12px)/1.55 Manrope,sans-serif;color:#806c84;text-align:center;pointer-events:none}
+.social-art-instagram{padding:0;display:grid;place-items:center;background:linear-gradient(135deg,#eee4dc,#c7adc7 65%,#c09caa)}
+.bcv-social-camera-lens{position:absolute;left:17%;top:17%;width:66%;aspect-ratio:1;box-sizing:border-box;padding:12%;border-radius:50%;background:radial-gradient(circle,#161e30 0 24%,#65727e 26% 28%,#202733 30% 40%,#9a8ca5 42% 45%,#c4bfcb 47% 49%,#4a414f 51% 60%,#a79aac 62% 66%,#d7cdda 68%);box-shadow:1px 3px 0 #928b9b,3px 7px 10px #44334b44,inset 0 2px 1px #ffffffa6}
+.bcv-social-camera-lens svg{width:100%;height:100%;stroke:#b5b3cf;stroke-width:1.5;animation:bcv-social-aperture 9s ease-in-out infinite;animation-play-state:paused}
+.bcv-social-camera-reflection{position:absolute;inset:0;background:linear-gradient(130deg,transparent 30%,#fff3 46%,transparent 61%);transform:translateX(-110%);animation:bcv-social-glass-light 8s ease-in-out infinite;animation-play-state:paused}
+.bcv-social-video-screen{position:absolute;inset:8% 7% 31%;border:1px solid #b9b5c155;border-radius:4px;display:flex;align-items:center;background:linear-gradient(125deg,#332638,#151721);box-shadow:inset 0 1px 3px #0006}
+.bcv-social-video-screen svg{width:90%;height:auto;margin:0 auto;stroke:#bf9aba;stroke-width:1;opacity:.65;stroke-dasharray:180;animation:bcv-social-wave-draw 6s ease-in-out infinite;animation-play-state:paused}
+.social-art-youtube>.bcv-social-platform-mark{width:26%;height:31%;left:37%;top:22%}
+.bcv-social-video-timeline{position:absolute;left:8%;right:8%;bottom:9%;height:16%;display:flex;flex-direction:column;gap:3px;border-left:1px solid #ebe3ee6b}
+.bcv-social-video-timeline i{height:22%;width:76%;border-radius:2px;background:#dcb7ca77}.bcv-social-video-timeline i:nth-child(2){width:52%;margin-left:20%;background:#bbcad484}.bcv-social-video-timeline i:nth-child(3){width:86%;background:#e5d7b06b}
+.bcv-social-video-timeline b{position:absolute;left:0;top:-10%;bottom:-10%;width:1px;background:#f9ede7;box-shadow:0 0 2px #fff7;animation:bcv-social-edit-cursor 6s ease-in-out infinite;animation-play-state:paused}
+.social-art-x{display:flex;align-items:center;padding:12% 8%;background:linear-gradient(135deg,#e3e7e5,#c7d2da)}
+.bcv-social-thought{display:block;width:100%;margin:0;font:500 clamp(10px,6cqw,24px)/1.18 Newsreader,Georgia,serif;letter-spacing:-.025em;overflow-wrap:anywhere}
+.bcv-social-thought>span,.bcv-social-thought>em{display:block;animation:bcv-social-word-breathe 7s ease-in-out infinite;animation-play-state:paused}
+.bcv-social-thought>span:nth-child(2){animation-delay:-2s}.bcv-social-thought>em{animation-delay:-4s}
+.bcv-social-thought>i{display:block;width:65%;height:1px;background:#7b8c9e80;margin-top:10%;transform-origin:left;animation:bcv-social-thought-line 7s ease-in-out infinite;animation-play-state:paused}
+.social-art-snapchat{display:grid;place-items:center;padding:0;background:linear-gradient(145deg,#f2e7ba,#cabe88)}
+.bcv-social-snap-ghost{display:block;width:62%;height:62%;color:#635b3c;animation:bcv-social-ghost-peek 6s ease-in-out infinite;animation-play-state:paused}
+.bcv-social-snap-ghost svg{width:100%;height:100%;stroke-width:1;fill:#fff4d533;filter:none}
+.social-art-snapchat>.bcv-social-platform-mark{display:none}
+.bcv-social-snap-bubble{position:absolute;width:17%;height:12%;border:1px solid #8a784e77;border-radius:5px;background:#fff6ce55;animation:bcv-social-message-drift 7s ease-in-out infinite;animation-play-state:paused}
+.bcv-social-snap-bubble::after{content:'';position:absolute;left:3px;bottom:-4px;width:5px;height:5px;border-left:1px solid #8a784e77;transform:skewY(-35deg)}
+.bubble-one{left:9%;top:13%}.bubble-two{right:8%;bottom:12%;animation-delay:-3.5s}
+.bcv-social-page[data-running] .bcv-social-camera-lens svg,.bcv-social-page[data-running] .bcv-social-camera-reflection,.bcv-social-page[data-running] .bcv-social-video-screen svg,.bcv-social-page[data-running] .bcv-social-video-timeline b,.bcv-social-page[data-running] .bcv-social-thought>span,.bcv-social-page[data-running] .bcv-social-thought>em,.bcv-social-page[data-running] .bcv-social-thought>i,.bcv-social-page[data-running] .bcv-social-snap-ghost,.bcv-social-page[data-running] .bcv-social-snap-bubble{animation-play-state:running}
+.bcv-social-preview-identity{display:grid;place-items:center;border:4px solid var(--bg);border-radius:50%;background:linear-gradient(135deg,color-mix(in srgb,var(--social-accent) 45%,var(--bg)),var(--bg));box-shadow:0 3px 8px #0002;box-sizing:border-box;color:var(--text)}
+.bcv-social-preview-identity>svg{width:55%;height:55%;stroke-width:1.4}
+.bcv-social-preview-identity>span{display:grid;place-items:center;font:500 12px/1 Manrope,sans-serif}
+@keyframes bcv-social-cover-platform{from{transform:perspective(500px) rotateY(-10deg) rotateZ(-5deg);translate:0 -2px}to{transform:perspective(500px) rotateY(6deg) rotateZ(3deg);translate:0 2px}}
+@keyframes bcv-social-hub-drift{from{translate:0 1px}to{translate:0 -3px}}
+@keyframes bcv-social-signal-flow{to{stroke-dashoffset:-72}}
+@keyframes bcv-social-hub-orbit{to{transform:rotate(360deg)}}
+@keyframes bcv-social-glass-light{0%,65%{transform:translateX(-110%)}90%,100%{transform:translateX(110%)}}
+@keyframes bcv-social-aperture{0%,40%,100%{transform:rotate(0) scale(1)}60%,75%{transform:rotate(30deg) scale(.88)}}
+@keyframes bcv-social-wave-draw{0%,100%{stroke-dashoffset:0;opacity:.65}50%{stroke-dashoffset:24;opacity:.9}}
+@keyframes bcv-social-edit-cursor{0%,15%{transform:translateX(0)}85%,100%{transform:translateX(80%)}}
+@keyframes bcv-social-word-breathe{0%,100%{opacity:.55;translate:0 2px}45%,65%{opacity:1;translate:0 0}}
+@keyframes bcv-social-thought-line{0%,100%{transform:scaleX(.5)}50%{transform:scaleX(1)}}
+@keyframes bcv-social-ghost-peek{0%,100%{transform:translateY(2px) rotate(-3deg)}50%{transform:translateY(-2px) rotate(3deg)}}
+@keyframes bcv-social-message-drift{0%,100%{opacity:.3;translate:0 2px}50%{opacity:.8;translate:0 -2px}}
+@media(max-width:600px){.bcv-social-profile-tile{gap:7px}.bcv-social-tile-description{font-size:9px;line-height:1.45}.bcv-social-thought{font-size:clamp(10px,6cqw,16px)}}
+@media(max-height:520px){.bcv-social-tile-description{display:none}.bcv-social-artwork{width:min(88cqw,calc((100cqh - 20px)*.8));height:calc(min(88cqw,calc((100cqh - 20px)*.8))*1.25)}.social-art-youtube{width:min(98cqw,calc((100cqh - 20px)*1.35));height:calc(min(98cqw,calc((100cqh - 20px)*1.35))*.74)}}
+@media(prefers-reduced-motion:reduce){.bcv-social-jacket *,.bcv-social-jacket *::after,.bcv-social-artwork *{animation:none!important}.bcv-social-camera-reflection{opacity:0}}
+
+.bcv-social-video-timeline b{width:100%;background:none;box-shadow:none}
+.bcv-social-video-timeline b::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:#f9ede7;box-shadow:0 0 2px #fff7}
+
+/* The portrait belongs only to the small glass hub on the social cover. */
+.bcv-social-cover-hub.is-portrait{box-sizing:border-box;padding:clamp(3px,1.5cqw,6px);border-color:#ffffff70;background:linear-gradient(135deg,#ffffff66,#ffffff13 55%,#c4bfe43b);box-shadow:1px 2px 0 #b2acc04d,3px 5px 0 #5e5c744d,6px 12px 20px #15101d40,inset 0 1px 1px #ffffffb3;overflow:hidden}
+.bcv-social-cover-hub.is-portrait img{display:block;width:100%;height:100%;min-height:0;object-fit:cover;object-position:50% 35%;border-radius:22%;box-shadow:inset 0 0 0 1px #ffffff70}
+.bcv-social-cover-hub.is-portrait>i{position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(130deg,#ffffff2e,transparent 34% 68%,#ffffff0d);box-shadow:inset 0 0 0 1px #ffffff35}
+

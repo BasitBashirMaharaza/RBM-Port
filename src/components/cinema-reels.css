@@ -1,0 +1,56 @@
+/* Dimensional celluloid, photographic frames and machined reel spools. */
+.bcv-reel-spool{position:absolute;display:block;width:70px;height:70px;aspect-ratio:1;border-radius:50%;background:conic-gradient(from 35deg,#c4b9a1,#656663 18%,#e9e1d0 32%,#8b8b83 51%,#e3d6bf 70%,#75766f 88%,#c4b9a1);border:1px solid #d8d0bc;box-shadow:inset 0 0 0 3px #77756b,inset 0 0 0 4px #e6dfcf,2px 3px 0 #55554c,4px 7px 10px #1b182844}
+.bcv-reel-spool svg{display:block;width:100%;height:100%;fill:#242426;filter:none}
+.bcv-cover-art.cover-cinema:not(.is-back-cover){background:color-mix(in srgb,var(--bg) 84%,#ae9a7e);color:var(--text)}
+.bcv-cover-art.cover-cinema:not(.is-back-cover) .bcv-cover-grain{opacity:.1}
+.bcv-cinema-jacket{position:absolute;inset:0;isolation:isolate;background:linear-gradient(145deg,#dac7aa0e,transparent 45%,#aa927c12);overflow:hidden}
+.bcv-cinema-cover-reels{position:absolute;inset:7% 5% 22%;perspective:900px}
+.bcv-cover-spool-one{width:40%;height:auto;right:-1%;top:-1%;transform:rotate(-15deg)}
+.bcv-cover-spool-two{width:40%;height:auto;left:-3%;bottom:0;transform:rotate(24deg)}
+.bcv-cover-film-collection{position:absolute;inset:8% 1% 6%;display:grid;grid-template-rows:repeat(4,minmax(0,1fr));gap:8%;transform:rotate(-7deg)}
+.bcv-cover-film-strip{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:7px 5px;background:linear-gradient(125deg,#2c2b2b,#141519);border:1px solid #87807555;border-radius:2px;box-shadow:1px 3px 0 #171719,3px 7px 12px #05050c55;transform:perspective(500px) rotateY(-9deg);animation:bcv-film-strip-drift 8s ease-in-out infinite alternate;animation-play-state:paused}
+.bcv-cover-film-strip:nth-child(2){--strip-x:4%;transform:perspective(500px) rotateY(8deg) rotateZ(3deg);animation-delay:-2s}
+.bcv-cover-film-strip:nth-child(3){--strip-x:-2%;transform:perspective(500px) rotateY(-8deg) rotateZ(-2deg);animation-delay:-4s}
+.bcv-cover-film-strip:nth-child(4){--strip-x:3%;transform:perspective(500px) rotateY(8deg);animation-delay:-6s}
+.bcv-cover-film-strip::before,.bcv-cover-film-strip::after{content:'';position:absolute;left:5px;right:5px;height:3px;background:repeating-linear-gradient(90deg,#c6c0af99 0 5px,transparent 5px 11px);border-radius:1px;pointer-events:none}
+.bcv-cover-film-strip::before{top:2px}.bcv-cover-film-strip::after{bottom:2px}
+.bcv-cover-film-strip>span{min-width:0;min-height:0;display:block;background:#111217;border:1px solid #55504c66;overflow:hidden}
+.bcv-cover-film-strip img{width:100%;height:100%;display:block;object-fit:contain}
+.bcv-cinema-cover-quote{position:absolute;left:8%;right:8%;bottom:5%;margin:0;text-align:center;font:500 clamp(18px,7.5cqw,29px)/1.07 Newsreader,Georgia,serif;letter-spacing:-.025em;color:var(--text)}
+.bcv-cinema-cover-quote em{font-style:italic;color:var(--muted)}
+.bcv-cinema-jacket[data-running] .bcv-cover-film-strip{animation-play-state:running}
+.bcv-film-reel-button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:44px;border:0;padding:0;background:none;cursor:pointer;container-type:size;color:#473b3d;touch-action:manipulation}
+.bcv-film-reel-visual{position:relative;display:block;width:min(90cqw,calc((100cqh - 26px)*.82));height:calc(min(90cqw,calc((100cqh - 26px)*.82))*1.22);flex:none;transform:perspective(600px) rotateY(-9deg) rotateZ(-4deg);transition:translate 240ms cubic-bezier(.22,1,.36,1);animation:bcv-film-reel-float 7s ease-in-out infinite alternate;animation-play-state:paused}
+.bcv-film-reel-button:nth-child(even) .bcv-film-reel-visual{transform:perspective(600px) rotateY(8deg) rotateZ(4deg);animation-delay:-3s}
+.bcv-film-reel-visual>.bcv-reel-spool{right:0;top:0;width:69%;height:auto;transform:rotate(18deg)}
+.bcv-film-reel-frame{position:absolute;left:0;bottom:0;width:79%;height:92%;padding:4px 6px;box-sizing:border-box;background:linear-gradient(120deg,#343031,#131419);border:1px solid #8e8478;border-radius:3px;box-shadow:1px 2px 0 #59534c,3px 5px 0 #37333466,5px 9px 12px #3023263d;overflow:hidden}
+.bcv-film-reel-frame::before,.bcv-film-reel-frame::after{content:'';position:absolute;top:5px;bottom:5px;width:3px;background:repeating-linear-gradient(0deg,#ded3becc 0 4px,transparent 4px 9px)}
+.bcv-film-reel-frame::before{left:1px}.bcv-film-reel-frame::after{right:1px}
+.bcv-film-reel-frame img{display:block;width:100%;height:100%;object-fit:contain;background:#111216;border:1px solid #ffffff18;transition:transform 240ms cubic-bezier(.22,1,.36,1)}
+.bcv-film-reel-frame>i{position:absolute;inset:0;background:linear-gradient(130deg,#ffffff22,transparent 30% 75%,#ffffff08);pointer-events:none}
+.bcv-film-reel-caption{display:flex;align-items:center;gap:4px;max-width:100%;font:600 clamp(8px,.9vw,12px)/1.25 Manrope,sans-serif;letter-spacing:-.015em}
+.bcv-film-reel-caption small{font:500 clamp(6px,.6vw,8px)/1 'DM Mono',monospace;color:#8d7970;flex:none}
+.bcv-film-reel-caption strong{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bcv-film-reel-button:focus-visible{outline:2px solid #927060;outline-offset:4px;border-radius:6px}
+.bcv-film-reel-button:disabled{cursor:default}
+.bcv-cinema-page[data-running] .bcv-film-reel-visual{animation-play-state:running}
+@keyframes bcv-film-reel-float{from{translate:0 -1px}to{translate:0 1px}}
+@keyframes bcv-film-strip-drift{from{translate:var(--strip-x,0) -1px}to{translate:var(--strip-x,0) 1px}}
+@media(hover:hover) and (pointer:fine){.bcv-film-reel-button:not(:disabled):hover .bcv-film-reel-frame img{transform:scale(1.025)}}
+@media(max-width:600px){.bcv-film-reel-button{gap:5px}.bcv-film-reel-caption{font-size:8px}.bcv-film-reel-caption small{font-size:6px}.bcv-film-reel-visual{width:min(93cqw,calc((100cqh - 19px)*.82));height:calc(min(93cqw,calc((100cqh - 19px)*.82))*1.22)}.bcv-film-reel-frame{padding:3px 5px}.bcv-film-reel-frame::before,.bcv-film-reel-frame::after{width:2px}}
+@media(prefers-reduced-motion:reduce){.bcv-film-reel-visual,.bcv-cover-film-strip{animation:none!important;transition:none}.bcv-film-reel-frame img{transition:none}}
+
+/* Mechanical reels wind gently while the photographs remain easy to read. */
+.bcv-reel-spool{animation:bcv-spool-wind 18s linear infinite;animation-play-state:paused}
+.bcv-cover-spool-two{animation-duration:23s;animation-direction:reverse}
+.bcv-cinema-jacket[data-running] .bcv-reel-spool,.bcv-cinema-page[data-running] .bcv-reel-spool{animation-play-state:running}
+.bcv-film-reel-button:nth-child(even) .bcv-reel-spool{animation-direction:reverse;animation-duration:22s}
+.bcv-film-reel-frame>i::after{content:'';position:absolute;inset:-25%;background:linear-gradient(110deg,transparent 30%,#ffffff3b 49%,transparent 66%);animation:bcv-film-projection-light 8s ease-in-out infinite;animation-play-state:paused;transform:translateX(-110%)}
+.bcv-cinema-page[data-running] .bcv-film-reel-frame>i::after{animation-play-state:running}
+.bcv-film-reel-button:nth-child(even) .bcv-film-reel-frame>i::after{animation-delay:-4s}
+@keyframes bcv-spool-wind{from{rotate:0deg}to{rotate:360deg}}
+@keyframes bcv-film-projection-light{0%,65%{transform:translateX(-110%)}85%,100%{transform:translateX(110%)}}
+@media(prefers-reduced-motion:reduce){.bcv-reel-spool,.bcv-film-reel-frame>i::after{animation:none!important}.bcv-film-reel-frame>i::after{opacity:0}}
+.bcv-cinema-preview[data-running] .bcv-reel-spool{animation-play-state:running}
+/* Reel artwork never steals a neighbour's tap during its movement. */
+.bcv-film-reel-visual,.bcv-film-reel-caption{pointer-events:none}

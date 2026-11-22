@@ -1,0 +1,14 @@
+/* Theme/layout integration only. Motion comes from the supplied ScrollFloat component. */
+.portfolio-scroll-float {
+ --scroll:0;--scroll-y:0px;
+ display:block;max-width:100%;
+ padding-block:.1em;margin: -.1em 0;
+}
+.portfolio-scroll-float .portfolio-scroll-float-text {
+ display:block;font:inherit;letter-spacing:inherit;
+ text-align:inherit;line-height:inherit;text-transform:inherit;
+}
+.portfolio-scroll-float-rich { display:contents; }
+@media(prefers-reduced-motion:reduce) {
+ .portfolio-scroll-float .scroll-float-char { opacity:1!important;transform:none!important;filter:none!important;will-change:auto!important; }
+}

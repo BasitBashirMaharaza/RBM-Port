@@ -15,7 +15,7 @@ export function createJournalSound() {
   }
   return {
     async play(kind) {
-      if (disposed || document.hidden) return;
+      if (disposed || document.hidden || kind === 'note' && !navigator.userActivation?.hasBeenActive) return;
       const generation = ++ticket;
       try {
         const Engine = window.AudioContext || window.webkitAudioContext;
@@ -26,10 +26,10 @@ export function createJournalSound() {
         stop();
         // Layered, irregular paper fibres with a soft binding contact.
         // No oscillators, chimes, repeated flutter loops, or sharp clicks.
-        const duration = kind === 'turn' ? .72 : kind === 'open' ? .86 : .76;
+        const duration = kind === 'note' ? .16 : kind === 'turn' ? .72 : kind === 'open' ? .86 : .76;
         const buffer = context.createBuffer(1, Math.ceil(context.sampleRate * duration), context.sampleRate);
         const samples = buffer.getChannelData(0);
-        const gestures = kind === 'turn' ? [[.22,.13,.55],[.47,.2,.9],[.73,.12,.3]]
+        const gestures = kind === 'note' ? [[.35,.2,.4],[.65,.16,.18]] : kind === 'turn' ? [[.22,.13,.55],[.47,.2,.9],[.73,.12,.3]]
           : kind === 'open' ? [[.15,.11,.5],[.4,.23,.7],[.7,.16,.3]]
           : [[.18,.16,.4],[.43,.2,.5],[.73,.09,.65]];
         let fibre = 0;
@@ -44,7 +44,7 @@ export function createJournalSound() {
           if (Math.random() < .0007) fleck += (Math.random() - .5) * .035;
           const friction = gestures.reduce((sum,[at,width,level]) => sum + level * Math.exp(-Math.pow((progress-at)/width,2)),0);
           const taper = Math.pow(Math.sin(Math.PI * progress),1.5);
-          const binding = kind === 'turn' ? 0 : Math.exp(-Math.pow((progress-(kind === 'close' ? .77 : .17))/.065,2));
+          const binding = kind === 'turn' || kind === 'note' ? 0 : Math.exp(-Math.pow((progress-(kind === 'close' ? .77 : .17))/.065,2));
           samples[i] = ((fibre-body)*friction*.65 + noise*friction*.025 + fleck + body*binding*1.4) * taper;
         }
         const source = context.createBufferSource();
@@ -57,8 +57,9 @@ export function createJournalSound() {
         filter.frequency.linearRampToValueAtTime(650, start + duration);
         const gain = context.createGain();
         gain.gain.setValueAtTime(0, start);
-        gain.gain.linearRampToValueAtTime(.075, start + .06);
-        gain.gain.setValueAtTime(.075, start + duration - .1);
+        const volume = kind === 'note' ? .028 : .075;
+        gain.gain.linearRampToValueAtTime(volume, start + Math.min(.06,duration*.2));
+        gain.gain.setValueAtTime(volume, start + duration - Math.min(.1,duration*.25));
         gain.gain.linearRampToValueAtTime(0, start + duration);
         source.connect(filter).connect(gain).connect(context.destination);
         active = { source, gain };

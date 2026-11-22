@@ -70,7 +70,7 @@ function RobotFace() {
   </span>;
 }
 
-export default function IntroPoster() {
+export default function IntroPoster({ navigationCollapsed=false, heroMode=false, character, onHeroClick, heroBubble, videoRequest=0, heroExpanded=false }) {
   const posterRef = useRef(null);
   const anchorRef = useRef(null);
   const playerRef = useRef(null);
@@ -78,7 +78,7 @@ export default function IntroPoster() {
   const closingRef = useRef(false);
   const timerRef = useRef(null);
   const [overlay, setOverlay] = useState(null);
-  const [bubble, setBubble] = useState('hi');
+  const [bubble, setBubble] = useState(heroMode ? '' : 'hi');
   const [reaction, setReaction] = useState('');
   const [peeking, setPeeking] = useState(false);
   const [idleAction, setIdleAction] = useState('');
@@ -87,6 +87,7 @@ export default function IntroPoster() {
   const [pageVisible, setPageVisible] = useState(!document.hidden);
 
   useEffect(() => {
+    if(heroMode)return undefined;
     const anchor = anchorRef.current;
     const header = anchor?.closest('.site-header');
     const toggle = header?.querySelector('.header-switch-dock .bb8-toggle');
@@ -105,6 +106,7 @@ export default function IntroPoster() {
   }, []);
 
   useEffect(() => {
+    if(heroMode)return undefined;
     let stopTimer;
     const onScroll = () => {
       setScrolling(true);
@@ -124,7 +126,7 @@ export default function IntroPoster() {
   }, [bubble, overlay]);
 
   useEffect(() => {
-    if (!peeking || shy || bubble || overlay || scrolling || !pageVisible || matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    if (heroMode || !peeking || shy || bubble || overlay || scrolling || !pageVisible || matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
     const actions = ['blink', 'wave', 'nod', 'hide', 'explore'];
     if (!idleAction) {
       const timer = window.setTimeout(() => setIdleAction(actions[Math.floor(Math.random() * actions.length)]), 2800 + Math.random() * 3600);
@@ -136,7 +138,7 @@ export default function IntroPoster() {
   }, [peeking, shy, bubble, overlay, scrolling, pageVisible, idleAction]);
 
   const noticeCursor = (event) => {
-    if (event.pointerType !== 'mouse' || bubble || overlay || scrolling) return;
+    if (heroMode || event.pointerType !== 'mouse' || bubble || overlay || scrolling) return;
     const center = posterRef.current.getBoundingClientRect().left + 22;
     const side = event.clientX < center ? 1 : -1;
     anchorRef.current.style.setProperty('--shy-tilt', `${side * 7}deg`);
@@ -147,6 +149,7 @@ export default function IntroPoster() {
   };
 
   useEffect(() => {
+    if(heroMode)return undefined;
     const greetingTimer = window.setTimeout(() => {
       setBubble((value) => value === 'hi' ? '' : value);
       setPeeking(true);
@@ -178,7 +181,7 @@ export default function IntroPoster() {
 
   const open = () => {
     if (overlay || closingRef.current) return;
-    const rect = posterRef.current?.querySelector('.intro-robot')?.getBoundingClientRect();
+    const rect = posterRef.current?.querySelector('.hero-robot-canvas, .intro-robot')?.getBoundingClientRect();
     if (!rect) return;
     const origin = { x: rect.left, y: rect.top, width: rect.width, height: rect.height };
     setOverlay({ origin, phase: 'start' });
@@ -190,12 +193,14 @@ export default function IntroPoster() {
     if (!overlay || closingRef.current) return;
     closingRef.current = true;
     playerRef.current?.pause();
-    const rect = posterRef.current?.querySelector('.intro-robot')?.getBoundingClientRect();
+    const rect = posterRef.current?.querySelector('.hero-robot-canvas, .intro-robot')?.getBoundingClientRect();
     const origin = rect ? { x: rect.left, y: rect.top, width: rect.width, height: rect.height } : overlay.origin;
     setOverlay((value) => value && { ...value, origin, phase: 'closing' });
     playPosterSound(true);
     timerRef.current = window.setTimeout(finishClose, matchMedia('(prefers-reduced-motion: reduce)').matches ? 120 : 850);
   };
+
+  useEffect(()=>{if(heroMode&&videoRequest>0)open();},[videoRequest]);
 
   useEffect(() => {
     if (!overlay) return undefined;
@@ -231,10 +236,11 @@ export default function IntroPoster() {
   useEffect(() => () => window.clearTimeout(timerRef.current), []);
 
   return <>
-    <span ref={anchorRef} className={`intro-robot-anchor ${peeking ? 'intro-robot-peeking' : ''} ${shy ? 'intro-robot-shy' : ''} ${bubble === 'ask' ? 'intro-robot-inviting' : ''} ${idleAction ? `intro-robot-idle-${idleAction}` : ''} ${reaction ? `intro-robot-${reaction}` : ''} ${overlay ? 'intro-robot-watching' : ''}`}>
-      <button ref={posterRef} type="button" className="intro-poster" onPointerEnter={noticeCursor} onPointerMove={noticeCursor} onPointerLeave={() => setShy(false)} onClick={() => { if (!overlay) { playRobotSound(); setIdleAction(''); setShy(false); setPeeking(false); setBubble('ask'); } }} aria-label="Ask the robot to watch my introduction video" aria-haspopup="dialog" aria-expanded={bubble === 'ask'}>
-        <span className="intro-robot-motion"><RobotFace /></span>
+    <span ref={anchorRef} data-robot-hero={heroMode} inert={navigationCollapsed} aria-hidden={navigationCollapsed} className={`intro-robot-anchor ${peeking ? 'intro-robot-peeking' : ''} ${shy ? 'intro-robot-shy' : ''} ${bubble === 'ask' ? 'intro-robot-inviting' : ''} ${idleAction ? `intro-robot-idle-${idleAction}` : ''} ${reaction ? `intro-robot-${reaction}` : ''} ${overlay ? 'intro-robot-watching' : ''}`}>
+      <button ref={posterRef} type="button" className="intro-poster" data-sound={heroMode ? "silent" : undefined} onPointerEnter={noticeCursor} onPointerMove={noticeCursor} onPointerLeave={() => setShy(false)} onClick={() => { if (!overlay) { if(!heroMode)playRobotSound(); setIdleAction(''); setShy(false); setPeeking(false); if(heroMode)onHeroClick?.();else setBubble('ask'); } }} aria-label={heroMode ? "Chat with the robot" : "Ask the robot to watch my introduction video"} aria-haspopup="dialog" aria-expanded={heroMode ? heroExpanded : bubble === 'ask'}>
+        {character || <span className="intro-robot-motion"><RobotFace /></span>}
       </button>
+      {heroMode&&!overlay&&heroBubble}
       {bubble && !overlay && <span className={`intro-robot-bubble intro-robot-bubble-${bubble}`} role={bubble === 'ask' ? 'dialog' : 'status'} aria-label={bubble === 'ask' ? 'Watch my intro?' : undefined}>
         {bubble === 'hi' ? 'Hi!' : <><span>Watch my intro?</span><span className="intro-robot-choices">
           <button type="button" onClick={() => { setBubble(''); setReaction('happy'); open(); window.setTimeout(() => setReaction(''), 400); }}>Yes</button>
@@ -246,7 +252,7 @@ export default function IntroPoster() {
       <div ref={modalRef} className="intro-video-panel" role="dialog" aria-modal="true" aria-label="Portfolio introduction video" tabIndex={-1}
         style={{ '--poster-x': `${overlay.origin.x}px`, '--poster-y': `${overlay.origin.y}px`, '--poster-width': `${overlay.origin.width}px`, '--poster-height': `${overlay.origin.height}px` }}
         onTransitionEnd={(event) => { if (event.target === event.currentTarget && event.propertyName === 'transform' && closingRef.current) finishClose(); }}>
-        <div className="intro-video-poster-copy"><RobotFace /></div>
+        <div className="intro-video-poster-copy">{!heroMode&&<RobotFace />}</div>
         <video ref={playerRef} src={VIDEO_SOURCE} controls playsInline preload="metadata" aria-label="Portfolio introduction video" />
       </div>
     </div>, document.body)}

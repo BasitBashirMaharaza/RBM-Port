@@ -69,3 +69,12 @@ html[data-theme='light'] .michigan-certificate-dialog {
   .education .credential-logo-michigan[role='button'], .education .credential-logo-google[role='button'] { transition: none; }
   .michigan-certificate-overlay, .michigan-certificate-dialog, .michigan-certificate-overlay.is-closing, .michigan-certificate-overlay.is-closing .michigan-certificate-dialog { animation-duration: 150ms; }
 }
+/* Spectral inlay on the wooden frame; the document and protective glass stay untouched. */
+.michigan-certificate-dialog::before{
+ inset:3px;border:1px solid transparent;
+ background:linear-gradient(125deg,color-mix(in srgb,var(--accent) 65%,#c6b9de),#e7d7af 28%,#8daaa0 61%,color-mix(in srgb,var(--accent) 60%,#b9afce)) border-box;
+ -webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);
+ -webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);mask-composite:exclude;
+ box-shadow:none;opacity:.8;
+}
+html[data-theme='light'] .michigan-certificate-dialog::before{opacity:.95}

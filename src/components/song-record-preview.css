@@ -1,0 +1,31 @@
+/* A compact record sleeve and its listening liner, scoped to the song preview. */
+.bcv-song-dialog.bcv-song-popover{--record-paper:color-mix(in srgb,var(--bg) 91%,#ad9bc9);width:min(296px,calc(100vw - 24px));background:var(--record-paper);border:1px solid color-mix(in srgb,var(--text) 20%,transparent);border-radius:15px;box-shadow:0 18px 48px #100b1c4d,inset 0 1px 0 #ffffff20}
+.bcv-song-popover .bcv-record-preview{padding:0 18px 13px;background:linear-gradient(130deg,#ffffff06,transparent 45%),repeating-linear-gradient(90deg,transparent 0 3px,#ffffff02 3px 4px);isolation:isolate}
+.bcv-record-preview-masthead{display:flex;align-items:center;gap:7px;height:38px;margin:0 26px 15px 0;color:var(--muted);font:500 7px/1 'DM Mono',monospace;letter-spacing:.12em}
+.bcv-record-preview-masthead svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.2;flex:none}
+.bcv-song-popover .bcv-record-preview .bcv-song-close{width:44px;height:44px;top:0;right:0;font-size:20px;border-radius:10px}
+.bcv-song-popover .bcv-record-preview .bcv-song-preview-heading{grid-template-columns:92px minmax(0,1fr);gap:13px;align-items:center;padding:0;margin:0 0 19px}
+.bcv-song-sleeve{position:relative;width:92px;height:80px;perspective:500px}
+.bcv-song-popover .bcv-song-sleeve .bcv-song-art{position:absolute;left:0;top:3px;width:74px;height:74px;z-index:2;border-radius:3px;transform:rotate(-6deg);background:var(--bg);box-shadow:1px 2px 0 #ffffff26,3px 5px 9px #0005;overflow:hidden}
+.bcv-song-popover .bcv-song-sleeve .bcv-song-art::after{content:'';position:absolute;inset:0;border:1px solid #ffffff38;background:linear-gradient(120deg,#ffffff15,transparent 40%);pointer-events:none}
+.bcv-song-mini-vinyl{position:absolute;top:3px;left:17px;width:74px;height:74px;border-radius:50%;background:repeating-radial-gradient(circle,#111318 0 1px,#41424a 1.2px 1.6px,#1b1c23 1.8px 3px);box-shadow:2px 4px 7px #0005;border:1px solid #77747c;box-sizing:border-box;animation:bcv-sleeve-record-reveal .65s cubic-bezier(.22,1,.36,1) both}
+.bcv-song-mini-vinyl::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,transparent,#fff2 15%,transparent 30% 55%,#fff2 70%,transparent 85%)}
+.bcv-song-mini-vinyl>span{position:absolute;inset:35%;border-radius:50%;overflow:hidden;background:#ad9ac0}
+.bcv-song-mini-vinyl>span img{display:block;width:100%;height:100%;object-fit:cover}
+.bcv-song-mini-vinyl>span::after{content:'';position:absolute;left:calc(50% - 2px);top:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:#14151b;box-shadow:0 0 0 1px #ffffff60}
+.bcv-song-popover .bcv-song-preview-copy{min-width:0}
+.bcv-song-popover .bcv-record-preview .bcv-song-eyebrow{font-size:7px;letter-spacing:.08em;margin:0 0 7px;color:var(--muted)}
+.bcv-song-popover .bcv-record-preview h3{font:500 22px/1.03 Newsreader,Georgia,serif;letter-spacing:-.025em;margin:0 0 7px;color:var(--text);overflow-wrap:normal}
+.bcv-song-popover .bcv-record-preview p{font:500 10px/1.5 Manrope,sans-serif;color:var(--muted)}
+.bcv-record-listen-label{display:flex;gap:9px;align-items:center;margin-bottom:8px;font:500 7px/1 'DM Mono',monospace;letter-spacing:.12em;color:var(--muted)}
+.bcv-record-listen-label i{height:1px;flex:1;background:color-mix(in srgb,var(--text) 13%,transparent)}
+.bcv-song-popover .bcv-record-preview .bcv-song-links{grid-template-columns:.85fr 1.15fr;gap:7px}
+.bcv-song-popover .bcv-record-preview .bcv-song-links a{justify-content:flex-start;gap:6px;padding:8px;min-height:44px;font:600 10px/1.25 Manrope,sans-serif;border-radius:8px;background:color-mix(in srgb,var(--text) 4%,transparent);border-color:color-mix(in srgb,var(--text) 16%,transparent);transition:background-color 180ms ease,translate 180ms ease}
+.bcv-record-preview .bcv-song-links svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.bcv-record-preview .bcv-song-links a>span{font-size:10px;margin-left:auto;opacity:.65}
+.bcv-record-preview-footer{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font:400 6px/1.5 'DM Mono',monospace;letter-spacing:.1em}
+.bcv-record-preview-footer svg{width:47px;height:12px;stroke:currentColor;stroke-width:.9;flex:none;opacity:.65}
+html[data-theme='light'] .bcv-song-dialog.bcv-song-popover{--record-paper:color-mix(in srgb,var(--bg) 84%,#e6dfec);box-shadow:0 16px 40px #35244138,inset 0 1px 0 #fff}
+@keyframes bcv-sleeve-record-reveal{from{transform:translateX(-16px) rotate(-45deg)}to{transform:translateX(0) rotate(0)}}
+@media(hover:hover) and (pointer:fine){.bcv-song-popover .bcv-record-preview .bcv-song-links a:hover{background:color-mix(in srgb,var(--accent) 13%,var(--record-paper));translate:0 -1px;transform:none}.bcv-song-popover .bcv-record-preview .bcv-song-links a:active{translate:0 0}}
+@media(prefers-reduced-motion:reduce){.bcv-song-mini-vinyl{animation:none}.bcv-song-popover .bcv-record-preview .bcv-song-links a{transition:none}}

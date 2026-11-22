@@ -1,22 +1,33 @@
+import ContactGlassLink from './components/ContactGlassLink.jsx';
+import ContactMailbox from './components/ContactMailbox.jsx';
+import FooterRibbons from './components/FooterRibbons.jsx';
+import './contact-polish.css';
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import InkRidges from './components/AuraBackground.jsx';
 import CanvasText from './components/CanvasText.jsx';
 import ExpandableTabs from './components/ExpandableTabs.jsx';
+import ContactJourney,{CONTACT_JOURNEY} from './components/ContactJourney.jsx';
 import SignatureHero from './components/SignalHero.jsx';
-import { playControlSound, requestWelcomeSound, stopWelcomeSound, unlockSound } from './soundDesign.js';
+import HeroProfileTransition from './components/HeroProfileTransition.jsx';
+import BeyondCvSection from './components/BeyondCvSection.jsx';
+import SelectedWorkArchive from './components/SelectedWorkArchive.jsx';
+import LearningGallery from './components/LearningGallery.jsx';
+import SectionTextReveal from './components/SectionTextReveal.jsx';
+import { ProfileTagline, ProfileAnnotations, ProfileSkillsLoop } from './components/ProfileMotion.jsx';
+import { playControlSound, playNavbarCollapse, requestWelcomeSound, stopWelcomeSound, unlockSound } from './soundDesign.js';
 import './project-motion.css';
 import ExperienceStack from './components/ExperienceJournal.jsx';
 import './education-signature.css';
-import './toolkit-glass.css';
 import './about-profile.css';
+import './section-labels.css';
+import './navbar-collapse.css';
 import VoiceNoteOverlay from './VoiceNoteOverlay.jsx';
 import EmailContactOverlay from './EmailContactOverlay.jsx';
 import { playEmailSound, stopEmailSound } from './emailContactSound.js';
 import './email-contact.css';
 import MichiganCertificateOverlay from './MichiganCertificateOverlay.jsx';
 import { playVoiceNoteRevealSound } from './voiceNoteRevealSound.js';
-import IntroPoster from './IntroPoster.jsx';
 
 const profileLinks = {
   github: 'https://github.com/BasitBashirMaharaza',
@@ -124,58 +135,6 @@ const skillGroups = [
   ['Healthcare operations', 'Marg ERP 9+', 'Pharmacy billing & POS', 'Pharmaceutical formulations', 'Digital inventory & reconciliation', 'Batch & expiry workflows'],
   ['Web & analytics', 'Streamlit prototyping', 'Search engine optimization', 'Web analytics', 'Git & Linux', 'Digital growth strategy'],
 ];
-
-function SkillIcon({ index }) {
-  const paths = [
-    <><path d="M4 23 16 4l12 19H4Z" /><path d="m13 23 7-11 7 11" /><circle cx="16" cy="4" r="1.5" /></>,
-    <><rect x="4" y="5" width="16" height="21" rx="3" /><path d="M10 10h4M10 15h9M10 20h6M23 9l5 5-5 5" /></>,
-    <><path d="M16 3 29 16 16 29 3 16 16 3Z" /><path d="M7 16h5l3-5 3 10 3-5h4" /></>,
-    <><circle cx="16" cy="16" r="12" /><path d="M5 19h5l4-7 4 10 4-6h5M10 9h12" /></>,
-  ];
-  return <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[index]}</svg>;
-}
-
-function ToolkitGallery() {
-  const [active, setActive] = useState(0);
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const moveCard = (event) => {
-    if (event.pointerType !== 'mouse' || reducedMotion) return;
-    const card = event.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - .5) * 2));
-    const y = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - .5) * 2));
-    card.style.setProperty('--feature-tilt-x', `${-y * 2.4}deg`);
-    card.style.setProperty('--feature-tilt-y', `${x * 2.4}deg`);
-    card.style.setProperty('--feature-shift-x', `${x * 4}px`);
-    card.style.setProperty('--feature-shift-y', `${y * 4}px`);
-    card.style.setProperty('--feature-light-x', `${(x + 1) * 50}%`);
-    card.style.setProperty('--feature-light-y', `${(y + 1) * 50}%`);
-  };
-  const resetCard = (event) => {
-    ['--feature-tilt-x', '--feature-tilt-y', '--feature-shift-x', '--feature-shift-y', '--feature-light-x', '--feature-light-y'].forEach((name) => event.currentTarget.style.removeProperty(name));
-  };
-  const media = (index) => <div className="toolkit-feature-media" data-skill-theme={index}>
-    <div className="toolkit-feature-art" aria-hidden="true"><span /><span /><span /><SkillIcon index={index} /></div>
-    <div className="toolkit-feature-content"><p>Working knowledge</p><ul>{skillGroups[index].slice(1).map((skill) => <li key={skill}>{skill}</li>)}</ul></div>
-  </div>;
-  return <div className="toolkit-feature-layout">
-    <div className="toolkit-feature-list" role="group" aria-label="Explore capabilities">
-      {skillGroups.map(([title], index) => <motion.div className="toolkit-feature-item" data-active={active === index} key={title}
-        initial={reducedMotion ? false : { opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-        transition={{ duration: .35, delay: reducedMotion ? 0 : index * .07, ease: 'easeOut' }}>
-        <button type="button" className="toolkit-feature-choice" aria-pressed={active === index} aria-controls={`toolkit-feature-mobile-${index}`} onClick={() => setActive(index)} data-sound={`toolkit-${index + 1}`}>
-          <span className="toolkit-feature-number">{index + 1}</span><span className="toolkit-feature-title">{title}</span>
-        </button>
-        <div className="toolkit-feature-mobile" id={`toolkit-feature-mobile-${index}`}>
-          <AnimatePresence initial={false}>{active === index && <motion.div key={index} initial={reducedMotion ? false : { height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: reducedMotion ? 0 : .35, ease: [.4, 0, .2, 1] }} className="toolkit-feature-mobile-inner">{media(index)}</motion.div>}</AnimatePresence>
-        </div>
-      </motion.div>)}
-    </div>
-    <div className="toolkit-feature-desktop"><div className="toolkit-feature-stage" onPointerMove={moveCard} onPointerLeave={resetCard}><AnimatePresence mode="wait" initial={false}>
-      <motion.div className="toolkit-feature-stage-inner" key={active} initial={reducedMotion ? false : { opacity: 0, y: 12, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: .98 }} transition={{ duration: reducedMotion ? 0 : .35, ease: [.4, 0, .2, 1] }}>{media(active)}</motion.div>
-    </AnimatePresence></div></div>
-  </div>;
-}
 
 function Arrow({ direction = 'up' }) {
   return <span className={`arrow arrow-${direction}`} aria-hidden="true">↗</span>;
@@ -325,18 +284,64 @@ function LampSwitch({ theme, onToggle }) {
 
 function Header({ theme, onThemeToggle }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const lastScroll = useRef(0);
+  const root=useRef(null),avatar=useRef(null);
+  const [away,setAway]=useState(false),[revealed,setRevealed]=useState(false);
+  const awayRef=useRef(false),revealedRef=useRef(false),openedAt=useRef(0);
+  revealedRef.current=revealed;
+  const collapsed=away&&!revealed&&!menuOpen;
 
-  useEffect(() => {
-    const update = () => {
-      const current = window.scrollY;
-      setHidden(current > lastScroll.current && current > 520 && !menuOpen);
-      lastScroll.current = current;
+  useEffect(()=>{
+    let frame=0;
+    const update=()=>{
+      frame=0;const header=root.current,home=document.getElementById('home');if(!header||!home)return;
+      const headerRect=header.getBoundingClientRect(),heroBottom=home.getBoundingClientRect().bottom;
+      const next=heroBottom<headerRect.bottom+24+(awayRef.current?36:0);
+      if(next!==awayRef.current){awayRef.current=next;setAway(next);setRevealed(false);}
+      if(next&&revealedRef.current&&Math.abs(window.scrollY-openedAt.current)>64)setRevealed(false);
     };
-    window.addEventListener('scroll', update, { passive: true });
-    return () => window.removeEventListener('scroll', update);
-  }, [menuOpen]);
+    const schedule=()=>{if(!frame)frame=requestAnimationFrame(update);};
+    const measure=()=>{
+      const header=root.current,icon=avatar.current?.querySelector('.brand-avatar');if(!header||!icon)return;
+      const box=header.getBoundingClientRect();
+      // Offset geometry stays stable while the avatar animates toward the screen edge.
+      const left=avatar.current.offsetLeft+icon.offsetLeft+header.clientLeft;
+      const top=avatar.current.offsetTop+icon.offsetTop+header.clientTop;
+      const edge=parseFloat(getComputedStyle(header).getPropertyValue('--nav-edge-inset'))||8;
+      const shift=Math.min(0,edge-box.left-left);
+      header.style.setProperty('--nav-edge-x',shift+'px');
+      header.style.setProperty('--nav-avatar-top',top+'px');
+      header.style.setProperty('--nav-avatar-left',left+'px');
+      header.style.setProperty('--nav-avatar-right',Math.max(0,box.width-left-icon.offsetWidth)+'px');
+      header.style.setProperty('--nav-avatar-bottom',Math.max(0,box.height-top-icon.offsetHeight)+'px');
+      header.querySelectorAll('.desktop-nav,.header-actions,.intro-robot-anchor').forEach(part=>{
+        header.style.setProperty('--nav-gather-'+(part.classList.contains('desktop-nav')?'links':part.classList.contains('header-actions')?'actions':'robot'),(left+icon.offsetWidth/2-part.offsetLeft-part.offsetWidth/2)+'px');
+      });
+      schedule();
+    };
+    const resize=new ResizeObserver(measure);if(root.current)resize.observe(root.current);
+    const heroChanges=new MutationObserver(schedule);const main=document.getElementById('main');if(main)heroChanges.observe(main,{childList:true});
+    window.addEventListener('scroll',schedule,{passive:true});window.addEventListener('resize',measure);measure();
+    return()=>{cancelAnimationFrame(frame);resize.disconnect();heroChanges.disconnect();window.removeEventListener('scroll',schedule);window.removeEventListener('resize',measure);};
+  },[]);
+
+  const previousCollapse=useRef(collapsed);
+  useEffect(()=>{if(collapsed&&!previousCollapse.current)playNavbarCollapse();previousCollapse.current=collapsed;},[collapsed]);
+
+  useEffect(()=>{
+    if(!collapsed)return;
+    if(root.current?.contains(document.activeElement)&&document.activeElement!==avatar.current)avatar.current?.focus({preventScroll:true});
+  },[collapsed]);
+  useEffect(()=>{
+    if(!revealed)return undefined;
+    const outside=event=>{if(!root.current?.contains(event.target)&&!event.target.closest('.intro-video-overlay'))setRevealed(false);};
+    const escape=event=>{if(event.key==='Escape'&&!document.querySelector('.intro-video-overlay')){setRevealed(false);avatar.current?.focus({preventScroll:true});}};
+    document.addEventListener('pointerdown',outside);document.addEventListener('keydown',escape);
+    return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',escape);};
+  },[revealed]);
+  const toggleNavigation=()=>{
+    if(away){openedAt.current=window.scrollY;setRevealed(value=>!value);}
+    else document.getElementById('home')?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  };
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -352,38 +357,40 @@ function Header({ theme, onThemeToggle }) {
     return () => document.body.classList.remove('menu-open');
   }, [menuOpen]);
 
-  const close = () => setMenuOpen(false);
+  const close = () => { setMenuOpen(false);setRevealed(false); };
   const navTabs = [
     { title: 'About', icon: 'about', target: 'about' },
     { title: 'Education', icon: 'education', target: 'education' },
     { title: 'Experience', icon: 'experience', target: 'experience' },
     { title: 'Work', icon: 'work', target: 'work' },
-    { title: 'Toolkit', icon: 'toolkit', target: 'toolkit' },
+    { title: 'Beyond CV', icon: 'beyond', target: 'beyond-cv' },
     { type: 'separator' },
     { title: 'Contact', icon: 'contact', target: 'contact' },
   ];
   const navigateTab = (_, tab) => {
     if (!tab) return;
+    setRevealed(false);
+    if(tab.target==='contact'){window.dispatchEvent(new Event(CONTACT_JOURNEY));return;}
     document.getElementById(tab.target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
     <>
-      <header className={`site-header ${hidden ? 'header-hidden' : ''}`}>
-        <a className="brand" href="#home" onClick={close} aria-label="Basit Bashir, home">
+      <header ref={root} className={`site-header nav-morph ${collapsed?'nav-collapsed':'nav-expanded'}`} data-nav-state={collapsed?'collapsed':'expanded'} data-hero-away={away ? 'true' : 'false'}>
+        <span className="nav-morph-glass" aria-hidden="true" />
+        <button ref={avatar} className="brand nav-profile-toggle" data-sound="silent" type="button" onClick={toggleNavigation} aria-label={away?(collapsed?'Open navigation':'Collapse navigation'):'Basit Bashir, home'} aria-expanded={!collapsed} aria-controls="portfolio-primary-navigation">
           <span className="brand-avatar"><img src="/portfolio_photo.webp" alt="" decoding="async" fetchPriority="high" /></span>
-          <span className="brand-name">Basit Bashir <small>AI · DATA · HEALTH</small></span>
-        </a>
-        <div className="desktop-nav"><ExpandableTabs tabs={navTabs} onChange={navigateTab} /></div>
-        <div className="header-actions">
-          <a className="nav-cta" href="#contact">Let’s talk <Arrow /></a>
+          <span className="brand-name" aria-hidden={collapsed}>Basit Bashir <small>AI · DATA · HEALTH</small></span>
+        </button>
+        <div id="portfolio-primary-navigation" className="desktop-nav" inert={collapsed}><ExpandableTabs tabs={navTabs} onChange={navigateTab} /></div>
+        <div className="header-actions" inert={collapsed}>
+          <a className="nav-cta" href="#contact" onClick={event=>{event.preventDefault();close();window.dispatchEvent(new Event(CONTACT_JOURNEY));}}>Let’s talk <Arrow /></a>
           <div className="header-switch-dock"><LampSwitch theme={theme} onToggle={onThemeToggle} /></div>
           <button className={`menu-button ${menuOpen ? 'open' : ''}`} type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label="Toggle navigation"><span /><span /></button>
         </div>
-        <IntroPoster />
       </header>
       <nav id="mobile-navigation" className={`mobile-menu ${menuOpen ? 'open' : ''}`} aria-label="Mobile navigation" aria-hidden={!menuOpen}>
-        {['about', 'education', 'experience', 'work', 'toolkit', 'contact'].map((item, index) => <a key={item} href={`#${item}`} onClick={close}><span>0{index + 1}</span>{item}</a>)}
+        {['about', 'education', 'experience', 'work', 'beyond-cv', 'contact'].map((item, index) => <a key={item} href={`#${item}`} onClick={event=>{close();if(item==='contact'){event.preventDefault();window.dispatchEvent(new Event(CONTACT_JOURNEY));}}}><span>0{index + 1}</span>{item === 'beyond-cv' ? 'Beyond CV' : item}</a>)}
       </nav>
     </>
   );
@@ -474,11 +481,11 @@ function OrbitalHero({ introReady }) {
   );
 }
 
-function SectionHeading({ index, label, children, aside }) {
+function SectionHeading({ label, children, aside, effect }) {
   return (
-    <header className="section-heading reveal">
-      <p className="section-label"><span>{index}</span>{label}</p>
-      <h2>{children}</h2>
+    <header className="section-heading">
+      <p className="section-label">{label}</p>
+      <h2>{effect ? <SectionTextReveal>{children}</SectionTextReveal> : children}</h2>
       {aside && <p className="section-aside">{aside}</p>}
     </header>
   );
@@ -630,7 +637,7 @@ function App() {
   };
 
   const hideEmail = () => {
-    if (!emailVisibleRef.current || emailContactOpen || contactSection.current?.contains(document.activeElement)) return;
+    if (!emailVisibleRef.current || emailContactOpen || document.documentElement.dataset.contactJourney==='running' || contactSection.current?.contains(document.activeElement)) return;
     emailVisibleRef.current = false;
     setEmailVisible(false);
     stopEmailSound();
@@ -728,20 +735,39 @@ function App() {
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
     reveals.forEach((node) => observer.observe(node));
 
-    let frame = 0;
+    let frame = 0, maxScroll = 0;
+    const progress = document.querySelector('.scroll-progress span');
+    const parallax = Array.from(document.querySelectorAll('.orbital-scene,.contact-orb'));
+    // Root-level inherited variables invalidated the whole portfolio every scroll frame.
+    // Keep the identical visual values on the few elements that actually use them.
+    document.documentElement.style.removeProperty('--scroll');
+    document.documentElement.style.removeProperty('--scroll-y');
     const updateScroll = () => {
-      cancelAnimationFrame(frame);
+      if (frame) return;
       frame = requestAnimationFrame(() => {
-        const max = document.documentElement.scrollHeight - innerHeight;
-        document.documentElement.style.setProperty('--scroll', max > 0 ? window.scrollY / max : 0);
-        document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`);
+        frame = 0;
+        const position = window.scrollY;
+        if (progress) progress.style.transform = `scaleX(${maxScroll > 0 ? position / maxScroll : 0})`;
+        parallax.forEach(node => {
+          const rate = node.classList.contains('contact-orb') ? -.025 : .025;
+          node.style.transform = `translateY(${position * rate}px)`;
+        });
       });
     };
+    const measureScroll = () => {
+      maxScroll = document.documentElement.scrollHeight - innerHeight;
+      updateScroll();
+    };
+    const scrollSize = new ResizeObserver(measureScroll);
+    scrollSize.observe(document.body);
     window.addEventListener('scroll', updateScroll, { passive: true });
-    updateScroll();
+    window.addEventListener('resize', measureScroll);
+    measureScroll();
     return () => {
       observer.disconnect();
+      scrollSize.disconnect();
       window.removeEventListener('scroll', updateScroll);
+      window.removeEventListener('resize', measureScroll);
       cancelAnimationFrame(frame);
     };
   }, []);
@@ -793,88 +819,66 @@ function App() {
       <main id="main">
         {welcomeOpen ? <div className="hero-placeholder" aria-hidden="true" /> : <SignatureHero />}
 
+        <HeroProfileTransition />
+
         <section className="section about" id="about">
           <div className="container">
-            <SectionHeading index="01" label="Profile">A technical perspective shaped by <em>care.</em></SectionHeading>
+            <SectionHeading index="01" label="Profile"><ProfileTagline /></SectionHeading>
             <div className="about-grid">
               <figure ref={voiceTrigger} className="about-profile-sketch reveal" role="button" tabIndex={0} aria-haspopup="dialog" aria-label="Basit Bashir portrait. Double-click or double-tap to open a voice note; press Enter to open with a keyboard." data-sound="silent" onDoubleClick={openVoiceNote} onPointerUp={handleVoicePress} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openVoiceNote(event); } }} onPointerMove={(event) => { if (event.pointerType !== 'mouse') return; const rect = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--profile-tilt-x', `${((event.clientY - rect.top) / rect.height - .5) * -3}deg`); event.currentTarget.style.setProperty('--profile-tilt-y', `${((event.clientX - rect.left) / rect.width - .5) * 3}deg`); }} onPointerLeave={(event) => { event.currentTarget.style.setProperty('--profile-tilt-x', '0deg'); event.currentTarget.style.setProperty('--profile-tilt-y', '0deg'); }}>
                 <div className="about-profile-portrait"><img src="/portfolio_photo.webp" alt="Basit Bashir" loading="lazy" decoding="async" /><span className="about-profile-hint" aria-hidden="true"><span className="profile-hint-desktop">Double-click to listen</span><span className="profile-hint-mobile">Double-tap to listen</span></span></div>
-                <svg className="about-profile-arrows" viewBox="0 0 400 320" preserveAspectRatio="none" aria-hidden="true"><path d="M118 24 C133 18 145 24 151 35 M141 32 L151 35 L149 25" /><path d="M282 24 C267 18 255 24 249 35 M251 25 L249 35 L259 32" /><path d="M54 148 C67 140 79 143 85 156 M75 148 L85 156 L83 145" /><path d="M346 148 C333 140 321 143 315 156 M325 148 L315 156 L317 145" /><path d="M112 308 C121 297 135 288 150 285 M137 282 L150 285 L141 294" /><path d="M288 308 C279 297 265 288 250 285 M259 294 L250 285 L263 282" /></svg>
-                <span className="about-profile-note note-clear">Clear Thinker</span><span className="about-profile-note note-detail">Detail-Oriented</span><span className="about-profile-note note-people">People-First</span><span className="about-profile-note note-curious">Curious</span><span className="about-profile-note note-fast">Fast Learner</span><span className="about-profile-note note-consistent">Consistent</span>
+                <ProfileAnnotations />
               </figure>
-              <div className="about-copy reveal">
-                <p>I graduated with a Bachelor of Technology in Computer Science & Engineering from Government College of Engineering and Technology, Safapora Ganderbal, in the 2024 batch.</p>
-                <p>Technical internships at NIELIT Srinagar and Google sit alongside two years at Dar Medicate and Medical Agency. Experience with pharmaceutical products, prescription workflows, inventory and Marg ERP 9+ now informs how I approach healthcare AI.</p>
+              <div className="about-copy">
+                <h3 className="profile-hello"><SectionTextReveal early>Hello.</SectionTextReveal><svg viewBox="0 0 400 22" fill="none" aria-hidden="true"><path d="M4 18C91 3 287 4 396 12" /></svg></h3>
+                <p><SectionTextReveal early>I graduated with a <strong>Bachelor of Technology in Computer Science & Engineering</strong> from Government College of Engineering and Technology, Safapora Ganderbal, in the 2024 batch.</SectionTextReveal></p>
+                <p><SectionTextReveal early>Technical internships at <strong>NIELIT Srinagar</strong> and <strong>Google</strong> sit alongside two years at <strong>Dar Medicate and Medical Agency</strong>. Experience with pharmaceutical products, prescription workflows, inventory and <strong>Marg ERP 9+</strong> now informs how I approach <strong>healthcare AI</strong>.</SectionTextReveal></p>
                 <a className="underlink" href={profileLinks.pharmacy} target="_blank" rel="noreferrer">View the pharmacy location <Arrow /></a>
                 <div className="about-focus"><div><span>Focus</span><strong>Data Science<br />Generative AI<br />Healthcare Informatics</strong></div><div><span>Core stack</span><strong>Python · LangChain<br />Scikit-Learn · Pandas<br />Streamlit · NumPy</strong></div></div>
               </div>
             </div>
-            <div className="capabilities reveal"><span>Retrieval-Augmented Generation</span><span>Clinical conversational AI</span><span>Predictive modeling</span><span>Pharmacy operations & ERP</span></div>
+            <ProfileSkillsLoop />
           </div>
         </section>
 
-        <section className="section education" id="education">
-          <div className="container">
-            <SectionHeading index="05" label="Education">Formal learning, <em>applied.</em></SectionHeading>
-            <div className="education-grid">
-              <article className="degree-card reveal" data-tilt><EducationScene kind="engineering" /><div className="degree-year">2019<span>—</span>2024</div><div><div className="degree-institution-mark"><img src="/logos/gcet-degree.svg" alt="" loading="lazy" decoding="async" /><span>GCET Kashmir<small>Safapora · Ganderbal</small></span></div><p className="mini-label">Academic degree</p><h3>Bachelor of Technology</h3><h4>Computer Science & Engineering</h4><p>Government College of Engineering and Technology (GCET), Safapora Ganderbal, Jammu & Kashmir, India.</p><div className="tag-list"><span>Algorithms & DSA</span><span>Machine learning</span><span>DBMS</span><span>Software engineering</span><span>Operating systems</span></div></div></article>
-              <div className="credentials">
-                <article className="credential reveal" data-tilt><EducationScene kind="learning" /><img ref={michiganLogo} className="credential-logo credential-logo-michigan" src="/logos/michigan.svg" alt="University of Michigan logo" role="button" tabIndex={0} aria-label="View University of Michigan Applied Machine Learning certificate" aria-haspopup="dialog" onClick={() => setMichiganCertificateOpen(true)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setMichiganCertificateOpen(true); } }} loading="lazy" decoding="async" /><div><span>University of Michigan</span><time>Jun 2024</time></div><h3>Applied Machine Learning in Python</h3><p>Applied algorithms, Scikit-Learn model creation, NumPy and Pandas preprocessing, and evaluation metrics.</p></article>
-                <article className="credential reveal" data-tilt><EducationScene kind="analytics" /><img ref={googleLogo} className="credential-logo credential-logo-google" src="/logos/google.svg" alt="Google logo" role="button" tabIndex={0} aria-label="View Google Fundamentals of Digital Marketing certificate" aria-haspopup="dialog" onClick={() => setGoogleCertificateOpen(true)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setGoogleCertificateOpen(true); } }} loading="lazy" decoding="async" /><div><span>Google Digital Garage</span><time>Nov 2022</time></div><h3>The Fundamentals of Digital Marketing</h3><p>SEO practices, digital strategy, web analytics and search-performance optimization.</p><small>Credential ID: U33 RXC S8T</small></article>
-              </div>
-            </div>
-          </div>
-        </section>
+        <HeroProfileTransition compact direction="reverse" topic="education" />
+
+        <LearningGallery skillGroups={skillGroups} michiganLogoRef={michiganLogo} googleLogoRef={googleLogo} onMichiganOpen={()=>setMichiganCertificateOpen(true)} onGoogleOpen={()=>setGoogleCertificateOpen(true)} />
+
+        <HeroProfileTransition compact direction="forward" topic="experience" />
 
         <section className="section experience" id="experience">
           <div className="container">
-            <SectionHeading index="02" label="Experience">From operations to <em>models.</em></SectionHeading>
+            <SectionHeading index="02" label="Experience" effect="float">From operations to <em>models.</em></SectionHeading>
             <ExperienceGallery />
           </div>
         </section>
 
-        <section className="section work" id="work">
-          <div className="container">
-            <SectionHeading index="03" label="Selected work" aside="Five projects across conversational healthcare, document intelligence, predictive data science, semantic search and web analytics.">Systems built for <em>use.</em></SectionHeading>
-            <div className="project-stack">
-              {projects.map((project, index) => (
-                <article className="project-card reveal" key={project.title} style={{ '--index': index }} data-tilt>
-                  <ProjectVisual type={project.visual} index={index} />
-                  <div className="project-copy">
-                    <div className="project-meta"><span>{project.number}</span><span>{project.eyebrow}</span></div>
-                    <h3>{project.title}</h3>
-                    <p>{project.description}</p><p className="project-detail">{project.detail}</p>
-                    <div className="tag-list">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-                    <a className="case-link" href={profileLinks.github} target="_blank" rel="noreferrer">Explore on GitHub <Arrow /></a>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        <HeroProfileTransition compact direction="reverse" topic="work" />
 
-        <section className="section toolkit" id="toolkit">
-          <div className="container">
-            <SectionHeading index="04" label="Toolkit">Capabilities over <em>percentages.</em></SectionHeading>
-            <ToolkitGallery />
-          </div>
-        </section>
+        <SelectedWorkArchive projects={projects} githubUrl={profileLinks.github} />
+
+        <HeroProfileTransition compact direction="forward" topic="beyond" />
+
+        <BeyondCvSection />
 
         <section ref={contactSection} className="contact" id="contact" onPointerEnter={(event) => { if (event.pointerType === 'mouse') revealEmail(); }} onPointerLeave={(event) => { if (event.pointerType === 'mouse') hideEmail(); }} onTouchStart={revealEmail} onFocusCapture={revealEmail}>
           <div className="contact-orb" aria-hidden="true" />
           <div className="container contact-grid">
-            <div className="contact-copy reveal"><p className="section-label"><span>06</span>Contact</p><h2>Let’s build something <em>useful.</em></h2><p>If you’re working on retrieval systems, healthcare AI, predictive models, or a role where practical domain thinking matters, I’d like to hear about <span className="contact-signature-anchor">it.<svg className="contact-signature" viewBox="0 0 150 62" role="button" tabIndex={0} aria-label="Replay Basit signature" onClick={replaySignature} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); replaySignature(event); } }}><path d="M12 51 C18 35 25 17 31 8 C35 2 47 3 49 10 C52 18 41 23 29 27 C41 22 56 24 54 34 C52 43 37 49 17 49 C32 50 47 46 57 40" /><path d="M57 40 C61 35 66 32 69 35 C72 38 68 45 62 46 C57 46 58 40 62 36 M69 36 C66 43 68 47 75 42 C79 38 83 34 87 35 C91 37 85 41 79 43 C76 46 83 47 90 41" /><path d="M90 41 C93 37 96 33 98 32 C96 37 93 43 97 44 C101 44 104 40 107 37 C111 32 115 20 118 14 C120 10 121 15 118 22 C115 31 109 40 111 43 C114 47 121 41 129 35 C133 32 137 33 140 35" /><path d="M107 29 C115 27 122 26 128 27" /><path d="M100 26 L100.5 25" /><path d="M29 55 C63 56 100 53 137 52" /></svg></span></p></div>
+            <div className="contact-copy"><p className="section-label">Contact</p><h2><SectionTextReveal>Let’s build something <em>useful.</em></SectionTextReveal></h2><p>If you’re working on retrieval systems, healthcare AI, predictive models, or a role where practical domain thinking matters, I’d like to hear about <span className="contact-signature-anchor">it.<svg className="contact-signature" viewBox="0 0 150 62" role="button" tabIndex={0} aria-label="Replay Basit signature" onClick={replaySignature} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); replaySignature(event); } }}><path d="M12 51 C18 35 25 17 31 8 C35 2 47 3 49 10 C52 18 41 23 29 27 C41 22 56 24 54 34 C52 43 37 49 17 49 C32 50 47 46 57 40" /><path d="M57 40 C61 35 66 32 69 35 C72 38 68 45 62 46 C57 46 58 40 62 36 M69 36 C66 43 68 47 75 42 C79 38 83 34 87 35 C91 37 85 41 79 43 C76 46 83 47 90 41" /><path d="M90 41 C93 37 96 33 98 32 C96 37 93 43 97 44 C101 44 104 40 107 37 C111 32 115 20 118 14 C120 10 121 15 118 22 C115 31 109 40 111 43 C114 47 121 41 129 35 C133 32 137 33 140 35" /><path d="M107 29 C115 27 122 26 128 27" /><path d="M100 26 L100.5 25" /><path d="M29 55 C63 56 100 53 137 52" /></svg></span></p></div>
             <div className="contact-links reveal">
-              <a href={profileLinks.linkedin} target="_blank" rel="noreferrer"><small>Start a conversation</small><strong>LinkedIn</strong><Arrow /></a>
-              <a href={profileLinks.github} target="_blank" rel="noreferrer"><small>Explore the code</small><strong>GitHub</strong><Arrow /></a>
+              <div className={`contact-email-dock mailbox-dock${emailVisible ? ' is-visible' : ''}`}><button ref={emailTrigger} className="contact-email-trigger mailbox-trigger" type="button" aria-label="Email me" onClick={openEmailContact} data-sound="silent" aria-haspopup="dialog" tabIndex={0}><ContactMailbox/></button></div>
+              <ContactGlassLink kind="linkedin" href={profileLinks.linkedin}><Arrow/></ContactGlassLink>
+              <ContactGlassLink kind="github" href={profileLinks.github}><Arrow/></ContactGlassLink>
               <div className="contact-availability"><i /><span><strong>Open to opportunities</strong><small>Onsite & remote · Anantnag, India</small></span></div>
             </div>
           </div>
-          <div className={`contact-email-dock${emailVisible ? ' is-visible' : ''}`} aria-hidden={!emailVisible}><button ref={emailTrigger} className="contact-email-trigger" type="button" onClick={openEmailContact} onPointerMove={(event) => { if (event.pointerType !== 'mouse') return; const bounds = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty('--email-shift-x', `${((event.clientX - bounds.left) / bounds.width - .5) * 4}px`); event.currentTarget.style.setProperty('--email-shift-y', `${((event.clientY - bounds.top) / bounds.height - .5) * 3}px`); event.currentTarget.style.setProperty('--email-light-x', `${event.clientX - bounds.left}px`); event.currentTarget.style.setProperty('--email-light-y', `${event.clientY - bounds.top}px`); }} onPointerLeave={(event) => { event.currentTarget.style.removeProperty('--email-shift-x'); event.currentTarget.style.removeProperty('--email-shift-y'); }} data-sound="silent" aria-haspopup="dialog" tabIndex={emailVisible ? 0 : -1}><span aria-hidden="true">✦</span> Email me <span aria-hidden="true">↗</span></button></div>
+
         </section>
       </main>
 
-      <footer><div className="container"><span>© {new Date().getFullYear()} Basit Bashir</span><span>Computer Science Engineer · AI, Data & Healthcare</span><a href="#home">Back to top ↑</a></div></footer>
+      <footer className="footer-light-bar"><FooterRibbons/><div className="container"><span>© {new Date().getFullYear()} Basit Bashir</span><span>Computer Science Engineer · AI, Data & Healthcare</span><a className="footer-return" href="#home" aria-label="Back to top"><span>Back to top</span><i aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></i></a></div></footer>
+      <ContactJourney onRevealEmail={revealEmail}/>
       {voiceOpen && <VoiceNoteOverlay origin={voiceOrigin} onClosed={() => { setVoiceOpen(false); requestAnimationFrame(() => voiceTrigger.current?.focus({ preventScroll: true })); }} />}
       {michiganCertificateOpen && <MichiganCertificateOverlay triggerRef={michiganLogo} onClosed={() => setMichiganCertificateOpen(false)} />}
       {googleCertificateOpen && <MichiganCertificateOverlay triggerRef={googleLogo} imageSrc="/certificates/google-digital-marketing.jpg" certificateLabel="The Fundamentals of Digital Marketing certificate" imageAlt="Google Digital Unlocked Fundamentals of Digital Marketing certificate awarded to Basit Bashir Maharaza" onClosed={() => setGoogleCertificateOpen(false)} />}

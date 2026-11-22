@@ -1,0 +1,85 @@
+/* Local contact refinements: preserve the section's original palette and layout. */
+.contact .contact-links{gap:14px}
+.contact-links>.contact-glass-link{position:relative;isolation:isolate;display:grid;grid-template-columns:48px 1fr 20px;align-items:center;gap:18px;padding:21px 22px;border:1px solid color-mix(in srgb,var(--accent-ink) 27%,transparent);border-radius:18px;background:linear-gradient(125deg,color-mix(in srgb,var(--accent-ink) 13%,transparent),color-mix(in srgb,var(--accent-ink) 3%,transparent));box-shadow:inset 0 1px 0 color-mix(in srgb,var(--accent-ink) 25%,transparent),inset 0 -1px 0 color-mix(in srgb,var(--accent-ink) 10%,transparent),0 8px 18px #1a2e1410;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transform:perspective(800px) rotateX(var(--glass-rx,0deg)) rotateY(var(--glass-ry,0deg));transition:transform 180ms ease,border-color 180ms ease,box-shadow 180ms ease;overflow:hidden;color:var(--accent-ink)}
+.contact-glass-link:before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;background:radial-gradient(circle at var(--glass-x,30%) var(--glass-y,10%),color-mix(in srgb,var(--accent-ink) 18%,transparent),transparent 65%);pointer-events:none}
+.contact-glass-link:after{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;box-shadow:inset 2px 0 0 #ffffff12,inset -2px 0 0 #00000009;pointer-events:none}
+.contact-glass-brand{display:grid;place-items:center;width:46px;height:46px;border-radius:13px;background:color-mix(in srgb,var(--accent-ink) 9%,transparent);border:1px solid color-mix(in srgb,var(--accent-ink) 25%,transparent);box-shadow:inset 0 1px 0 #fff3,0 5px 9px #16271114;transform:translateZ(8px)}
+.contact-glass-brand>svg{display:block;width:25px;height:25px}
+.glass-linkedin .contact-glass-brand{background:linear-gradient(145deg,#167ab5,#07578b);color:#fff;border-color:#ffffff50}
+.contact-links .contact-glass-copy{display:grid;gap:7px;min-width:0;transform:translateZ(4px)}
+.contact-links .contact-glass-copy small{grid-column:auto;margin:0;font:400 7px/1.4 'DM Mono',monospace;letter-spacing:.09em;opacity:.82}
+.contact-links .contact-glass-copy strong{font:500 22px/1.15 Manrope,sans-serif;letter-spacing:-.04em}
+.contact-glass-link>.arrow{width:18px;height:18px;transition:transform 180ms ease}
+.contact .contact-availability{margin-top:12px}
+/* A glass-and-metal mailbox with a fine twig nest above its curved roof. */
+.contact .mailbox-trigger{display:grid;grid-template-columns:86px 1fr 16px;align-items:center;gap:14px;width:310px;max-width:calc(100vw - 36px);min-height:104px;padding:14px 20px 12px 14px;white-space:normal;border-radius:19px;border:1px solid color-mix(in srgb,var(--accent-ink) 34%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--accent-ink) 14%,transparent),color-mix(in srgb,var(--accent-ink) 5%,transparent));box-shadow:inset 0 1px 0 color-mix(in srgb,var(--accent-ink) 25%,transparent),0 10px 24px #14271016;color:var(--accent-ink);text-align:left;isolation:isolate;overflow:visible;--nest-twig:color-mix(in srgb,var(--accent-ink) 74%,#ad935b)}
+.contact .mailbox-trigger:before{display:none}
+.contact-mailbox-scene{position:relative;display:block;width:80px;height:76px;perspective:300px}
+.mailbox-shell{position:absolute;left:8px;bottom:11px;width:57px;height:52px;border-radius:29px 29px 6px 6px;background:linear-gradient(120deg,color-mix(in srgb,var(--accent-ink) 18%,transparent),color-mix(in srgb,var(--accent-ink) 5%,transparent));box-shadow:0 5px 7px #162b181c,inset 1px 0 0 #ffffff40;transform:rotateY(-12deg)}
+.mailbox-side{position:absolute;left:45px;top:1px;width:23px;height:52px;border:1px solid color-mix(in srgb,var(--accent-ink) 30%,transparent);border-radius:13px 24px 6px 0;background:linear-gradient(90deg,color-mix(in srgb,var(--accent-ink) 7%,transparent),color-mix(in srgb,var(--accent-ink) 20%,transparent));transform:skewY(-12deg)}
+.mailbox-letter{position:absolute;z-index:1;left:10px;top:19px;width:36px;height:25px;background:color-mix(in srgb,var(--accent-ink) 14%,var(--accent));border-radius:3px;transform:translateY(5px) rotate(-5deg);transition:transform 240ms ease}
+.mailbox-letter>svg{width:100%;height:100%;stroke:var(--accent-ink);stroke-width:.9}
+.mailbox-door{position:absolute;z-index:2;inset:1px;border:1px solid color-mix(in srgb,var(--accent-ink) 55%,transparent);border-radius:28px 28px 5px 5px;background:linear-gradient(125deg,color-mix(in srgb,var(--accent-ink) 23%,var(--accent)),color-mix(in srgb,var(--accent-ink) 8%,var(--accent)));box-shadow:inset 2px 1px 0 #ffffff24,inset -2px -1px 0 #10271914;transform-origin:50% 100%;transition:transform 240ms ease}
+.mailbox-slot{position:absolute;left:14px;right:14px;top:28px;height:3px;border-radius:2px;background:color-mix(in srgb,var(--accent-ink) 55%,transparent);box-shadow:0 1px 0 #ffffff28}
+.mailbox-door-knob{position:absolute;left:25px;bottom:7px;width:3px;height:3px;border-radius:50%;background:var(--accent-ink)}
+.mailbox-flag{position:absolute;left:65px;top:18px;width:2px;height:21px;background:var(--accent-ink);transform:rotate(-12deg);transform-origin:50% 100%;transition:transform 240ms ease}.mailbox-flag:after{content:'';position:absolute;top:0;right:0;width:9px;height:6px;border-radius:1px;background:var(--accent-ink)}
+.mailbox-nest{position:absolute;z-index:4;left:0;top:-6px;width:73px;height:24px;pointer-events:none}.mailbox-nest>svg{width:100%;height:100%;stroke:var(--nest-twig);stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round}.mailbox-nest>[data-bird-perch]{position:absolute;left:24px;top:8px;width:26px;height:1px}
+.mailbox-plinth{position:absolute;left:9px;right:6px;bottom:5px;height:4px;border-radius:50%;background:color-mix(in srgb,var(--accent-ink) 12%,transparent)}
+.contact-mailbox-copy{display:grid;gap:8px}.contact-mailbox-copy>strong{font:500 20px/1.2 Manrope,sans-serif;letter-spacing:-.04em}.contact-mailbox-copy>small{font:400 9px/1.5 'DM Mono',monospace;letter-spacing:0;opacity:.85}.contact-mailbox-open{font:400 19px/1 Manrope,sans-serif;align-self:center}
+.contact .mailbox-trigger.contact-journey-arrived{outline:1px solid currentColor;outline-offset:5px}.mailbox-trigger.contact-journey-arrived .mailbox-flag{transform:rotate(-38deg)}
+/* Keep the credits; replace the bottom rule with a live field of light ribbons. */
+footer.footer-light-bar{position:relative;isolation:isolate;overflow:hidden;border-top:0;padding:30px 0 126px;background:var(--bg)}
+.footer-light-bar>.container{position:relative;z-index:1;align-items:center}
+.footer-ribbon-wallpaper{position:absolute;left:0;bottom:0;width:100%;height:130px;z-index:0;pointer-events:none}
+.footer-light-bar .footer-return{position:relative;display:flex;align-items:center;gap:20px;flex:none;min-height:58px;padding:9px 11px 9px 21px;border:1px solid transparent;border-radius:999px;background:linear-gradient(var(--bg),var(--bg)) padding-box,linear-gradient(115deg,#a4c88a,#aea0eb,#7cbcb8,#a4c88a) border-box;background-size:100% 100%,220% 100%;box-shadow:0 0 17px #a498df20;color:var(--text);font:500 14px/1.4 Manrope,sans-serif;letter-spacing:-.025em;text-transform:none;transition:transform 200ms ease,box-shadow 200ms ease;animation:footer-ribbon-border 7s linear infinite;animation-play-state:paused}
+.footer-light-bar[data-ribbons-live] .footer-return{animation-play-state:running}
+.footer-return>i{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line-strong);border-radius:50%;background:var(--surface)}.footer-return svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;transition:transform 200ms ease}
+@keyframes footer-ribbon-border{to{background-position:0 0,220% 0}}
+@media(hover:hover) and (pointer:fine){.contact-links>.contact-glass-link:hover{border-color:color-mix(in srgb,var(--accent-ink) 48%,transparent);box-shadow:inset 0 1px 0 color-mix(in srgb,var(--accent-ink) 32%,transparent),0 12px 22px #182c1420}.contact-glass-link:hover>.arrow{transform:translate(2px,-2px)}.mailbox-trigger:hover .mailbox-door{transform:rotateX(-24deg)}.mailbox-trigger:hover .mailbox-letter{transform:translateY(-3px) rotate(-5deg)}.mailbox-trigger:hover .mailbox-flag{transform:rotate(-38deg)}.footer-light-bar .footer-return:hover{transform:translateY(-2px);box-shadow:0 0 25px #a498df3b}.footer-return:hover svg{transform:translateY(-2px)}}
+.contact-glass-link:focus-visible,.contact .mailbox-trigger:focus-visible{outline:2px solid var(--accent-ink);outline-offset:5px}.footer-return:focus-visible{outline:2px solid var(--accent);outline-offset:5px}
+@media(max-width:600px){.contact-links>.contact-glass-link{padding:18px;gap:16px;grid-template-columns:44px 1fr 18px;border-radius:16px}.contact-glass-brand{width:43px;height:43px}.contact-links .contact-glass-copy strong{font-size:20px}.contact .mailbox-trigger{width:300px;max-width:calc(100vw - 36px)}.footer-light-bar>.container{align-items:flex-start}.footer-light-bar .footer-return{font-size:15px;gap:22px}.footer-ribbon-wallpaper{height:125px}footer.footer-light-bar{padding-bottom:125px}}
+@media(prefers-reduced-motion:reduce){.contact-links>.contact-glass-link{transform:none!important;transition:none}.mailbox-door,.mailbox-flag,.mailbox-letter,.footer-return svg{transition:none}.footer-light-bar .footer-return{animation:none}}
+
+.contact .mailbox-dock{opacity:1;pointer-events:auto;transform:translate3d(-50%,0,0)}
+@media(max-width:700px){.contact .mailbox-dock{transform:none}}
+
+/* A consistent type hierarchy across the green contact area and its closing credits. */
+.contact .section-label{font:500 10px/1.5 'DM Mono',monospace;letter-spacing:.13em;text-transform:uppercase;color:color-mix(in srgb,var(--accent-ink) 82%,transparent)}
+.contact h2{max-width:720px;font-family:Manrope,sans-serif;font-size:clamp(52px,7.1vw,100px);font-weight:500;line-height:.97;letter-spacing:-.065em}
+.contact h2 em{font-family:Newsreader,Georgia,serif;font-weight:400;letter-spacing:-.05em;text-decoration-thickness:.025em;text-underline-offset:.12em}
+.contact .contact-copy>p:last-child{font:400 13px/1.85 Manrope,sans-serif;color:color-mix(in srgb,var(--accent-ink) 92%,transparent);letter-spacing:-.01em}
+.contact-links .contact-glass-copy small{font-size:8px;line-height:1.5;letter-spacing:.1em;opacity:.87}
+.contact-links .contact-glass-copy strong{font-weight:500;letter-spacing:-.035em}
+.contact .contact-availability strong{font:500 11px/1.5 Manrope,sans-serif}.contact .contact-availability small{font:400 8px/1.6 'DM Mono',monospace;letter-spacing:.025em;opacity:.85}
+.contact-mailbox-copy>strong{font-family:Manrope,sans-serif;font-weight:500;letter-spacing:-.035em}.contact-mailbox-copy>small{font-size:9px;line-height:1.6;letter-spacing:.015em}
+.contact .contact-copy .contact-signature path{stroke-dashoffset:0}
+.footer-light-bar>.container{font:400 10px/1.6 Manrope,sans-serif;letter-spacing:.01em;text-transform:none;color:var(--muted)}
+.footer-light-bar>.container>span:first-child{font-weight:500;color:var(--text)}
+.footer-light-bar>.container>span:nth-child(2){font-size:10px;letter-spacing:0}
+.footer-light-bar .footer-return{min-height:44px;gap:12px;padding:7px 9px 7px 16px;border-radius:14px;font:500 12px/1.4 Manrope,sans-serif;letter-spacing:-.01em;background:linear-gradient(135deg,var(--surface),var(--bg)) padding-box,linear-gradient(115deg,var(--accent),#97b7aa,var(--muted),var(--accent)) border-box;background-size:100% 100%,220% 100%;box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 5%,transparent),0 3px 12px #1725180d}
+.footer-return>i{width:28px;height:28px;background:color-mix(in srgb,var(--surface) 70%,transparent);border-color:var(--line)}.footer-return svg{width:14px;height:14px;stroke-width:1.3}
+@media(hover:hover) and (pointer:fine){.footer-light-bar .footer-return:hover{transform:translateY(-1px);box-shadow:0 4px 15px color-mix(in srgb,var(--accent) 12%,transparent)}}
+@media(max-width:600px){.contact .section-label{font-size:9px}.contact h2{font-size:clamp(48px,13vw,74px);line-height:.99;letter-spacing:-.06em}.contact .contact-copy>p:last-child{font-size:12px;line-height:1.85}.contact-links .contact-glass-copy small{font-size:8px}.footer-light-bar>.container{gap:17px}.footer-light-bar>.container>span:nth-child(2){font-size:9px}.footer-light-bar .footer-return{font-size:12px;min-height:44px;gap:12px}}
+
+/* One aligned contact column, with the mailbox as the primary invitation. */
+.contact .contact-grid{align-items:center;gap:clamp(40px,7vw,110px)}
+.contact .contact-links{gap:14px}
+.contact .contact-links .mailbox-dock,.contact .contact-links .mailbox-dock.is-visible{position:relative;inset:auto;width:100%;margin:0;opacity:1;pointer-events:auto;transform:none}
+.contact .contact-links .mailbox-trigger{width:100%;max-width:none;min-width:0}
+.contact .contact-links .contact-availability{margin-top:6px;padding-top:20px;border-top:1px solid color-mix(in srgb,var(--accent-ink) 20%,transparent)}
+.footer-light-bar>.container{display:grid;grid-template-columns:1fr auto auto;gap:28px;align-items:center}
+@media(max-width:900px){.footer-light-bar>.container{grid-template-columns:1fr auto;gap:16px}.footer-light-bar>.container>span:nth-child(2){grid-column:1;grid-row:2}.footer-light-bar .footer-return{grid-column:2;grid-row:1 / 3}}
+@media(max-width:767px){.contact .contact-grid{gap:36px}.contact .contact-links{max-width:none}.contact .contact-copy>p:last-child{max-width:100%}}
+@media(max-width:600px){.footer-light-bar>.container{grid-template-columns:1fr;gap:14px}.footer-light-bar>.container>span:nth-child(2){grid-column:auto;grid-row:auto}.footer-light-bar .footer-return{grid-column:auto;grid-row:auto;justify-self:start}}
+
+/* The light field is the credits’ backdrop, not a separate strip below them. */
+footer.footer-light-bar{padding:34px 0}.footer-ribbon-wallpaper{inset:0;width:100%;height:100%;opacity:.65}
+
+.contact .contact-copy .contact-signature-anchor{display:contents;padding:0;white-space:normal}
+.contact .contact-copy .contact-signature{position:relative;display:block;inset:auto;width:112px;height:46px;margin:14px 0 0;transform:rotate(-4deg)}
+.footer-light-bar>.container>span{text-shadow:0 1px 3px var(--bg)}
+
+.contact .contact-links{max-width:none}
+
+/* The mailbox shell stays still: its door and flag provide the hover feedback. */
+.contact .mailbox-trigger:is(:hover,:focus-visible,:active){transform:none}

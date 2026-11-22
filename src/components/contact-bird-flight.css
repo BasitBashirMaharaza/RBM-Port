@@ -1,0 +1,11 @@
+.contact-bird-flight{position:fixed;left:0;top:0;width:24px;height:24px;z-index:1200;pointer-events:none;will-change:transform,opacity;--bird-fold:1;--bird-mail:0}
+.contact-bird-flight[hidden]{display:none}
+.contact-bird-flight>svg{display:block;width:100%;height:100%;overflow:visible}
+.contact-flight-bird{opacity:var(--bird-fold);transform-origin:12px 12px;transform:scaleX(var(--bird-direction,1)) scale(calc(.65 + var(--bird-fold)*.35))}
+.contact-flight-wing{transform-origin:11px 12px;animation:contact-wingbeat 280ms ease-in-out infinite alternate}
+.contact-flight-eye{fill:var(--bg,#151519)}
+.contact-flight-envelope{opacity:var(--bird-mail);transform-origin:12px 12px;transform:scale(calc(.84 + var(--bird-mail)*.16))}
+.contact-mail-in-flight{opacity:0!important}
+@keyframes contact-wingbeat{from{transform:rotate(-20deg) scaleY(.6)}to{transform:rotate(30deg) scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.contact-bird-flight{display:none}.contact-mail-in-flight{opacity:1!important}}
+

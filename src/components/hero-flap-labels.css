@@ -1,0 +1,22 @@
+.hero-flap-label { display:inline-flex;vertical-align:middle;line-height:1; }
+.signal-polished .hero-flap-label .split-flap-text { font-family:'DM Mono',monospace;font-weight:500;line-height:1;letter-spacing:0;color:var(--text);-webkit-text-fill-color:initial; }
+.signal-polished .hero-flap-label .split-flap-text__char { color:var(--text);-webkit-text-fill-color:initial; }
+@supports ((background-clip:text) or (-webkit-background-clip:text)) {
+ .signal-polished .hero-flap-label .split-flap-text__char {
+  background-image:linear-gradient(110deg,color-mix(in srgb,var(--text) 85%,#9b92ff),color-mix(in srgb,var(--accent) 65%,var(--text)) 52%,color-mix(in srgb,var(--text) 75%,#9b92ff));
+  background-clip:text;-webkit-background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+ }
+}
+.editorial-footer-label { display:flex;align-items:center; }
+@media(max-width:560px) { .signal-polished .editorial-kicker { font-size:8px; }.signal-polished .editorial-footer { font-size:8px; } }
+
+/* Flap faces own their ink: inherited text masks otherwise paint both halves twice. */
+.signal-polished .editorial-kicker { background:none;background-clip:border-box;-webkit-background-clip:border-box;color:var(--text);-webkit-text-fill-color:initial; }
+.signal-polished .hero-flap-label span { padding:0; }
+/* Keep the small settled labels crisp; expose the hinge only during an actual turn. */
+.signal-polished .hero-flap-label .split-flap-text__tile:not(.is-flipping) { -webkit-mask:none;mask:none; }
+/* The greeting and refresh-selected thought share the original hero label position. */
+.signal-polished .hero-greeting-kicker{display:flex;flex-direction:column;align-items:center;gap:12px;width:calc(100% - 38px);max-width:760px;text-align:center;letter-spacing:.04em}
+.hero-greeting-line{font-size:1.15em}
+@media(max-width:560px){.signal-polished .hero-greeting-kicker{gap:11px;font-size:8px}.hero-greeting-line{font-size:10px}}
+@media(max-width:360px){.signal-polished .hero-greeting-kicker{font-size:6.5px}}

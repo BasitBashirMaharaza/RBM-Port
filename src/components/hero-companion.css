@@ -1,0 +1,11 @@
+.hero-companion{position:absolute;left:0;top:0;z-index:8;width:72px;height:72px;pointer-events:none;opacity:0}
+.hero-companion[data-ready='true']:not([data-phase='waiting']){opacity:1;transition:opacity 250ms ease}
+.hero-companion .intro-robot-anchor{position:relative;display:block;inset:auto!important;width:72px;height:72px;transform:none!important;clip-path:none!important;overflow:visible;pointer-events:auto}
+.hero-companion .intro-poster{position:relative;inset:auto;width:72px;height:72px;transform:none!important;overflow:visible;border:0;background:transparent;padding:0;cursor:pointer}
+.hero-companion .hero-robot-canvas{display:block;width:72px;height:72px;pointer-events:none;filter:drop-shadow(0 3px 2px #0002)}
+.hero-companion .intro-robot-bubble{bottom:80px;top:auto;right:0;left:auto;transform:none;max-width:min(190px,80vw)}
+.hero-companion [data-robot-hero='true']::before,.hero-companion [data-robot-hero='true']::after{display:none}
+.hero-companion .intro-poster:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:12px}
+@media(prefers-reduced-motion:reduce){.hero-companion{transition:opacity 150ms ease!important}}
+.hero-companion[data-phase='waiting']{visibility:hidden}
+.hero-companion .intro-robot-peeking .intro-poster::after{display:none}

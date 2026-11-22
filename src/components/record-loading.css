@@ -1,0 +1,22 @@
+.bcv-record-flight{position:fixed;left:0;top:0;width:96px;height:96px;z-index:100;pointer-events:none;border-radius:50%;background:repeating-radial-gradient(circle,#15151a 0 1px,#48464f 1.3px 1.8px,#17171d 2px 4px);box-shadow:0 5px 12px #0c091c55,inset 0 0 0 1px #ffffff4a;will-change:transform}
+.bcv-record-flight::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 25deg,transparent,#ffffff35 14%,transparent 30% 55%,#ffffff28 70%,transparent 85%)}
+.bcv-record-flight>span{position:absolute;inset:34%;border-radius:50%;overflow:hidden;background:var(--record-accent)}
+.bcv-record-flight img{width:100%;height:100%;object-fit:cover;display:block}
+.bcv-record-flight i{position:absolute;left:calc(50% - 2px);top:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:#18171d;box-shadow:0 0 0 1px #fff7}
+.bcv-turntable-deck.is-loading .bcv-turntable-disc{opacity:0}
+.bcv-turntable-deck.is-loading .bcv-turntable-led{animation:bcv-record-ready 800ms ease-in-out infinite alternate}
+.bcv-turntable-deck.has-song{background:repeating-linear-gradient(100deg,#ffffff0d 0 1px,transparent 1px 4px),linear-gradient(135deg,color-mix(in srgb,var(--record-accent) 32%,#d4d8d0),color-mix(in srgb,var(--record-accent) 38%,#808b86))}
+.bcv-turntable.has-song .bcv-turntable-disc>span{background:var(--record-accent)}
+.bcv-turntable-disc .bcv-record-label-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.bcv-turntable-disc>span .bcv-record-label-hole{z-index:1;width:7%;height:7%;background:#18171e;box-shadow:0 0 0 1px #ffffff80}
+.bcv-turntable .bcv-turntable-info strong{display:block;overflow-wrap:anywhere;line-height:1.3}
+.bcv-turntable .bcv-turntable-info small{min-height:1.4em}
+.bcv-turntable.has-song .bcv-turntable-led.is-on{background:color-mix(in srgb,var(--record-accent) 60%,#edffd6);box-shadow:0 0 5px color-mix(in srgb,var(--record-accent) 60%,transparent)}
+.bcv-song-popover .bcv-song-sleeve .bcv-song-preview-button{position:absolute;left:5px;bottom:5px;width:64px;min-height:28px;z-index:3;display:flex;align-items:center;justify-content:center;gap:4px;padding:4px 5px;border:1px solid #ffffff66;border-radius:5px;background:#14151ce8;color:#fff;font:600 8px/1.2 Manrope,sans-serif;cursor:pointer;box-shadow:0 2px 5px #0004;transition:background-color 180ms ease,translate 180ms ease}
+.bcv-song-preview-button svg{width:9px;height:9px;fill:currentColor;flex:none}
+.bcv-song-preview-button::before{content:'';position:absolute;inset:-8px -3px}
+.bcv-song-preview-button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@keyframes bcv-record-ready{from{opacity:.35}to{opacity:1}}
+@media(hover:hover) and (pointer:fine){.bcv-song-popover .bcv-song-sleeve .bcv-song-preview-button:hover{background:#30313cf5;translate:0 -1px}}
+@media(prefers-reduced-motion:reduce){.bcv-turntable-deck.is-loading .bcv-turntable-led{animation:none}.bcv-song-preview-button{transition:none}}
+

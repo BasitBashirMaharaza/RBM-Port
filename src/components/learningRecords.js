@@ -1,0 +1,5 @@
+export const educationRecords=[
+ {id:'gcet',institution:'GCET Kashmir',title:'Bachelor of Technology',subtitle:'Computer Science & Engineering',period:'2019 — 2024',label:'Academic degree',logo:'/logos/gcet-degree.svg',description:'Government College of Engineering and Technology (GCET), Safapora Ganderbal, Jammu & Kashmir, India.',location:'Safapora · Ganderbal',tags:['Algorithms & DSA','Machine learning','DBMS','Software engineering','Operating systems']},
+ {id:'michigan',institution:'University of Michigan',title:'Applied Machine Learning in Python',period:'Jun 2024',logo:'/logos/michigan.svg',description:'Applied algorithms, Scikit-Learn model creation, NumPy and Pandas preprocessing, and evaluation metrics.',certificate:'/certificates/michigan-applied-ml.png'},
+ {id:'google',institution:'Google Digital Garage',title:'The Fundamentals of Digital Marketing',period:'Nov 2022',logo:'/logos/google.svg',description:'SEO practices, digital strategy, web analytics and search-performance optimization.',credential:'Credential ID: U33 RXC S8T',certificate:'/certificates/google-digital-marketing.jpg'},
+];

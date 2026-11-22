@@ -1,0 +1,85 @@
+.hero-profile-transition {
+  position:relative;
+  width:100%;
+  padding:4em 0 2em;
+  margin-bottom:-3em;
+  overflow:hidden;
+  isolation:isolate;
+  pointer-events:none;
+  user-select:none;
+  font-size:clamp(12px,1.111111vw,18px);
+  line-height:1;
+  --band-ink:var(--text);
+  --band-edge:color-mix(in srgb,var(--text) 70%,var(--bg));
+}
+.hero-profile-band {
+  position:relative;
+  display:flex;
+  align-items:center;
+  width:max(150vw,calc(100% + 24em));
+  padding:1.8em 0;
+  border-top:.125em solid var(--band-edge);
+  border-bottom:.125em solid var(--band-edge);
+  color:var(--band-ink);
+  transform-origin:50% 50%;
+}
+.hero-profile-band-0 {
+  background:color-mix(in srgb,var(--accent) 16%,var(--surface-2));
+  transform:translate3d(-18em,0,0) rotate(1deg);
+}
+.hero-profile-band-1 {
+  top:-2em;
+  background:var(--accent);
+  color:var(--accent-ink);
+  transform:translate3d(-20em,0,0) rotate(2.5deg);
+}
+.hero-profile-band-2 {
+  top:-4em;
+  background:color-mix(in srgb,var(--accent) 7%,var(--surface-2));
+  transform:translate3d(-22em,0,0) rotate(5deg);
+}
+.hero-profile-band-unit { display:flex;align-items:center;flex-shrink:0; }
+.hero-profile-band-unit > span { font:400 1.75em/1 Manrope,system-ui,sans-serif;letter-spacing:-.025em; }
+.hero-profile-band-unit svg { flex-shrink:0;width:4.25em;height:4.25em;margin:0 1.5em;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round; }
+.hero-profile-band-2 svg { width:4.125em;height:4.125em; }
+@media(max-width:767px) {
+  .hero-profile-transition { font-size:12px;padding:2em 0 1em; }
+  .hero-profile-band { width:max(180vw,calc(100% + 26em));padding:1.2em 0; }
+  .hero-profile-band-unit > span { font-size:1.3em; }
+  .hero-profile-band-unit svg { width:3.5em;height:3.5em;margin:0 1.25em; }
+}
+
+/* Keep only the three moving surfaces promoted while near the viewport. */
+.hero-profile-transition.is-active .hero-profile-band { will-change:transform; }
+/* The ribbons hand directly into Profile instead of a second section-sized gap. */
+.hero-profile-transition + .about { padding-top:clamp(20px,2vw,28px);border-top:0; }
+@media(prefers-reduced-motion:reduce) {
+ .hero-profile-transition.is-active .hero-profile-band { will-change:auto; }
+}
+
+/* Smaller chapter ribbons alternate their tilt and travel to form a continuous wave. */
+.hero-profile-transition.is-compact {
+ font-size:clamp(11px,.88vw,14px);
+ padding:2.8em 0 1.2em;
+ margin:0;
+}
+.hero-profile-transition.is-compact .hero-profile-band {
+ padding:.65em 0;
+ border-width:1px;
+}
+.hero-profile-transition.is-compact .hero-profile-band-1 { top:-.8em; }
+.hero-profile-transition.is-compact .hero-profile-band-2 { top:-1.6em; }
+.hero-profile-transition.is-compact .hero-profile-band-unit > span { font-size:1.35em;white-space:nowrap;letter-spacing:-.02em; }
+.hero-profile-transition.is-compact .hero-profile-band-unit svg { width:2.6em;height:2.6em;margin:0 1.15em;stroke-width:1.7; }
+.hero-profile-transition.is-compact + .section { padding-top:clamp(42px,4vw,64px);border-top:0; }
+.hero-profile-transition.is-compact + .wa-section { padding-top:clamp(42px,4vw,64px); }
+.hero-profile-transition.is-compact + .beyond-cv-section { padding-top:clamp(48px,6vw,80px);border-top:0; }
+.hero-profile-transition.is-reverse .hero-profile-band-0 { transform:translate3d(0,0,0) rotate(-.28deg); }
+.hero-profile-transition.is-reverse .hero-profile-band-1 { transform:translate3d(0,0,0) rotate(-.7deg); }
+.hero-profile-transition.is-reverse .hero-profile-band-2 { transform:translate3d(0,0,0) rotate(-1.4deg); }
+@media(max-width:767px) {
+ .hero-profile-transition.is-compact { font-size:11px;padding:2em 0 1em; }
+ .hero-profile-transition.is-compact .hero-profile-band { padding:.6em 0; }
+ .hero-profile-transition.is-compact .hero-profile-band-unit > span { font-size:1.25em; }
+ .hero-profile-transition.is-compact .hero-profile-band-unit svg { width:2.2em;height:2.2em;margin:0 1em; }
+}

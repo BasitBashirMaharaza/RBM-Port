@@ -1,0 +1,51 @@
+.profile-rotate {
+  display: flex;
+  flex-wrap: wrap;
+  white-space: pre-wrap;
+  position: relative;
+}
+
+.profile-rotate-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.profile-rotate-word {
+  display: inline-flex;
+}
+
+.profile-rotate-lines {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.profile-rotate-element {
+  display: inline-block;
+}
+
+.profile-rotate-space {
+  white-space: pre;
+}
+
+.profile-rotate-highlight {
+  box-sizing: content-box;
+  flex-wrap: nowrap;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0.1em 0.28em;
+  border-radius: 0.16em;
+}
+
+.profile-rotate-highlight-content {
+  display: flex;
+  flex-shrink: 0;
+  white-space: pre;
+}

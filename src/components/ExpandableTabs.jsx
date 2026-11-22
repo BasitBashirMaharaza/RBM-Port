@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import ContactBirdFlight from './ContactBirdFlight.jsx';
 
 const iconPaths = {
+  beyond: <><path d="M12 6.5C9.5 4.7 6.3 4.2 3 5v14c3.3-.8 6.5-.3 9 1.5 2.5-1.8 5.7-2.3 9-1.5V5c-3.3-.8-6.5-.3-9 1.5Z" /><path d="M12 6.5v14M6 9l3 .5M15 9.5l3-.5" /></>,
   about: <><circle cx="12" cy="8" r="3" /><path d="M5.5 20c.8-4 3-6 6.5-6s5.7 2 6.5 6" /></>,
   experience: <><rect x="4" y="7" width="16" height="12" rx="2" /><path d="M9 7V5h6v2M4 12h16M10 12v2h4v-2" /></>,
   work: <><rect x="4" y="4" width="6" height="6" rx="1" /><rect x="14" y="4" width="6" height="6" rx="1" /><rect x="4" y="14" width="6" height="6" rx="1" /><rect x="14" y="14" width="6" height="6" rx="1" /></>,
@@ -37,11 +39,13 @@ export default function ExpandableTabs({ tabs, onChange }) {
   return (
     <nav className="expandable-tabs" ref={root} aria-label="Primary navigation" onPointerLeave={() => setHovered(null)}>
       {tabs.map((tab, index) => tab.type === 'separator' ? <i className="expandable-separator" aria-hidden="true" key={`separator-${index}`} /> : (
-        <button className={`expandable-tab ${active === index ? 'is-selected' : ''}`} type="button" onClick={() => select(tab, index)} onPointerEnter={() => setHovered(index)} onFocus={() => setHovered(index)} onBlur={() => setHovered(null)} aria-pressed={selected === index} aria-label={tab.title} key={tab.title} data-sound={`nav-${tab.title}`}>
+        <button data-contact-flight-target={tab.icon === 'contact' ? '' : undefined} className={`expandable-tab ${active === index ? 'is-selected' : ''}`} type="button" onClick={() => select(tab, index)} onPointerEnter={() => setHovered(index)} onFocus={() => setHovered(index)} onBlur={() => setHovered(null)} aria-pressed={selected === index} aria-label={tab.title} key={tab.title} data-sound={`nav-${tab.title}`}>
           <TabIcon name={tab.icon} />
           <span><b>{tab.title}</b></span>
         </button>
       ))}
+      <ContactBirdFlight navigation={root} />
     </nav>
   );
 }
+

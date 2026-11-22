@@ -1,0 +1,37 @@
+.contact-journey-bird{position:fixed;left:0;top:0;width:28px;height:28px;z-index:1200;pointer-events:none;will-change:transform;--bird-feather:#479b78;color:var(--bird-feather);filter:drop-shadow(0 1px 2px #12372930)}
+.contact-journey-bird[hidden]{display:none}
+.contact-journey-bird svg{display:block;width:100%;height:100%;overflow:visible}
+.contact-journey-character{transform-origin:12px 12px;transform-box:view-box;transition:transform 240ms ease}
+.contact-journey-wing{transform-box:view-box;transform-origin:11px 12px;animation:contact-journey-wingbeat 1440ms linear infinite}
+.contact-journey-eye{fill:var(--bg,#151519)}
+.contact-journey-bird[data-phase='landed'] .contact-journey-wing{animation:none;transform:rotate(15deg) scaleY(.55)}
+.contact-email-trigger.contact-journey-arrived{outline:2px solid currentColor;outline-offset:5px}
+/* Two measured power strokes followed by a short extended-wing glide.
+   Lift is suggested by the wing stroke; the body stays on one stable flight corridor. */
+@keyframes contact-journey-wingbeat{
+ 0%,42%,100%{transform:rotate(-18deg) scaleY(1)}
+ 13%,55%{transform:rotate(28deg) scaleY(.4)}
+ 27%,69%{transform:rotate(-18deg) scaleY(1)}
+ 80%{transform:rotate(-12deg) scaleY(.92)}
+ 92%{transform:rotate(-12deg) scaleY(.92)}
+}
+@media(prefers-reduced-motion:reduce){.contact-journey-bird{display:none}.contact-journey-wing{animation:none}}
+
+.contact-journey-bird{appearance:none;padding:0;border:0;border-radius:9px;background:none;font:inherit;touch-action:manipulation}
+.contact-journey-bird[data-phase='landed']{pointer-events:auto;cursor:pointer}
+.contact-journey-bird:focus-visible{outline:1px solid var(--bird-feather);outline-offset:5px}
+.contact-journey-bird:after{content:'';position:absolute;inset:-8px;border-radius:50%}
+.contact-journey-idle{transform-box:view-box;transform-origin:10px 19px}
+.contact-journey-bird[data-action='look'] .contact-journey-idle{animation:contact-perch-look 1.3s ease-in-out both}
+.contact-journey-bird[data-action='preen'] .contact-journey-idle{animation:contact-perch-preen 1.3s ease-in-out both}
+.contact-journey-bird[data-action='stretch'] .contact-journey-wing{animation:contact-perch-wave 600ms ease-in-out 2}
+.contact-journey-bird[data-action='blink'] .contact-journey-eye,.contact-journey-bird[data-action='look'] .contact-journey-eye{transform-box:fill-box;transform-origin:center;animation:contact-perch-blink 1.1s ease both}
+@keyframes contact-perch-look{0%,100%{transform:rotate(0)}25%,43%{transform:rotate(-6deg)}65%,80%{transform:rotate(4deg)}}
+@keyframes contact-perch-preen{0%,100%{transform:rotate(0)}35%,60%{transform:rotate(13deg) translateY(.5px)}75%{transform:rotate(-3deg)}}
+@keyframes contact-perch-wave{0%,100%{transform:rotate(15deg) scaleY(.55)}45%{transform:rotate(-26deg) scaleY(.95)}70%{transform:rotate(-12deg) scaleY(.8)}}
+@keyframes contact-perch-blink{0%,34%,43%,65%,74%,100%{transform:scaleY(1)}38%,69%{transform:scaleY(.1)}}
+@media(prefers-reduced-motion:reduce){.contact-journey-bird[data-phase='landed']{display:block}.contact-journey-idle,.contact-journey-eye,.contact-journey-bird[data-phase='landed'] .contact-journey-wing{animation:none!important;transition:none!important}}
+
+.contact-bird-host{display:contents}
+.contact-bird-host.is-perched{display:block;position:absolute;inset:0 auto auto 0;width:0;height:0;z-index:5;pointer-events:none}
+.contact-bird-host.is-perched .contact-journey-bird{position:absolute;will-change:auto}

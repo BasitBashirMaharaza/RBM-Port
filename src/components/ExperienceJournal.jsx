@@ -4,16 +4,18 @@ import './experience-journal.css';
 import contributions from './journal-contributions.json';
 import { createJournalSound } from './journalSound.js';
 import JournalContributionOverlay from './JournalContributionOverlay.jsx';
+import JournalAtmosphere from './JournalAtmosphere.jsx';
+import useJournalScrollFloat from './useJournalScrollFloat.js';
 
 function PerspectiveScene() {
   return (
-    <div className="journal-weather-study" role="img" aria-label="Hand-drawn architectural study with drifting clouds and a slowly turning sun, based on the supplied reference">
+    <div className="journal-weather-study" role="img" aria-label="Hand-drawn architectural study with drifting clouds, a complete sun and birds flying toward it">
       <p className="weather-study-caption">A little sunshine. A wider perspective.</p>
       <svg className="weather-study-sky" viewBox="0 0 526 300" fill="none" aria-hidden="true">
         <g className="weather-sun" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
           <circle cx="380" cy="137" r="35" />
           <g className="weather-sun-rays">
-            <path d="M380 90v-13m33 27 9-10m7 41 13-3m-18 36 15 6m-59 14v15m-46-70-11-4m24-21-9-13" />
+            {Array.from({length:12},(_,index)=>{const angle=index*Math.PI/6;return <line key={index} x1={380+Math.sin(angle)*47} y1={137-Math.cos(angle)*47} x2={380+Math.sin(angle)*61} y2={137-Math.cos(angle)*61}/>;})}
           </g>
         </g>
         <path className="weather-cloud weather-cloud-near" d="M278 177c-13-13-1-38 16-40 14-3 25 3 31 16 8-13 20-10 24 0 7-16 20-17 25-2 9-16 29-15 37 1 10 20-1 32-18 32h-91c-10 3-19 1-24-7Z" />
@@ -21,6 +23,9 @@ function PerspectiveScene() {
         <path className="weather-cloud weather-cloud-middle" d="M172 87c-8-13 1-29 14-29 9 0 15 4 18 11 7-8 16-6 20 1 8-11 21-7 23 5 3 10-3 16-14 16h-43c-8 2-14 1-18-4Z" />
         <path className="weather-cloud weather-cloud-low" d="M345 251c-7-11 2-24 12-24 8 0 14 4 17 10 6-7 14-6 18 0 8-9 20-5 21 5 2 9-4 13-12 13h-41c-7 1-12 0-15-4Z" />
         <path className="weather-cloud weather-cloud-wisp" d="M66 125c-5-8 1-19 10-18 6 0 10 3 12 7 5-5 11-4 14 1 6-8 15-5 17 3 1 7-3 11-10 11H79c-6 1-10 0-13-4Z" />
+        <g className="weather-birds" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          {[{x:86,y:187,delay:'0s',scale:1},{x:112,y:209,delay:'-6s',scale:.8},{x:62,y:219,delay:'-12s',scale:.65}].map((bird,index)=><g key={index} className="weather-bird-flight" style={{'--bird-delay':bird.delay}}><g transform={`translate(${bird.x} ${bird.y}) scale(${bird.scale})`}><path className="weather-bird-wing wing-left" d="M0 0Q-7-9-14-5"/><path className="weather-bird-wing wing-right" d="M0 0Q6-9 13-7"/></g></g>)}
+        </g>
       </svg>
       <div className="weather-study-building" aria-hidden="true">
         <svg viewBox="0 300 526 288" fill="none">
@@ -70,17 +75,6 @@ function ContributionNote({ onOpen }) {
   );
 }
 
-function JournalLogo({ item, index }) {
-  return (
-    <span className={'journal-logo-scene journal-logo-' + index}>
-      <span className="journal-logo-ambient" aria-hidden="true"><i /><i /><i /></span>
-      <img src={index === 0 ? '/logos/dar-pharma.png' : item.logo} alt={item.company + ' logo'} draggable="false" />
-      <span className="journal-logo-trace" aria-hidden="true" />
-      <span className="journal-logo-veil veil-top" aria-hidden="true" />
-      <span className="journal-logo-veil veil-bottom" aria-hidden="true" />
-    </span>
-  );
-}
 
 function BackCoverScene() {
   return (
@@ -95,7 +89,7 @@ function BackCoverScene() {
       <span className="care-cover-owner">BASIT BASHIR</span>
       <div className="care-cover-copy">
         <span>Healthcare · Data · AI</span>
-        <h3>Care,<br /><em>carried forward.</em></h3>
+        <h3>Curiosity,<br /><em>put to work.</em></h3>
       </div>
       <div className="care-cover-reflection"><ReflectionNote /></div>
       <div className="care-cover-signoff"><span>Learning through doing.</span><small>KASHMIR · INDIA</small></div>
@@ -104,16 +98,42 @@ function BackCoverScene() {
 }
 
 function ReflectionNote() {
+  const lines = ['Care taught me to listen.','Data taught me to question.','Experience taught me to connect them.'];
   return (
     <div className="journal-reflection-note">
       <span className="journal-reflection-portrait">
         <img src="/portfolio_photo.webp" alt="Basit Bashir" draggable="false" />
-        <span aria-hidden="true" />
+        <span className="portrait-aperture portrait-aperture-one" aria-hidden="true" />
+        <span className="portrait-aperture portrait-aperture-two" aria-hidden="true" />
+        <svg className="portrait-engraving" viewBox="0 0 100 100" fill="none" aria-hidden="true"><circle cx="50" cy="50" r="47" pathLength="1" /><path d="M50 4a46 46 0 0 1 46 46M50 96A46 46 0 0 1 4 50" pathLength="1" /></svg>
       </span>
       <div>
         <span className="journal-eyebrow">What I carry forward</span>
-        <p><span className="reflection-line">Care taught me to listen.</span><span className="reflection-line">Data taught me to question.</span><span className="reflection-line"><em>Experience taught me to connect them.</em></span></p>
+        <p>{lines.map((line,lineIndex)=><span className={'reflection-line' + (lineIndex === 2 ? ' reflection-line-emphasis' : '')} key={line} style={{'--line-order':lineIndex}}>{line.split(' ').map((word,wordIndex)=><span className="reflection-word" key={wordIndex} style={{'--word-order':wordIndex}}>{word + (wordIndex < line.split(' ').length-1 ? ' ' : '')}</span>)}</span>)}</p>
       </div>
+    </div>
+  );
+}
+
+function CoverMaterial() {
+  const material = useRef(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => material.current?.classList.toggle('is-live',entry.isIntersecting),{rootMargin:'100px'});
+    if(material.current) observer.observe(material.current);
+    return () => observer.disconnect();
+  },[]);
+  return (
+    <div ref={material} className="journal-cover-material" aria-hidden="true">
+      <div className="cover-material-weave" />
+      <svg viewBox="0 0 500 700" preserveAspectRatio="xMidYMid slice" fill="none">
+        <g className="cover-material-contours">
+          {Array.from({length:9},(_,index)=><path key={index} d={`M${-150+index*27} 740C${420+index*18} 520 ${-80+index*23} 370 ${210+index*24} -70`} />)}
+        </g>
+        <g className="cover-material-stitch"><path d="M22 0v700M478 0v700" /></g>
+      </svg>
+      <div className="cover-material-ribbon" />
+      <svg className="cover-edge-signal" viewBox="0 0 500 700" preserveAspectRatio="none"><rect x="2" y="2" width="496" height="696" rx="16" pathLength="1" /></svg>
+      <div className="cover-inner-light" />
     </div>
   );
 }
@@ -127,14 +147,15 @@ function Cover({ items, back = false, onOpen, onContributions }) {
     );
   }
   return (
-    <div className={'journal-cover-art' + (onOpen ? ' journal-cover-interactive' : '')}
+    <div className={'journal-cover-art journal-front-art' + (onOpen ? ' journal-cover-interactive' : '')}
       onClick={onOpen ? (event) => { if (!event.target.closest('button')) onOpen(); } : undefined}>
       {onOpen && <button data-sound="silent" type="button" className="journal-cover-hitarea" aria-label="Open the experience journal" onClick={onOpen} />}
+      <CoverMaterial />
       <span className="journal-cover-name">BASIT BASHIR</span>
-      <span className="journal-note journal-note-main">From operations<br />to <em>intelligence.</em></span>
-      <span className="journal-note journal-note-small">Experience<br />& field notes</span>
+      <span className="journal-note journal-note-main"><i className="journal-paper-pin" aria-hidden="true" />From operations<br />to <em>intelligence.</em></span>
+      <span className="journal-note journal-note-small"><i className="journal-paper-pin pin-silver" aria-hidden="true" />Experience<br />& field notes</span>
       <span className="journal-cover-stamp">AI · DATA<br />HEALTHCARE</span>
-      <span className="journal-note journal-note-list">{items.map((item) => <span key={item.role}>{item.label}</span>)}</span>
+      <span className="journal-note journal-note-list"><span className="journal-note-tape" aria-hidden="true" />{items.map((item) => <span key={item.role}>{item.label}</span>)}</span>
       <ContributionNote onOpen={onContributions} />
     </div>
   );
@@ -152,7 +173,158 @@ const chapterWorkflows = [
   { title: 'Visibility, measured', steps: ['Search visibility', 'Organic reach', 'Campaign signals'], note: 'SEO and multi-channel web analytics, connected through performance measurement.' },
 ];
 
-function Page({ item, index, side }) {
+function ChapterIdentityCard({ item, index, revealAt }) {
+  const card = useRef(null);
+  useLayoutEffect(() => {
+    const element = card.current;
+    if (!element) return undefined;
+    let frame = 0;
+    const preference = matchMedia('(prefers-reduced-motion: reduce)');
+    const reduced = preference.matches;
+    const observer = new IntersectionObserver(([entry]) => {
+      element.classList.toggle('is-live',entry.isIntersecting);
+      if (entry.isIntersecting && !reduced) {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          // Both printed halves use the document clock, including after a leaf lands.
+          element.getAnimations({subtree:true}).forEach(animation => {
+            if (animation.animationName?.startsWith('identity-')) animation.startTime = 0;
+          });
+        });
+      }
+    },{rootMargin:'50px'});
+    observer.observe(element);
+    let reveal;
+    if (!reduced) {
+      const frames = index === 0
+        ? [{clipPath:'inset(0 50% 0 50%)',opacity:.2},{clipPath:'inset(0)',opacity:1}]
+        : index === 1
+          ? [{clipPath:'polygon(0 0,0 0,0 100%,0 100%)',opacity:.35},{clipPath:'polygon(0 0,100% 0,100% 100%,0 100%)',opacity:1}]
+          : [{clipPath:'circle(0% at 50% 50%)',opacity:.3},{clipPath:'circle(75% at 50% 50%)',opacity:1}];
+      reveal = element.querySelector('img').animate(frames,{duration:900,easing:'cubic-bezier(.23,1,.32,1)',fill:'both'});
+      reveal.startTime = revealAt ?? document.timeline.currentTime;
+    }
+    const stopForReducedMotion = () => { if(preference.matches) reveal?.finish(); };
+    preference.addEventListener('change',stopForReducedMotion);
+    return () => { observer.disconnect();cancelAnimationFrame(frame);reveal?.cancel();preference.removeEventListener('change',stopForReducedMotion); };
+  },[index,revealAt]);
+  return (
+    <div ref={card} className={'pharmacy-center-card chapter-identity-card identity-' + index}>
+      <svg className="identity-living-surface" viewBox="0 0 700 200" fill="none" preserveAspectRatio="none" aria-hidden="true">
+        {index === 0 ? <>
+          <path className="identity-care-grid" d="M0 55h700M0 105h700M0 155h700M100 0v200M225 0v200M350 0v200M475 0v200M600 0v200" />
+          <path className="identity-care-signal" d="M-50 112H160l17-9 14 22 21-56 22 84 18-41h498" />
+        </> : index === 1 ? <>
+          <g className="identity-model-architecture"><path d="M0 40h150l65 60h270l65-60h150M0 160h150l65-60m270 0 65 60h150M130 0v40m440 120v40" /><path d="M220 65h260v70H220zM238 80h224M238 96h125M238 112h190" /></g>
+          <path className="identity-model-flow" d="M0 40h150l65 60h270l65 60h150" />
+        </> : <>
+          <path className="identity-analytics-grid" d="M30 40h640M30 85h640M30 130h640M30 175h640M110 20v155M270 20v155M430 20v155M590 20v155" />
+          <path className="identity-analytics-curve" d="M-20 170C80 170 90 100 170 120S275 158 345 85 455 118 530 59 620 80 730 10" />
+          <path className="identity-analytics-echo" d="M-20 185C80 185 100 130 170 145S290 170 350 115 465 130 540 87 640 110 730 40" />
+        </>}
+      </svg>
+      <span className="identity-material-sheen" aria-hidden="true" />
+      <span className="identity-cursor-light" aria-hidden="true" />
+      <span className="pharmacy-card-kicker">{['Community pharmacy · Field experience','Applied data science · NIELIT','Digital strategy · Google'][index]}</span>
+      <div className="identity-logo-plinth"><img src={index === 0 ? '/logos/dar-pharma.png' : item.logo} alt={item.company + ' logo'} draggable="false" /></div>
+      <strong>{item.company}</strong>
+      <span className="pharmacy-card-place">{item.location}</span>
+    </div>
+  );
+}
+
+function ChapterPaperAtmosphere({ index }) {
+  return <svg className={'chapter-paper-atmosphere paper-atmosphere-' + index} viewBox="0 0 500 675" preserveAspectRatio="none" fill="none" aria-hidden="true">
+    {index === 0 ? <path d="M-20 560h115l17-12 17 28 23-55 22 67 22-28h350M-20 150h570" />
+      : index === 1 ? <path d="M-30 480h110v-70h100v-65h110v-90h240M40 0v150h120v75h180v-80h180M80 410v180h160v100" />
+        : <><path d="M-20 600C100 600 80 470 200 490S320 330 550 250M-20 160C100 160 200 60 300 100S450 30 550 20" /><path d="M70 250v130m80-100v100m80-180v180" /></>}
+  </svg>;
+}
+
+function ChapterWorkflow({ workflow }) {
+  if (!workflow) return null;
+  return <div className="chapter-workflow"><span className="journal-note-tape" aria-hidden="true" /><span className="journal-eyebrow">In practice</span><h4>{workflow.title}</h4><ol>{workflow.steps.map(step=><li key={step}>{step}</li>)}</ol></div>;
+}
+
+function JournalNoteArea({ className, children }) {
+  const viewport = useRef(null);
+  const content = useRef(null);
+  const [directions,setDirections] = useState({up:false,down:false});
+  useEffect(() => {
+    let frame=0;
+    const update = () => {
+      frame=0;
+      const node=viewport.current;
+      if(!node) return;
+      const up=node.scrollTop>3;
+      const down=node.scrollHeight-node.clientHeight-node.scrollTop>3;
+      setDirections(previous=>previous.up===up&&previous.down===down?previous:{up,down});
+    };
+    const schedule = () => { if(!frame) frame=requestAnimationFrame(update); };
+    const observer=new ResizeObserver(schedule);
+    if(viewport.current) observer.observe(viewport.current);
+    if(content.current) observer.observe(content.current);
+    viewport.current?.addEventListener('scroll',schedule,{passive:true});
+    const node=viewport.current;
+    update();
+    return () => {cancelAnimationFrame(frame);observer.disconnect();node?.removeEventListener('scroll',schedule);};
+  },[]);
+  const scroll = (direction) => {
+    const node=viewport.current;
+    node?.scrollBy({top:direction*Math.max(110,node.clientHeight*.65),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  };
+  return <div className={className+' journal-scroll-area'+(directions.up||directions.down?' has-scroll-content':'')}>
+    <div className="journal-scroll-viewport" ref={viewport} tabIndex={directions.up||directions.down?0:undefined} aria-label="Scrollable journal notes"><div className="journal-scroll-content" ref={content}>{children}</div></div>
+    <button type="button" data-sound="silent" className={'journal-scroll-arrow journal-scroll-down'+(directions.down?' is-available':'')} disabled={!directions.down} tabIndex={directions.down?0:-1} aria-label="Scroll notes down" onClick={()=>scroll(1)}><svg viewBox="0 0 34 52" fill="none" aria-hidden="true"><path className="journal-arrow-ink" d="M18 5C9 14 24 19 18 28c-5 7-4 12-1 18M8 36c3 4 5 7 9 10 4-3 7-7 9-11" /><path className="journal-arrow-trace" pathLength="1" d="M18 5C9 14 24 19 18 28c-5 7-4 12-1 18M8 36c3 4 5 7 9 10 4-3 7-7 9-11" /></svg></button>
+  </div>;
+}
+
+function ChapterSpreadPage({ item, index, side, revealAt }) {
+  const workflow = chapterWorkflows[index];
+  const leftPoints = index === 0 ? item.points.slice(0,2) : item.points.slice(0,1);
+  const rightPoints = index === 0 ? item.points.slice(2) : item.points.slice(1);
+  return (
+    <div className={'journal-page-content journal-' + side + ' journal-pharmacy-page journal-chapter-spread'} data-chapter={index}>
+      <ChapterPaperAtmosphere index={index} />
+      <div className="chapter-paper-light" aria-hidden="true" />
+      <div className="pharmacy-desktop">
+        {side === 'left' ? <>
+          <span className="journal-eyebrow">{item.label}</span>
+          <h3 className="pharmacy-role">{item.role}</h3>
+          <div className="journal-date-stamp"><span>FIELD NOTES</span><strong>{item.period}</strong></div>
+          <JournalNoteArea className={'pharmacy-notes pharmacy-left-notes' + (workflow ? ' chapter-notes-with-workflow' : '')}>
+            <ul>{leftPoints.map((point,noteIndex)=><li key={point} className={'journal-impact-note note-tone-' + noteIndex}><i className={'journal-paper-pin' + (noteIndex % 2 ? ' pin-silver' : '')} aria-hidden="true" />{point}</li>)}</ul>
+            <ChapterWorkflow workflow={workflow} />
+          </JournalNoteArea>
+        </> : <>
+          <div className="journal-summary-note pharmacy-summary"><span className="journal-tape" aria-hidden="true" /><p className="journal-summary">{chapterNotes[index]}</p></div>
+          <div className="pharmacy-working-knowledge"><span className="journal-eyebrow">Working knowledge</span><div className="journal-tags">{item.tags.map(tag=><span key={tag}>{tag}</span>)}</div></div>
+          <JournalNoteArea className="pharmacy-notes pharmacy-right-notes"><ul>{rightPoints.map(point=><li key={point} className="journal-impact-note note-tone-2"><span className="journal-note-tape" aria-hidden="true" />{point}</li>)}</ul>
+            {workflow && <aside className="chapter-observation"><i className="journal-paper-pin pin-silver" aria-hidden="true" /><span className="journal-eyebrow">Field observation</span><p>{workflow.note}</p></aside>}
+          </JournalNoteArea>
+          <span className="journal-handwriting pharmacy-signoff">Experience, put into practice.</span>
+          <span className="journal-folio">{String(index+1).padStart(2,'0')}</span>
+        </>}
+        <div className={'pharmacy-center-half pharmacy-half-' + side} aria-hidden={side === 'left' ? true : undefined}><ChapterIdentityCard item={item} index={index} revealAt={revealAt} /></div>
+      </div>
+      {side === 'right' && <JournalNoteArea className="pharmacy-mobile">
+        <span className="journal-eyebrow">{item.label}</span>
+        <h3>{item.role}</h3>
+        <div className="journal-date-stamp"><span>FIELD NOTES</span><strong>{item.period}</strong></div>
+        <ChapterIdentityCard item={item} index={index} revealAt={revealAt} />
+        <p className="journal-summary">{chapterNotes[index]}</p>
+        <ul className="pharmacy-notes">{item.points.map((point,noteIndex)=><li key={point} className={'journal-impact-note note-tone-' + noteIndex}><i className={'journal-paper-pin' + (noteIndex % 2 ? ' pin-silver' : '')} aria-hidden="true" />{point}</li>)}</ul>
+        <ChapterWorkflow workflow={workflow} />
+        {workflow && <aside className="chapter-observation"><i className="journal-paper-pin pin-silver" aria-hidden="true" /><span className="journal-eyebrow">Field observation</span><p>{workflow.note}</p></aside>}
+        <span className="journal-eyebrow">Working knowledge</span>
+        <div className="journal-tags">{item.tags.map(tag=><span key={tag}>{tag}</span>)}</div>
+      </JournalNoteArea>}
+    </div>
+  );
+}
+
+function Page({ item, index, side, revealAt }) {
+  if (item) return <ChapterSpreadPage item={item} index={index} side={side} revealAt={revealAt} />;
   if (!item) {
     return (
       <div className={'journal-page-content journal-finale journal-' + side} data-chapter="closing">
@@ -173,55 +345,6 @@ function Page({ item, index, side }) {
       </div>
     );
   }
-  if (side === 'left') {
-    return (
-      <div className="journal-page-content journal-left" data-chapter={index}>
-        <span className="journal-eyebrow">{item.label}</span>
-        <div className="journal-id">
-          <span className="journal-tape" aria-hidden="true" />
-          <div className="journal-logo-mount"><JournalLogo key={item.company} item={item} index={index} /></div>
-          <p>{item.company}</p>
-          <span>{item.location}</span>
-        </div>
-        <h3>{item.role}</h3>
-        <div className="journal-date-stamp"><span>FIELD NOTES</span><strong>{item.period}</strong></div>
-        {chapterWorkflows[index] && <div className="journal-workflow-card">
-          <span className="journal-eyebrow">In practice</span>
-          <h4>{chapterWorkflows[index].title}</h4>
-          <ol>{chapterWorkflows[index].steps.map((step) => <li key={step}>{step}</li>)}</ol>
-        </div>}
-        <span className="journal-handwriting">Experience, put into practice.</span>
-      </div>
-    );
-  }
-  return (
-    <div className="journal-page-content journal-right" data-chapter={index}>
-      <div className="journal-mobile-heading">
-        <JournalLogo key={item.company} item={item} index={index} />
-        <h3>{item.role}</h3><p>{item.company}</p>
-        <span>{item.period} · {item.location}</span>
-      </div>
-      <div className="journal-details">
-        <div className="journal-summary-note">
-          <span className="journal-tape" aria-hidden="true" />
-          <p className="journal-summary">{chapterNotes[index] || item.summary}</p>
-        </div>
-        <ul>{item.points.map((point, pointIndex) => (
-          <li key={point} className={'journal-impact-note note-tone-' + pointIndex}>{point}</li>
-        ))}</ul>
-        {chapterWorkflows[index] && <aside className="journal-method-note">
-          <span className="journal-tape" aria-hidden="true" />
-          <span className="journal-eyebrow">Field observation</span>
-          <p>{chapterWorkflows[index].note}</p>
-        </aside>}
-        <div className="journal-skills-slip">
-          <span className="journal-eyebrow">Working knowledge</span>
-          <div className="journal-tags">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-        </div>
-      </div>
-      <span className="journal-folio">{String(index + 1).padStart(2, '0')}</span>
-    </div>
-  );
 }
 
 function Arrow({ back = false }) {
@@ -254,11 +377,60 @@ export default function ExperienceJournal({ items }) {
     const opening = from === -1 || from === items.length + 1;
     journalSound.current.play(closing ? 'close' : opening ? 'open' : 'turn');
   };
+  const lastNoteSound = useRef(0);
+  const playNoteSound = (event) => {
+    if (event.type === 'pointerover' && event.pointerType !== 'mouse') return;
+    const note = event.target.closest('.journal-note, .journal-impact-note, .journal-summary-note, .journal-final-note, .chapter-observation');
+    if (!note || note.contains(event.relatedTarget)) return;
+    const now = performance.now();
+    if (now - lastNoteSound.current < 350) return;
+    lastNoteSound.current = now;
+    if (!journalSound.current) journalSound.current = createJournalSound();
+    journalSound.current.play('note');
+  };
+  const revealTimes = useRef({});
   const regionRef = useRef(null);
   const reduced = useReducedMotion();
   const bookRef = useRef(null);
+  const presentationRef = useRef(null);
   const leafRef = useRef(null);
   const transitionRef = useRef(null);
+  useJournalScrollFloat(regionRef,presentationRef,bookRef,transitionRef);
+  const identityHover = useRef({frame:0,cards:[],point:null});
+  const resetIdentityHover = () => {
+    const hover = identityHover.current;
+    cancelAnimationFrame(hover.frame);hover.frame=0;hover.point=null;
+    hover.cards.forEach(card=>{card.style.transform='';card.classList.remove('identity-hovered');});
+    hover.cards=[];
+  };
+  const moveIdentityHover = (event) => {
+    if(event.pointerType !== 'mouse' || event.buttons || transitionRef.current || matchMedia('(prefers-reduced-motion: reduce)').matches) { resetIdentityHover();return; }
+    const zone=event.target.closest('.pharmacy-center-half, .pharmacy-mobile .chapter-identity-card');
+    if(!zone) { resetIdentityHover();return; }
+    const hover=identityHover.current;
+    hover.point={x:event.clientX,y:event.clientY,zone};
+    if(hover.frame) return;
+    hover.frame=requestAnimationFrame(()=>{
+      hover.frame=0;
+      if(!hover.point || transitionRef.current) return;
+      const {x,y,zone}=hover.point;
+      const box=zone.getBoundingClientRect();
+      const half=zone.classList.contains('pharmacy-center-half');
+      const width=box.width*(half?2:1);
+      const left=box.left-(zone.classList.contains('pharmacy-half-right')?box.width:0);
+      const px=Math.max(0,Math.min(1,(x-left)/width));
+      const py=Math.max(0,Math.min(1,(y-box.top)/box.height));
+      const cards=half?[...bookRef.current.querySelectorAll('.journal-base-left .pharmacy-desktop .chapter-identity-card,.journal-base-right .pharmacy-desktop .chapter-identity-card')]:[zone];
+      hover.cards=cards;
+      cards.forEach(card=>{
+        card.classList.add('identity-hovered');
+        card.style.transform=`perspective(1400px) rotateX(${(1-py*2)*1.8}deg) rotateY(${(px*2-1)*2}deg) translateY(-1px)`;
+        const light=card.querySelector('.identity-cursor-light');
+        if(light) light.style.transform=`translate3d(${px*width-120}px,${py*box.height-120}px,0)`;
+      });
+    });
+  };
+
   const animationsRef = useRef([]);
   const gestureRef = useRef(null);
   const suppressClick = useRef(false);
@@ -267,6 +439,8 @@ export default function ExperienceJournal({ items }) {
   const backCoverPage = lastPage + 1;
 
   useEffect(() => {
+    const visibilityObserver = new IntersectionObserver(([entry]) => {const node=regionRef.current;node?.classList.toggle('is-in-view',entry.isIntersecting);node?.toggleAttribute('data-journal-visible',entry.isIntersecting);},{rootMargin:'100px'});
+    if (regionRef.current) visibilityObserver.observe(regionRef.current);
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         setHintReady(true);
@@ -276,6 +450,7 @@ export default function ExperienceJournal({ items }) {
     if (regionRef.current) observer.observe(regionRef.current);
     return () => {
       observer.disconnect();
+      visibilityObserver.disconnect();
     };
   }, []);
 
@@ -305,6 +480,8 @@ export default function ExperienceJournal({ items }) {
 
   const select = (next, manual = false) => {
     if (transitionRef.current || next === page || next < -1 || next > backCoverPage) return false;
+    resetIdentityHover();
+    if (next >= 0 && next < items.length) revealTimes.current[next] = (document.timeline.currentTime || 0) + (reduced ? 0 : 650);
     playPaperSound(page, next);
     if (reduced) {
       if (!manual) setPage(next);
@@ -344,8 +521,8 @@ export default function ExperienceJournal({ items }) {
     const toAngle = turn.forward ? -180 : 0;
     const mobile = window.matchMedia('(max-width: 700px)').matches;
     const closedOffset = mobile ? '0%' : '-25%';
-    const fromOffset = endOpen ? (mobile ? '0%' : '25%') : turn.from === -1 ? closedOffset : '0%';
-    const toOffset = endClose ? (mobile ? '0%' : '25%') : turn.to === -1 ? closedOffset : '0%';
+    const fromOffset = endOpen ? (mobile ? '100%' : '25%') : turn.from === -1 ? closedOffset : '0%';
+    const toOffset = endClose ? (mobile ? '100%' : '25%') : turn.to === -1 ? closedOffset : '0%';
     const options = { duration: 1000, easing: turn.manual ? 'linear' : 'cubic-bezier(.77,0,.175,1)', fill: 'both' };
     const leafAnimation = leafRef.current.animate([
       { transform: 'rotateY(' + fromAngle + 'deg)' },
@@ -377,6 +554,7 @@ export default function ExperienceJournal({ items }) {
 
   useEffect(() => () => {
     transitionRef.current = null;
+    cancelAnimationFrame(identityHover.current.frame);
     journalSound.current?.dispose();
     journalSound.current = null;
     animationsRef.current.forEach((animation) => animation.cancel());
@@ -384,7 +562,7 @@ export default function ExperienceJournal({ items }) {
 
   const startDrag = (event) => {
     if (transitionRef.current || !event.isPrimary || event.button !== 0 || reduced) return;
-    if (event.target.closest('.journal-open-hint, .journal-contribution-trigger')) return;
+    if (event.target.closest('.journal-open-hint, .journal-contribution-trigger, .journal-bookmarks, .journal-scroll-arrow')) return;
     suppressClick.current = false;
     gestureRef.current = {
       id: event.pointerId, x: event.clientX, y: event.clientY,
@@ -427,41 +605,49 @@ export default function ExperienceJournal({ items }) {
   const closed = page === -1 && !turn;
   const leftIndex = turn ? (turn.forward ? turn.from : turn.to) : page;
   // Keep the final scene mounted as the right board folds over the left page.
-  const rightIndex = endClosing || endOpening ? lastPage : turn ? (turn.forward ? turn.to : turn.from) : page;
+  const rightIndex = endClosing ? turn.from : endOpening ? turn.to : turn ? (turn.forward ? turn.to : turn.from) : page;
   const cover = <Cover items={items} />;
   const backCover = <Cover items={items} back />;
-  const renderPage = (index, side) => <Page item={items[index]} index={index} side={side} />;
-  const leafFront = endClosing || endOpening ? renderPage(lastPage, 'right') :
+  const renderPage = (index, side) => <Page item={items[index]} index={index} side={side} revealAt={revealTimes.current[index]} />;
+  const endPage = endClosing ? turn.from : endOpening ? turn.to : lastPage;
+  const leafFront = endClosing || endOpening ? (endPage === -1 ? cover : renderPage(endPage, 'right')) :
     turn?.from === -1 || turn?.to === -1 ? cover : turn && renderPage(turn.forward ? turn.from : turn.to, 'right');
   const leafBack = endClosing || endOpening ? backCover : turn && renderPage(turn.forward ? turn.to : turn.from, 'left');
 
   return (
-    <div ref={regionRef} className="experience-journal" data-sound="silent" role="region" aria-label="Experience journal" onPointerDownCapture={markInteraction} onClickCapture={markInteraction}
+    <div ref={regionRef} className={'experience-journal' + (hintReady ? ' journal-has-arrived' : '')} data-sound="silent" role="region" aria-label="Experience journal" onPointerDownCapture={(event) => { markInteraction();if(event.pointerType !== 'mouse') playNoteSound(event); }} onPointerOver={playNoteSound} onPointerMove={moveIdentityHover} onPointerLeave={resetIdentityHover} onClickCapture={markInteraction}
       onKeyDown={(event) => {
         if (event.key === 'ArrowRight') { event.preventDefault(); markInteraction(); select(page + 1); }
         if (event.key === 'ArrowLeft') { event.preventDefault(); markInteraction(); select(page - 1); }
       }}>
+      <JournalAtmosphere journalRef={regionRef} bookRef={bookRef} />
       <div className="journal-stage">
         <button data-sound="silent" className="journal-side-arrow journal-prev" onClick={() => select(page - 1)} disabled={page === -1 || !!turn} aria-label="Previous experience page"><Arrow back /></button>
+        <div ref={presentationRef} className="journal-presentation">
         <div ref={bookRef} className={'journal-book' + (closed ? ' is-closed' : '') + (backClosed ? ' is-back-closed' : '') + (turn ? ' is-turning' : '')}
           aria-busy={!!turn} onPointerDown={startDrag} onPointerMove={moveDrag}
           onPointerUp={endDrag} onPointerCancel={endDrag}
           onClickCapture={(event) => { if (suppressClick.current) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; } }}>
+          <div className="journal-cover-aura" aria-hidden="true" />
           <div className="journal-paper journal-base-left" style={{ visibility: leftIndex < 0 || closed ? 'hidden' : undefined }}>
             {backClosed ? <button data-sound="silent" className="journal-cover-button" onClick={() => select(lastPage)} aria-label="Reopen the experience journal">{backCover}</button> : leftIndex >= 0 && leftIndex <= lastPage && renderPage(leftIndex, 'left')}
           </div>
-          <div className="journal-paper journal-base-right" style={{ visibility: backClosed ? 'hidden' : undefined }}>
-            {closed ? <Cover items={items} onOpen={() => select(0)} onContributions={(event) => {
+          <div className="journal-paper journal-base-right" style={{ visibility: backClosed || endClosing || endOpening ? 'hidden' : undefined }}>
+            {closed || rightIndex === -1 ? <Cover items={items} onOpen={() => select(0)} onContributions={(event) => {
               contributionTrigger.current = event.currentTarget;
               setContributionsOpen(true);
             }} /> :
                 rightIndex >= 0 && rightIndex <= lastPage && renderPage(rightIndex, 'right')}
           </div>
+          <nav className="journal-bookmarks" aria-label="Journal bookmarks">
+            {items.map((item,index)=><button data-sound="silent" type="button" key={item.role} className={'journal-bookmark bookmark-' + index + (index < page ? ' bookmark-read' : ' bookmark-upcoming')} style={{'--bookmark-order':index}} aria-label={'Bookmark: ' + item.role} aria-current={page === index ? 'page' : undefined} aria-hidden={page === index ? true : undefined} tabIndex={page === index ? -1 : 0} disabled={!!turn || page === index} onClick={()=>select(index)}><span>{['Care','Data','Growth'][index]}</span></button>)}
+          </nav>
           {closed && <button data-sound="silent" className="journal-open-hint" onClick={() => select(0)}>open me <Arrow back /></button>}
           {turn && <div ref={leafRef} className={'journal-leaf' + (endClosing || endOpening ? ' journal-end-board' : '')} aria-hidden="true">
             <div className="journal-leaf-front">{leafFront}<div className="journal-leaf-light" /></div>
             <div className="journal-leaf-back">{leafBack}<div className="journal-leaf-light" /></div>
           </div>}
+        </div>
         </div>
         <button data-sound="silent" className="journal-side-arrow journal-next" onClick={() => select(page + 1)} disabled={page === backCoverPage || !!turn} aria-label="Next experience page"><Arrow /></button>
       </div>
