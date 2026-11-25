@@ -23,6 +23,39 @@ export default function BeyondCvSection() {
  const [active,setActive]=useState(0),[paused,setPaused]=useState(false),[opened,setOpened]=useState(null);
  useEffect(()=>{const effects=createBeyondBookSound();sound.current=effects;return()=>{sound.current=null;effects.dispose();};},[]);
  useEffect(()=>{
+  const root=stage.current;
+  let disposed=false,idle=0,timer=0;
+  const schedule=job=>{
+   if(disposed)return;
+   if(window.requestIdleCallback)idle=requestIdleCallback(job,{timeout:1200});
+   else timer=setTimeout(job,32);
+  };
+  const prepare=new IntersectionObserver(([entry])=>{
+   if(!entry.isIntersecting)return;
+   prepare.disconnect();root.dataset.prepared='true';
+   // Decode the actual jacket images ahead of entry, two at a time. Keeping
+   // their DOM nodes avoids swapping artwork or changing the shelf geometry.
+   const images=[...root.querySelectorAll('img')];
+   for(const video of root.querySelectorAll('video')){
+    video.preload='auto';
+    if(video.poster){const poster=new Image();poster.src=video.poster;images.unshift(poster);}
+   }
+   let next=0;
+   const decodeBatch=()=>{
+    if(disposed)return;
+    const batch=images.slice(next,next+2);next+=batch.length;
+    Promise.allSettled(batch.map(image=>{image.loading='eager';image.decoding='async';return image.decode?.();})).then(()=>{
+     if(disposed)return;
+     if(next<images.length)schedule(decodeBatch);
+     else schedule(()=>{if(!disposed)loadBookViewer().catch(()=>{});});
+    });
+   };
+   schedule(decodeBatch);
+  },{rootMargin:'2000px 0px'});
+  prepare.observe(root);
+  return()=>{disposed=true;prepare.disconnect();if(window.cancelIdleCallback)cancelIdleCallback(idle);clearTimeout(timer);root.removeAttribute('data-prepared');};
+ },[]);
+ useEffect(()=>{
   const root=stage.current,e=engine.current;
   const preference=matchMedia('(prefers-reduced-motion: reduce)');
   let coverTimer=0,previous=0,spacing=400,activeIndex=0,lastScroll=window.scrollY,lastScrollAt=performance.now(),intentUntil=0,lifts=Array(count).fill(0),sheens=[],shown=Array(count).fill(null),cameraTransform='',visibilityLimit=2.65;
@@ -101,12 +134,10 @@ export default function BeyondCvSection() {
    if(e.visible){wake();}else{sound.current?.stop();cancelAnimationFrame(e.frame);e.frame=0;previous=0;}
   },{rootMargin:'100px'});
   observer.observe(root);
-  const prepareViewer=new IntersectionObserver(([entry])=>{if(entry.isIntersecting){prepareViewer.disconnect();loadBookViewer().catch(()=>{});}},{rootMargin:'1500px'});
-  prepareViewer.observe(root);
   const resize=new ResizeObserver(measure);resize.observe(root);measure();
   const visibility=()=>{cancelAnimationFrame(e.frame);e.frame=0;previous=0;if(!document.hidden)wake();};
   preference.addEventListener('change',wake);document.addEventListener('visibilitychange',visibility);
-  return()=>{clearTimeout(coverTimer);root.removeAttribute('data-motion');cancelAnimationFrame(e.frame);window.removeEventListener('scroll',scroll);root.removeEventListener('wheel',wheel);observer.disconnect();prepareViewer.disconnect();resize.disconnect();preference.removeEventListener('change',wake);document.removeEventListener('visibilitychange',visibility);e.wake=()=>{};};
+  return()=>{clearTimeout(coverTimer);root.removeAttribute('data-motion');cancelAnimationFrame(e.frame);window.removeEventListener('scroll',scroll);root.removeEventListener('wheel',wheel);observer.disconnect();resize.disconnect();preference.removeEventListener('change',wake);document.removeEventListener('visibilitychange',visibility);e.wake=()=>{};};
  },[]);
  useEffect(()=>{engine.current.paused=paused;engine.current.wake();},[paused]);
  useEffect(()=>{engine.current.modal=opened!==null;if(!opened)engine.current.resumeCovers?.();engine.current.wake();},[opened!==null]);

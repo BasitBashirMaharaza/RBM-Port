@@ -230,7 +230,10 @@ html[data-theme='light'] .bcv-shelf-book>.bcv-volume-edge{box-shadow:0 23px 25px
 /* Keep live artwork intact at rest; move cached covers during scroll and drag. */
 .bcv-shelf[data-motion='moving'] .bcv-cover-art *,.bcv-shelf[data-motion='moving'] .bcv-cover-art *::before,.bcv-shelf[data-motion='moving'] .bcv-cover-art *::after{animation-play-state:paused!important}
 .bcv-shelf[data-motion='moving'] .bcv-album-glass{backdrop-filter:none;-webkit-backdrop-filter:none}
-.bcv-shelf[data-motion='moving'] .bcv-cover-grain{mix-blend-mode:normal}
+/* Keep the same compositing mode at rest and during motion. Switching blend
+   modes on the first scroll invalidates every cover's backing surface. */
+.bcv-shelf .bcv-cover-grain{mix-blend-mode:normal}
+.bcv-shelf[data-prepared] .bcv-shelf-book{will-change:transform}
 
 /* One viewport for the introduction, animated collection and its controls. */
 .beyond-cv-section{height:100svh;min-height:480px;padding:clamp(40px,7svh,76px) 0 24px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:12px}
