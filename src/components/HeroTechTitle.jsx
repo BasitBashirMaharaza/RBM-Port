@@ -39,25 +39,32 @@ export default function HeroTechTitle({onAnimationComplete}) {
   return()=>{clearTimeout(timer);observer.disconnect();events.forEach(event=>window.removeEventListener(event,activity));document.removeEventListener('visibilitychange',activity);};
  },[ready,reduced]);
  useLayoutEffect(()=>{
-  const node=root.current;let disposed=false;
+ const node=root.current;let disposed=false,frame=0,dotKey='',cachedDot;
   const measure=()=>{
    if(disposed)return;const rect=node.getBoundingClientRect(),style=getComputedStyle(node),pad=48;
    const wrap=node.closest('.editorial-title-wrap'),letter=node.querySelectorAll('.text-roll-width')[7],signature=wrap?.querySelector('.editorial-signature');
+   // Read the entire geometry before updating inherited custom properties.
+   const frameRect=wrap?.getBoundingClientRect(),letterRect=letter?.getBoundingClientRect(),baselineTop=baseline.current.getBoundingClientRect().top;
+   const nameStyle=signature?getComputedStyle(signature):null;
+   const positions=[...node.querySelectorAll('.text-roll-width')].map(letter=>letter.getBoundingClientRect().left-rect.left+pad);
    wrap?.style.setProperty('--hero-word-width',rect.width+'px');
    if(wrap&&letter&&signature){
-    const frame=wrap.getBoundingClientRect(),dot=measureIDot(style),left=letter.getBoundingClientRect().left-frame.left+dot.x+dot.width*.65;
-    const top=baseline.current.getBoundingClientRect().top-frame.top+dot.top-dot.width*.6;
+    const frame=frameRect,key=`${style.fontWeight}:${style.fontSize}:${style.fontFamily}`;
+    if(key!==dotKey){dotKey=key;cachedDot=measureIDot(style);}
+    const dot=cachedDot,left=letterRect.left-frame.left+dot.x+dot.width*.65;
+    const top=baselineTop-frame.top+dot.top-dot.width*.6;
     wrap.style.setProperty('--hero-name-top',top+'px');
     wrap.style.setProperty('--hero-name-available',Math.max(30,frame.width-left-8)+'px');
     wrap.style.setProperty('--hero-name-left',left+'px');
-    const nameStyle=getComputedStyle(signature),probe=document.createElement('canvas').getContext('2d');
+    const probe=document.createElement('canvas').getContext('2d');
     if(probe){probe.font=`${nameStyle.fontStyle} 400 100px ${nameStyle.fontFamily}`;const ratio=Math.max(1,probe.measureText('Basit Bashir').width/100-.035*12+.7);wrap.style.setProperty('--hero-name-fit',Math.max(10,(frame.width-left-8)/ratio)+'px');}
    }
-   const next={fontSize:parseFloat(style.fontSize),fontFamily:style.fontFamily,left:pad,baseline:baseline.current.getBoundingClientRect().top-rect.top+pad,width:rect.width,positions:[...node.querySelectorAll('.text-roll-width')].map(letter=>letter.getBoundingClientRect().left-rect.left+pad)};
+   const next={fontSize:parseFloat(style.fontSize),fontFamily:style.fontFamily,left:pad,baseline:baselineTop-rect.top+pad,width:rect.width,positions};
    setGeometry(previous=>JSON.stringify(previous)===JSON.stringify(next)?previous:next);
   };
-  const observer=new ResizeObserver(measure);observer.observe(node);window.addEventListener('resize',measure);measure();document.fonts?.ready.then(measure);
-  return()=>{disposed=true;observer.disconnect();window.removeEventListener('resize',measure);};
+  const schedule=()=>{if(!disposed&&!frame)frame=requestAnimationFrame(()=>{frame=0;measure();});};
+  const observer=new ResizeObserver(schedule);observer.observe(node);window.addEventListener('resize',schedule);measure();document.fonts?.ready.then(()=>{dotKey='';schedule();});
+  return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('resize',schedule);};
  },[]);
  const complete=()=>{setFinished(true);onAnimationComplete?.();};
  return <span ref={root} className={'hero-tech-word'+(ready?' is-tech-ready':'')+(idleSweep?' is-idle-sweeping':'')}>

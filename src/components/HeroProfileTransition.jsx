@@ -139,12 +139,19 @@ export default function HeroProfileTransition({ compact = false, direction = 'fo
       element.classList.toggle('is-active',entry.isIntersecting&&!motionPreference.matches);
     },{rootMargin:'100px'});
     inView.observe(element);
-    motionPreference.addEventListener('change',configure);
-    configure();
+    let prepared = false;
+    const prepare = () => { if (!prepared) { prepared = true; configure(); } };
+    const preparation = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { prepare(); preparation.disconnect(); }
+    }, { rootMargin: '100%' });
+    preparation.observe(element);
+    const preferenceChanged = () => { if (prepared) configure(); };
+    motionPreference.addEventListener('change',preferenceChanged);
     return () => {
       stopMotion();
       inView.disconnect();
-      motionPreference.removeEventListener('change',configure);
+      preparation.disconnect();
+      motionPreference.removeEventListener('change',preferenceChanged);
     };
   }, [compact, direction]);
 

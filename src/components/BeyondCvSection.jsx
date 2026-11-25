@@ -1,8 +1,9 @@
 import {createBeyondBookSound} from './beyondBookSound.js';
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { beyondBooks } from './beyondCvData.js';
 import { BeyondCover } from './BeyondCover.jsx';
-import BeyondBookViewer from './BeyondBookViewer.jsx';
+const loadBookViewer = () => import('./BeyondBookViewer.jsx');
+const BeyondBookViewer = lazy(loadBookViewer);
 import SectionTextReveal from './SectionTextReveal.jsx';
 import './beyond-cv.css';
 
@@ -97,13 +98,15 @@ export default function BeyondCvSection() {
   window.addEventListener('scroll',scroll,{passive:true});root.addEventListener('wheel',wheel,{passive:true});
   const observer=new IntersectionObserver(([entry])=>{
    e.visible=entry.isIntersecting;
-   if(e.visible)wake();else{sound.current?.stop();cancelAnimationFrame(e.frame);e.frame=0;previous=0;}
+   if(e.visible){wake();}else{sound.current?.stop();cancelAnimationFrame(e.frame);e.frame=0;previous=0;}
   },{rootMargin:'100px'});
   observer.observe(root);
+  const prepareViewer=new IntersectionObserver(([entry])=>{if(entry.isIntersecting){prepareViewer.disconnect();loadBookViewer().catch(()=>{});}},{rootMargin:'1500px'});
+  prepareViewer.observe(root);
   const resize=new ResizeObserver(measure);resize.observe(root);measure();
   const visibility=()=>{cancelAnimationFrame(e.frame);e.frame=0;previous=0;if(!document.hidden)wake();};
   preference.addEventListener('change',wake);document.addEventListener('visibilitychange',visibility);
-  return()=>{clearTimeout(coverTimer);root.removeAttribute('data-motion');cancelAnimationFrame(e.frame);window.removeEventListener('scroll',scroll);root.removeEventListener('wheel',wheel);observer.disconnect();resize.disconnect();preference.removeEventListener('change',wake);document.removeEventListener('visibilitychange',visibility);e.wake=()=>{};};
+  return()=>{clearTimeout(coverTimer);root.removeAttribute('data-motion');cancelAnimationFrame(e.frame);window.removeEventListener('scroll',scroll);root.removeEventListener('wheel',wheel);observer.disconnect();prepareViewer.disconnect();resize.disconnect();preference.removeEventListener('change',wake);document.removeEventListener('visibilitychange',visibility);e.wake=()=>{};};
  },[]);
  useEffect(()=>{engine.current.paused=paused;engine.current.wake();},[paused]);
  useEffect(()=>{engine.current.modal=opened!==null;if(!opened)engine.current.resumeCovers?.();engine.current.wake();},[opened!==null]);
@@ -141,7 +144,7 @@ export default function BeyondCvSection() {
  return <section className="beyond-cv-section" id="beyond-cv" aria-labelledby="beyond-cv-title">
   <div className="bcv-heading container">
    <p className="bcv-kicker">the things that never fit on<br/>a CV <span aria-hidden="true">↘</span></p>
-   <h2 id="beyond-cv-title"><SectionTextReveal>Beyond<br/>the <em>CV</em></SectionTextReveal><svg viewBox="0 0 400 25" fill="none" aria-hidden="true"><path d="M4 20C89 1 276 7 392 10"/></svg></h2>
+   <h2 id="beyond-cv-title"><SectionTextReveal>Beyond the <em>CV</em></SectionTextReveal><svg viewBox="0 0 400 25" fill="none" aria-hidden="true"><path d="M4 20C89 1 276 7 392 10"/></svg></h2>
    <p className="bcv-introduction"><SectionTextReveal>A glimpse into what drives me —<br/>beyond work, beyond code.</SectionTextReveal></p>
   </div>
   <div className="bcv-shelf" ref={stage} role="region" aria-label="Beyond the CV: personal book collection"
@@ -169,7 +172,7 @@ export default function BeyondCvSection() {
     <button type="button" data-sound="silent" className="bcv-motion-control" aria-label={paused?'Resume shelf motion':'Pause shelf motion'} onClick={()=>setPaused(value=>!value)}>{paused?'▶':'Ⅱ'}</button>
    </div>
   </div>
-  {opened&&<BeyondBookViewer index={opened.index} getOrigin={()=>buttons.current[opened.index]?.getBoundingClientRect()} onChoose={chooseBook} onClosed={closeBook} onSound={kind=>sound.current?.play(kind,0,beyondBooks[opened.index].id)}/>}
+  <Suspense fallback={null}>{opened&&<BeyondBookViewer index={opened.index} getOrigin={()=>buttons.current[opened.index]?.getBoundingClientRect()} onChoose={chooseBook} onClosed={closeBook} onSound={kind=>sound.current?.play(kind,0,beyondBooks[opened.index].id)}/>}</Suspense>
  </section>;
 }
 

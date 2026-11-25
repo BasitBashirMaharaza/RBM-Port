@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import './SplitFlapText.css';
 
 const DEFAULT_WORDS = ['LAUNCH READY', 'SYNC ONLINE', 'SIGNAL LIVE'];
@@ -47,6 +47,19 @@ const buildSequence = (target, flips, charset) => {
 };
 
 const toGlyph = char => (char === ' ' ? ' ' : char);
+
+// Keep unchanged letters out of React's work during another letter's flip.
+const FlapTile = memo(function FlapTile({tile, minimal, shaded}) {
+  return <span className={`split-flap-text__tile${tile.flipping ? ' is-flipping' : ''}`} aria-hidden="true">
+    <span className="split-flap-text__half split-flap-text__half--top" key={minimal ? `top-${tile.tick}` : 'top'}><span className="split-flap-text__char">{toGlyph(tile.flipping ? tile.next : tile.current)}</span></span>
+    <span className="split-flap-text__half split-flap-text__half--bottom" key={minimal ? `bottom-${tile.tick}` : 'bottom'}><span className="split-flap-text__char">{toGlyph(tile.current)}</span></span>
+    {tile.flipping && <>
+      {shaded && <><span className="split-flap-text__shade split-flap-text__shade--top" key={`shade-top-${tile.tick}`}/><span className="split-flap-text__shade split-flap-text__shade--bottom" key={`shade-bottom-${tile.tick}`}/></>}
+      <span className="split-flap-text__flap split-flap-text__flap--front" key={`front-${tile.tick}`}><span className="split-flap-text__char">{toGlyph(tile.current)}</span></span>
+      <span className="split-flap-text__flap split-flap-text__flap--back" key={`back-${tile.tick}`}><span className="split-flap-text__char">{toGlyph(tile.next)}</span></span>
+    </>}
+  </span>;
+});
 
 const shuffleIndices = count => {
   const list = Array.from({ length: count }, (_, index) => index);
@@ -378,43 +391,7 @@ const SplitFlapText = ({
   return (
     <div className={rootClass} style={componentStyle} {...props}>
       <span className="split-flap-text__sr">{label}</span>
-      {tiles.map((tile, index) => (
-        <span
-          className={`split-flap-text__tile${tile.flipping ? ' is-flipping' : ''}`}
-          aria-hidden="true"
-          key={`${index}-${tiles.length}`}
-        >
-          <span className="split-flap-text__half split-flap-text__half--top" key={minimal ? `top-${tile.tick}` : 'top'}>
-            <span className="split-flap-text__char">{toGlyph(tile.flipping ? tile.next : tile.current)}</span>
-          </span>
-          <span
-            className="split-flap-text__half split-flap-text__half--bottom"
-            key={minimal ? `bottom-${tile.tick}` : 'bottom'}
-          >
-            <span className="split-flap-text__char">{toGlyph(tile.current)}</span>
-          </span>
-
-          {tile.flipping && (
-            <>
-              {shaded && (
-                <>
-                  <span className="split-flap-text__shade split-flap-text__shade--top" key={`shade-top-${tile.tick}`} />
-                  <span
-                    className="split-flap-text__shade split-flap-text__shade--bottom"
-                    key={`shade-bottom-${tile.tick}`}
-                  />
-                </>
-              )}
-              <span className="split-flap-text__flap split-flap-text__flap--front" key={`front-${index}-${tile.tick}`}>
-                <span className="split-flap-text__char">{toGlyph(tile.current)}</span>
-              </span>
-              <span className="split-flap-text__flap split-flap-text__flap--back" key={`back-${index}-${tile.tick}`}>
-                <span className="split-flap-text__char">{toGlyph(tile.next)}</span>
-              </span>
-            </>
-          )}
-        </span>
-      ))}
+      {tiles.map((tile, index) => <FlapTile key={`${index}-${tiles.length}`} tile={tile} minimal={minimal} shaded={shaded}/>)}
     </div>
   );
 };

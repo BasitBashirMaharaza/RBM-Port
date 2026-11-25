@@ -3,5 +3,9 @@
 .text-roll-enter{transform-origin:50% 25%}
 .text-roll-exit{transform-origin:50% 100%}
 .text-roll-width{visibility:hidden;display:inline-block;white-space:pre}
+.text-roll-native-enter{animation-name:text-roll-native-out;animation-timing-function:cubic-bezier(.42,0,1,1);animation-fill-mode:both}
+.text-roll-native-exit{animation-name:text-roll-native-in;animation-timing-function:cubic-bezier(.42,0,1,1);animation-fill-mode:both}
+@keyframes text-roll-native-out{from{transform:rotateX(0deg)}to{transform:rotateX(90deg)}}
+@keyframes text-roll-native-in{from{transform:rotateX(90deg)}to{transform:rotateX(0deg)}}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(prefers-reduced-motion:reduce){.text-roll-face{transition:none!important}}

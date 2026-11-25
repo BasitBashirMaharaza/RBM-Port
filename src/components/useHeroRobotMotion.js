@@ -11,6 +11,7 @@ export default function useHeroRobotMotion({ready,root,engine,audio,interaction,
   const host=root.current,hero=host.closest('#home'),word=hero.querySelector('.hero-tech-word'),motion=matchMedia('(prefers-reduced-motion: reduce)');
   let frame=0,last=0,visible=false,robotVisible=false,alive=true,time=Math.min(2900,performance.now()-enteredAt.current),phase='waiting',index=0,target=0,next=0,direction=1,points=[],climbHeight=80,walkFrom=0,walkTo=0,clock=0,lastAttention=0,moodUntil=0,mood='curious',pointer=false,pokes=[],inviting=false,minX=0,maxX=Infinity,trustUntil=0,fearSide=1,mouse=null,headX=0,headY=0,parentTop=0;
   const surfaceY=(point,offset=0)=>{const column=Math.round(point.width*.53+offset);return point.y+(point.contour[Math.max(0,Math.min(point.contour.length-1,column))]-point.centerTop);};
+  const contours=new Map();
   const position=(x,y)=>{
    const localX=Math.max(minX,Math.min(maxX,x));headX=localX-minX+38;headY=parentTop-window.scrollY+y+34;host.style.transform=`translate3d(${localX}px,${y}px,0)`;
    if(inviting){const absoluteX=localX-minX+2,width=innerWidth<=600?208:228,left=Math.max(12-absoluteX,Math.min((72-width)/2,innerWidth-12-width-absoluteX));host.style.setProperty('--robot-chat-left',left+'px');host.style.setProperty('--robot-chat-tail',Math.max(12,Math.min(width-20,36-left))+'px');}
@@ -21,14 +22,21 @@ export default function useHeroRobotMotion({ready,root,engine,audio,interaction,
    if(!alive)return;const parent=host.parentElement.getBoundingClientRect(),letters=[...word.querySelectorAll('.text-roll-width')],baseline=word.querySelector('.hero-tech-baseline').getBoundingClientRect().top;
    parentTop=parent.top+window.scrollY;minX=2-parent.left;maxX=innerWidth-parent.left-74;
    const style=getComputedStyle(word),ctx=document.createElement('canvas').getContext('2d');ctx.font=`${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+   // Layout can move without the type changing. Reuse the expensive glyph
+   // readback in that case; retain only the current font/size measurements.
+   const fontKey=ctx.font;
+   if(contours.font!==fontKey){contours.clear();contours.font=fontKey;}
    climbHeight=ctx.measureText('P').actualBoundingBoxAscent||parseFloat(style.fontSize)*.7;
    points=letters.slice(0,7).map((letter,i)=>{
     const rect=letter.getBoundingClientRect(),glyph='Portfolio'[i],metrics=ctx.measureText(glyph),ascent=metrics.actualBoundingBoxAscent||parseFloat(style.fontSize)*.7;
+    const key=glyph+':'+rect.width,cached=contours.get(key);
+    if(cached)return{x:rect.left-parent.left+rect.width*.53-36,y:baseline-parent.top+cached.centerTop-65,width:rect.width,...cached};
     const raster=document.createElement('canvas');raster.width=Math.ceil(Math.max(rect.width,metrics.width)+16);raster.height=Math.ceil(parseFloat(style.fontSize)*1.5+16);
     const ink=raster.getContext('2d',{willReadFrequently:true});ink.font=ctx.font;ink.fillText(glyph,8,ascent+8);
     const pixels=ink.getImageData(0,0,raster.width,raster.height).data,contour=[];
     for(let x=0;x<Math.ceil(rect.width)+1;x++){let top=0;for(let y=0;y<raster.height;y++){if(pixels[(y*raster.width+x+8)*4+3]>90){top=y-ascent-8;break;}}contour.push(top||-ascent);}
     const centerTop=contour[Math.min(contour.length-1,Math.round(rect.width*.53))];
+    contours.set(key,{contour,centerTop});
     return{x:rect.left-parent.left+rect.width*.53-36,y:baseline-parent.top+centerTop-65,width:rect.width,contour,centerTop};
    });
    if(motion.matches&&points.length===7){index=6;host.style.opacity='1';enter('resting');position(points[6].x,points[6].y);engine.current?.setMotion({phase:'resting',progress:1,direction:0,mood:'happy'});}

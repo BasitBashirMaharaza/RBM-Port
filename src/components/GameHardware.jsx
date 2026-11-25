@@ -11,7 +11,7 @@ export function useGameMotion(root, enabled=true, observe=false) {
  },[root,enabled,observe]);
 }
 export function GameCartridgeArt({game}) {
- return <span className="bcv-cartridge-case"><span className="bcv-cartridge-grip" aria-hidden="true"/><span className="bcv-cartridge-screen"><img src={game.cover} alt="" decoding="async" draggable="false"/><i aria-hidden="true"/></span><span className="bcv-cartridge-contacts" aria-hidden="true"/><span className="bcv-cartridge-led" aria-hidden="true"/></span>;
+ return <span className="bcv-cartridge-case"><span className="bcv-cartridge-grip" aria-hidden="true"/><span className="bcv-cartridge-screen"><img src={game.cover} alt="" loading="lazy" decoding="async" draggable="false"/><i aria-hidden="true"/></span><span className="bcv-cartridge-contacts" aria-hidden="true"/><span className="bcv-cartridge-led" aria-hidden="true"/></span>;
 }
 export function GameCover({entries,live=true}) {
  const root=useRef(null);useGameMotion(root,live,true);

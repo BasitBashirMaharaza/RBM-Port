@@ -31,7 +31,7 @@ export default function MusicMosaicCover({ entries, live = true }) {
           const number = index++;
           return <div className="bcv-album-glass" key={song.url} style={{ '--album-angle': angles[number] + 'deg' }}>
             <span className="bcv-album-fallback"></span>
-            <img src={song.cover} alt="" title={song.title + ' · ' + song.artist} loading="eager" decoding="async" draggable="false" onError={event => { event.currentTarget.hidden = true; }} />
+            <img src={song.cover} alt="" title={song.title + ' · ' + song.artist} loading="lazy" decoding="async" draggable="false" onError={event => { event.currentTarget.hidden = true; }} />
             <span className="bcv-album-reflection" />
           </div>;
         })}

@@ -2,7 +2,7 @@ import ContactGlassLink from './components/ContactGlassLink.jsx';
 import ContactMailbox from './components/ContactMailbox.jsx';
 import FooterRibbons from './components/FooterRibbons.jsx';
 import './contact-polish.css';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import InkRidges from './components/AuraBackground.jsx';
 import CanvasText from './components/CanvasText.jsx';
@@ -179,17 +179,32 @@ const greetings = [
   { word: 'Sat Sri Akal', emoji: '✨' },
 ];
 
+const WelcomeGreetings = memo(function WelcomeGreetings({greeting,onComplete}) {
+  const item = greetings[greeting];
+  return <div className="welcome-stage" aria-hidden="true">
+      <div className="welcome-word" key={item.word} onAnimationEnd={greeting===greetings.length-1?event=>{if(event.target===event.currentTarget&&event.animationName==='greeting-arrive')onComplete();}:undefined}>
+        <span className="welcome-emoji">{item.emoji}</span>
+        <strong>{item.word}</strong><small>A portfolio of applied intelligence</small>
+      </div>
+  </div>;
+});
+
 function WelcomeScreen({ onComplete, leaving }) {
   const [greeting, setGreeting] = useState(0);
   const screen = useRef(null);
 
   useEffect(() => {
-    let exitTimer;
+    // Warm only the assets needed by the next screen, without parsing the
+    // robot or mounting offscreen interactive scenes during the greetings.
+    const robot = document.createElement('link');
+    robot.rel = 'preload'; robot.as = 'fetch'; robot.crossOrigin = 'anonymous';
+    robot.href = '/robot/companion.glb'; robot.fetchPriority = 'low';
+    document.head.appendChild(robot);
+    document.fonts?.load('italic 400 118px Newsreader').catch(() => {});
     const interval = window.setInterval(() => {
       setGreeting((current) => {
         if (current >= greetings.length - 2) {
           window.clearInterval(interval);
-          exitTimer = window.setTimeout(onComplete, 300);
           return greetings.length - 1;
         }
         return current + 1;
@@ -197,7 +212,7 @@ function WelcomeScreen({ onComplete, leaving }) {
     }, 300);
     return () => {
       window.clearInterval(interval);
-      window.clearTimeout(exitTimer);
+      robot.remove();
     };
   }, [onComplete]);
 
@@ -212,15 +227,8 @@ function WelcomeScreen({ onComplete, leaving }) {
       <InkRidges />
       <div className="welcome-grid" aria-hidden="true" />
       <div className="welcome-top"><span>BASIT BASHIR</span><span>WELCOME · 0{greeting + 1}/0{greetings.length}</span></div>
-      <div className="welcome-stage" aria-live="polite">
-        <span className="welcome-echo echo-one">{greetings[(greeting + greetings.length - 1) % greetings.length].word}</span>
-        <div className="welcome-word" key={greetings[greeting].word}>
-          <span className="welcome-emoji" aria-hidden="true">{greetings[greeting].emoji}</span>
-          <strong>{greetings[greeting].word}</strong>
-          <small>A portfolio of applied intelligence</small>
-        </div>
-        <span className="welcome-echo echo-two">{greetings[(greeting + 1) % greetings.length].word}</span>
-      </div>
+      <WelcomeGreetings greeting={greeting} onComplete={onComplete} />
+      <span className="sr-only" aria-live="polite">{greetings[greeting].word}</span>
     </div>
   );
 }
@@ -819,7 +827,7 @@ function App() {
       <main id="main">
         {welcomeOpen ? <div className="hero-placeholder" aria-hidden="true" /> : <SignatureHero />}
 
-        <HeroProfileTransition />
+        <HeroProfileTransition compact />
 
         <section className="section about" id="about">
           <div className="container">

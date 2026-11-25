@@ -99,8 +99,10 @@ export function createComputerEntrance(host,onComplete){
  document.fonts.ready.then(()=>{if(!screenDisposed)drawScreen();});drawScreen();
  let width=1,height=1,frame=0,elapsed=0,last=0,disposed=false,visible=false,completed=false,previousPhase='load';
  const resize=()=>{width=host.clientWidth;height=host.clientHeight;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();drawScreen();};const ro=new ResizeObserver(resize);ro.observe(host);resize();
- const syncFraming=()=>{visible=isLearningFramed(host.closest('#education'));last=0;if(!visible){stopLearningSound();cancelAnimationFrame(frame);frame=0;}else wake();};
- const io=new IntersectionObserver(syncFraming,{threshold:[0,.25,.5,.75,1]});io.observe(host);window.addEventListener('scroll',syncFraming,{passive:true});window.addEventListener('resize',syncFraming);syncFraming();
+ const syncFraming=()=>{const nextVisible=isLearningFramed(host.closest('#education'));if(nextVisible!==visible){visible=nextVisible;last=0;}if(!visible){stopLearningSound();cancelAnimationFrame(frame);frame=0;}else wake();};
+ let framingFrame=0;
+ const scheduleFraming=()=>{if(!framingFrame)framingFrame=requestAnimationFrame(()=>{framingFrame=0;syncFraming();});};
+ const io=new IntersectionObserver(scheduleFraming,{threshold:[0,.25,.5,.75,1]});io.observe(host);window.addEventListener('scroll',scheduleFraming,{passive:true});window.addEventListener('resize',scheduleFraming);syncFraming();
  const visibility=syncFraming;document.addEventListener('visibilitychange',visibility);
  function wake(){if(!disposed&&!frame&&visible&&!document.hidden)frame=requestAnimationFrame(tick);}
  function tick(now){
@@ -119,6 +121,6 @@ export function createComputerEntrance(host,onComplete){
   if(elapsed>=7.82&&!completed){completed=true;onComplete();return;}wake();
  }
  wake();
- return()=>{if(disposed)return;disposed=true;stopLearningSound();cancelAnimationFrame(frame);ro.disconnect();io.disconnect();document.removeEventListener('visibilitychange',visibility);window.removeEventListener('scroll',syncFraming);window.removeEventListener('resize',syncFraming);screenDisposed=true;themeObserver.disconnect();photo?.removeEventListener('load',drawScreen);resources.forEach(r=>r.dispose());renderer.dispose();renderer.domElement.remove();};
+ return()=>{if(disposed)return;disposed=true;stopLearningSound();cancelAnimationFrame(frame);cancelAnimationFrame(framingFrame);ro.disconnect();io.disconnect();document.removeEventListener('visibilitychange',visibility);window.removeEventListener('scroll',scheduleFraming);window.removeEventListener('resize',scheduleFraming);screenDisposed=true;themeObserver.disconnect();photo?.removeEventListener('load',drawScreen);resources.forEach(r=>r.dispose());renderer.dispose();renderer.domElement.remove();};
 }
 

@@ -20,7 +20,7 @@ export function CinemaCover({ entries, live = true }) {
     <div className="bcv-cinema-cover-reels" aria-hidden="true">
       <ReelSpool className="bcv-cover-spool-one"/><ReelSpool className="bcv-cover-spool-two"/>
       <div className="bcv-cover-film-collection">{[0,1,2,3].map(row => <div className="bcv-cover-film-strip" key={row}>
-        {entries.slice(row*4,row*4+4).map(entry => <span key={entry.id}><img src={entry.cover} alt="" decoding="async" draggable="false"/></span>)}
+        {entries.slice(row*4,row*4+4).map(entry => <span key={entry.id}><img src={entry.cover} alt="" loading="lazy" decoding="async" draggable="false"/></span>)}
       </div>)}</div>
     </div>
     <p className="bcv-cinema-cover-quote">Worlds apart.<br/><em>Stories that stay.</em></p>

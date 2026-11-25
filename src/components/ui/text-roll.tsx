@@ -43,6 +43,22 @@ export function TextRoll({
   } as const;
   const letters = children.split('');
 
+  // This predetermined entrance can run entirely on the compositor. Preserve
+  // the configurable Motion path for callers supplying custom variants/easing.
+  if (!variants && transition.ease === 'easeIn' && Object.keys(transition).length === 1) {
+    return <span className={className}>
+      {letters.map((letter, index) => {
+        const content = letter === ' ' ? '\u00a0' : letter;
+        return <span key={index} className="text-roll-letter" aria-hidden="true">
+          <span className="text-roll-face text-roll-enter text-roll-native-enter" style={{animationDuration:`${duration}s`,animationDelay:`${getEnterDelay(index)}s`}}>{content}</span>
+          <span className="text-roll-face text-roll-exit text-roll-native-exit" style={{animationDuration:`${duration}s`,animationDelay:`${getExitDelay(index)}s`}} onAnimationEnd={index === letters.length - 1 ? onAnimationComplete : undefined}>{content}</span>
+          <span className="text-roll-width" aria-hidden="true">{content}</span>
+        </span>;
+      })}
+      <span className="sr-only">{children}</span>
+    </span>;
+  }
+
   return (
     <span className={className}>
       {letters.map((letter, index) => {

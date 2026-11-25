@@ -4,7 +4,31 @@ import './aura-background.css';
 export default function AuraBackground() {
   const ref = useRef(null);
   useEffect(() => {
-    const canvas = ref.current, ctx = canvas.getContext('2d');
+    // Each effect owns its canvas, including StrictMode's development remount.
+    const canvas = document.createElement('canvas');
+    Object.assign(canvas.style,{width:'100%',height:'100%',display:'block'});
+    ref.current.appendChild(canvas);
+    if (canvas.transferControlToOffscreen && typeof Worker !== 'undefined') {
+      const worker = new Worker(new URL('./aura.worker.js', import.meta.url), { type: 'module' });
+      const surface = canvas.transferControlToOffscreen();
+      let viewportWidth=0;
+      const resize=()=>{
+        const width=document.documentElement.clientWidth;
+        if(Math.abs(width-viewportWidth)<2)return;
+        viewportWidth=width;
+        const mobile=matchMedia('(pointer: coarse)').matches;
+        const w=Math.min(1100,Math.max(mobile?480:640,width));
+        worker.postMessage({size:[w,Math.max(480,Math.round(w*innerHeight/width))]});
+      };
+      const state=()=>worker.postMessage({light:document.documentElement.dataset.theme==='light',paused:document.documentElement.dataset.auraPaused==='true',visible:!document.hidden});
+      const move=event=>{if(event.pointerType==='mouse'||event.pointerType==='pen')worker.postMessage({pointer:{x:event.clientX/innerWidth,y:event.clientY/innerHeight}});};
+      worker.postMessage({canvas:surface},[surface]);resize();state();
+      const observer=new MutationObserver(state);
+      observer.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','data-aura-paused']});
+      window.addEventListener('resize',resize);window.addEventListener('pointermove',move,{passive:true});document.addEventListener('visibilitychange',state);
+      return()=>{worker.terminate();canvas.remove();observer.disconnect();window.removeEventListener('resize',resize);window.removeEventListener('pointermove',move);document.removeEventListener('visibilitychange',state);};
+    }
+    const ctx = canvas.getContext('2d');
     let frame, last = 0, time = 0, pointer = { x: .5, y: .5 }, target = { x: .5, y: .5 };
     let viewportWidth = 0;
     const resize = () => {
@@ -25,10 +49,11 @@ export default function AuraBackground() {
     resize(); window.addEventListener('resize',resize);
     window.addEventListener('pointermove', move, { passive: true });
     const paint = now => {
+      frame = 0;
+      if (document.hidden) return;
       frame = requestAnimationFrame(paint);
       if(now-last<33) return;
       const dt=Math.min((now-last)/1000,.05); last=now;
-      if(document.hidden) return;
       if(document.documentElement.dataset.auraPaused!=='true') time+=dt;
       pointer.x += (target.x-pointer.x)*.018; pointer.y += (target.y-pointer.y)*.018;
       const w=canvas.width,h=canvas.height,light=document.documentElement.dataset.theme==='light';
@@ -48,7 +73,12 @@ export default function AuraBackground() {
       cursorGlow.addColorStop(0,light?'rgba(88,139,92,.13)':'rgba(179,228,153,.1)');cursorGlow.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=cursorGlow;ctx.fillRect(0,0,w,h);
     };
     frame=requestAnimationFrame(paint);
-    return ()=>{cancelAnimationFrame(frame);window.removeEventListener('resize',resize);window.removeEventListener('pointermove',move);};
+    const visibility = () => {
+      cancelAnimationFrame(frame); frame = 0; last = 0;
+      if (!document.hidden) frame = requestAnimationFrame(paint);
+    };
+    document.addEventListener('visibilitychange', visibility);
+    return ()=>{cancelAnimationFrame(frame);canvas.remove();document.removeEventListener('visibilitychange',visibility);window.removeEventListener('resize',resize);window.removeEventListener('pointermove',move);};
   },[]);
-  return <div className="aura-background" aria-hidden="true"><canvas ref={ref} style={{width:'100%',height:'100%',display:'block'}} /></div>;
+  return <div className="aura-background" aria-hidden="true"><div ref={ref} style={{width:'100%',height:'100%'}} /></div>;
 }

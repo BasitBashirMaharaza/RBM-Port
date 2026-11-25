@@ -138,6 +138,8 @@ const TechText = ({
     let introducing = false;
     let fontsReady = !document.fonts;
     let guideAlpha = 0;
+    let previousDamage = null, paintedLayout = '';
+    let pendingPointer = null;
     const kicks = [];
     const press = { x: 0, y: 0, time: 0, index: -1 };
     const pointer = { x: 0, y: 0, inside: false };
@@ -158,8 +160,12 @@ const TechText = ({
     const family = s => s.fontFamily || getComputedStyle(container).fontFamily || 'sans-serif';
     const fontFor = (s, size) => `${s.fontWeight} ${size}px ${family(s)}`;
 
+    let inheritedInk='',refreshInkUntil=0;
     const palette = s => {
-      const current = getComputedStyle(container).color || '#000000';
+      // Preserve every intermediate theme-transition color while avoiding a
+      // computed-style flush on each steady-state animation frame.
+      if(!inheritedInk||performance.now()<refreshInkUntil)inheritedInk=getComputedStyle(container).color || '#000000';
+      const current = inheritedInk;
       const pick = value => (!value || INHERIT.test(String(value).trim()) ? current : value);
       return { ink: pick(s.color), accent: pick(s.accentColor) };
     };
@@ -693,6 +699,7 @@ const TechText = ({
       raf = 0;
       const s = settingsRef.current;
       if (!s || document.hidden || !visible) return;
+      if(pendingPointer){locate(pendingPointer);pendingPointer=null;pointer.inside=dragging>=0||glyphAt(pointer.x,pointer.y,true)>=0;}
       if (sizeDirty) {
         sizeDirty = false;
         width = Math.max(1, container.clientWidth);
@@ -835,7 +842,23 @@ const TechText = ({
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.globalCompositeOperation = 'source-over';
       ctx.globalAlpha = 1;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // A hover changes one glyph and its decorations, not the entire title.
+      // Repaint the union of old/new damage, retaining identical pixels outside.
+      let damage=null;
+      const include=(x1,y1,x2,y2)=>{if(!damage)damage={x1,y1,x2,y2};else{damage.x1=Math.min(damage.x1,x1);damage.y1=Math.min(damage.y1,y1);damage.x2=Math.max(damage.x2,x2);damage.y2=Math.max(damage.y2,y2);}};
+      glyphs.forEach(g=>{if(g.outline>0||g.offset.x||g.offset.y)include(g.box.x1+g.offset.x-8,g.box.y1+g.offset.y-8,g.box.x2+g.offset.x+8,g.box.y2+g.offset.y+8);});
+      if(frame.alpha>.001)include(frame.x1-128,frame.y1-80,frame.x2+128,frame.y2+80);
+      const currentDamage=damage?{...damage}:null;
+      if(previousDamage)include(previousDamage.x1,previousDamage.y1,previousDamage.x2,previousDamage.y2);
+      const full=paintedLayout!==layoutKey||introducing||guideAlpha>.001||presence>.001;
+      paintedLayout=layoutKey;previousDamage=currentDamage;
+      ctx.save();
+      if(full||!damage)ctx.clearRect(0,0,canvas.width,canvas.height);
+      else{
+        const x=Math.max(0,Math.floor(damage.x1*dpr)),y=Math.max(0,Math.floor(damage.y1*dpr));
+        const w=Math.max(0,Math.min(canvas.width,Math.ceil(damage.x2*dpr))-x),h=Math.max(0,Math.min(canvas.height,Math.ceil(damage.y2*dpr))-y);
+        ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();ctx.clearRect(x,y,w,h);
+      }
       for (const glyph of glyphs) {
         const moved = Math.hypot(glyph.offset.x, glyph.offset.y);
         if (moved > 1) {
@@ -879,6 +902,7 @@ const TechText = ({
       });
       if (presence > 0.001) drawReveal(s);
       drawFrame(s, accent);
+      ctx.restore();
       if(!ready&&fontsReady){ready=true;readyRef.current?.();}
 
       const settling =
@@ -909,12 +933,12 @@ const TechText = ({
       pointer.y = e.clientY - rect.top;
     };
     const onMove = e => {
-      locate(e);
-      pointer.inside = dragging>=0||glyphAt(pointer.x,pointer.y,true)>=0;
+      pendingPointer={clientX:e.clientX,clientY:e.clientY};
       wake();
     };
     const onLeave = () => {
       if (dragging >= 0) return;
+      pendingPointer=null;
       pointer.inside = false;
       wake();
     };
@@ -972,12 +996,13 @@ const TechText = ({
       wake();
     });
     intersectionObserver.observe(container);
-    const themeObserver = new MutationObserver(wake);
+    const refreshPalette=()=>{inheritedInk='';refreshInkUntil=performance.now()+1000;wake();};
+    const themeObserver = new MutationObserver(refreshPalette);
     for (const node of [document.documentElement, document.body]) {
       if (node) themeObserver.observe(node, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] });
     }
     const schemeQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
-    schemeQuery?.addEventListener?.('change', wake);
+    schemeQuery?.addEventListener?.('change', refreshPalette);
     if (document.fonts) document.fonts.ready.then(fontsLoaded, fontsLoaded);
 
     const visibility=()=>{cancelAnimationFrame(raf);raf=0;wake();};
@@ -994,7 +1019,7 @@ const TechText = ({
       window.removeEventListener('resize', resize);
       intersectionObserver.disconnect();
       themeObserver.disconnect();
-      schemeQuery?.removeEventListener?.('change', wake);
+      schemeQuery?.removeEventListener?.('change', refreshPalette);
       container.style.cursor = '';
       container.removeEventListener('pointermove', onMove);
       container.removeEventListener('pointerenter', onMove);

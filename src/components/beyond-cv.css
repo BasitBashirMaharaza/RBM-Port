@@ -21,6 +21,7 @@ html[data-theme='light'] .beyond-cv-section { --bcv-accent:#695cb1; }
 .bcv-volume-edge::before,.bcv-volume-edge::after { content:'';position:absolute;top:0;bottom:0;width:13px;background:linear-gradient(90deg,#333b3b,#171b1b);transform-origin:left center;transform:rotateY(-90deg); }
 .bcv-volume-edge::after { left:auto;right:0;transform-origin:right center;transform:rotateY(90deg);background:repeating-linear-gradient(0deg,#c6c2b5 0 1px,#ebe6d8 1px 3px); }
 .bcv-shelf-book > .bcv-cover-art { transform:translateZ(6px); }
+.bcv-shelf-book > .bcv-cover-art { contain: layout paint style; }
 .bcv-shelf-floor { position:absolute;inset:65% 5% 2%;pointer-events:none;background:radial-gradient(ellipse at 50% 70%,color-mix(in srgb,var(--bcv-accent) 8%,transparent),transparent 67%); }
 .bcv-shelf-controls { display:flex;align-items:center;justify-content:space-between;gap:30px;position:relative;z-index:2; }
 .bcv-catalogue { display:grid;gap:11px;font:400 9px/1.4 'DM Mono',monospace;letter-spacing:.13em;color:var(--text); }
@@ -230,3 +231,31 @@ html[data-theme='light'] .bcv-shelf-book>.bcv-volume-edge{box-shadow:0 23px 25px
 .bcv-shelf[data-motion='moving'] .bcv-cover-art *,.bcv-shelf[data-motion='moving'] .bcv-cover-art *::before,.bcv-shelf[data-motion='moving'] .bcv-cover-art *::after{animation-play-state:paused!important}
 .bcv-shelf[data-motion='moving'] .bcv-album-glass{backdrop-filter:none;-webkit-backdrop-filter:none}
 .bcv-shelf[data-motion='moving'] .bcv-cover-grain{mix-blend-mode:normal}
+
+/* One viewport for the introduction, animated collection and its controls. */
+.beyond-cv-section{height:100svh;min-height:480px;padding:clamp(40px,7svh,76px) 0 24px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:12px}
+.bcv-heading{display:grid;grid-template-columns:minmax(0,1fr) minmax(200px,280px);column-gap:36px;row-gap:18px;align-items:center}
+.bcv-kicker{grid-column:1/-1;margin:0;font-size:19px;line-height:1.4;transform:none;min-height:27px}
+.bcv-kicker br{display:none}
+.bcv-heading h2{font-size:clamp(48px,6.1vw,88px);line-height:1.08;white-space:nowrap;margin:0}
+.bcv-heading h2 svg{height:14px;margin:8px 0 0;width:80%}
+.bcv-introduction{margin:0;max-width:280px;font-size:13px;line-height:1.6;align-self:center;justify-self:start}
+.bcv-shelf{height:100%;min-height:0;margin:0;container-type:size}
+.bcv-shelf-book{width:min(clamp(160px,30svh,300px),52cqh);top:50%}
+.bcv-catalogue{gap:6px;font-size:8px}
+.bcv-barcode{width:112px;height:18px}
+@media(max-width:700px){
+ .beyond-cv-section{min-height:540px;padding-top:48px;padding-bottom:20px;gap:8px}
+ .bcv-heading{grid-template-columns:1fr;gap:12px}
+ .bcv-kicker{font-size:16px;margin:0;min-height:23px}
+ .bcv-heading h2{font-size:clamp(43px,9.4vw,65px)}
+ .bcv-introduction{font-size:11px;max-width:none;margin:0}
+ .bcv-introduction br{display:none}
+ .bcv-shelf-book{width:min(clamp(160px,29svh,265px),52cqh)}
+ .bcv-shelf-controls{gap:8px;flex-direction:column;align-items:center;text-align:center}
+ .bcv-catalogue{justify-items:center}
+ .bcv-shelf-navigation{gap:3px}
+ .bcv-shelf-navigation>button{min-width:34px;min-height:38px}
+ .bcv-shelf-dots button{width:18px}
+ .bcv-shelf-dots button::after{left:6px}
+}

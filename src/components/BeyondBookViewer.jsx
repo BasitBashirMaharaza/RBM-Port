@@ -121,7 +121,7 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
  useLayoutEffect(()=>{
   const element=dialog.current;element.showModal();
   const oldOverflow=document.body.style.overflow,oldPadding=document.body.style.paddingRight;
-  const gap=innerWidth-document.documentElement.clientWidth;
+  const gap=CSS.supports('scrollbar-gutter: stable')?0:innerWidth-document.documentElement.clientWidth;
   document.body.style.overflow='hidden';if(gap)document.body.style.paddingRight=`${gap}px`;
   const board=rig.current.querySelector('.bcv-book-right').getBoundingClientRect();
   const outer=presentation.current.getBoundingClientRect();

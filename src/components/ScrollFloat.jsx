@@ -105,6 +105,8 @@ const ScrollFloat = ({
     if (!el || !textEl) return;
     if (scrollContainerRef && !scrollContainerRef.current) return;
 
+    let disposeAnimation;
+    const initialize = () => {
     const scroller = scrollContainerRef?.current || window;
     const pieces = el.querySelectorAll(splitBy === 'words' ? '.scroll-float-word' : '.scroll-float-char');
     const targets = pieces.length ? Array.from(pieces) : [textEl];
@@ -218,6 +220,17 @@ const ScrollFloat = ({
     });
 
     return () => mm.revert();
+    };
+    // Building every letter's GSAP tween during startup blocks the welcome and
+    // hero. Prepare the exact same timeline a full viewport before it is seen.
+    // Once prepared it stays alive, including its original reverse scrolling.
+    const preparation = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting) || disposeAnimation) return;
+      preparation.disconnect();
+      disposeAnimation = initialize();
+    }, { root: scrollContainerRef?.current || null, rootMargin: '100% 0px' });
+    preparation.observe(el);
+    return () => { preparation.disconnect(); disposeAnimation?.(); };
   }, [
     scrollContainerRef,
     text,

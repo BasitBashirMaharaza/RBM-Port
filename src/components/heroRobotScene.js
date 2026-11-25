@@ -23,8 +23,15 @@ export async function createHeroRobot(canvas){
  const indices=new Uint16Array(positions.count*4),weights=new Float32Array(positions.count*4),smooth=(a,b,v)=>THREE.MathUtils.smoothstep(v,a,b);
  for(let i=0;i<positions.count;i++){
   const x=positions.getX(i),y=positions.getY(i),arm=smooth(.17,.25,Math.abs(x))*(1-smooth(.66,.74,y))*smooth(.25,.35,y),leg=(1-smooth(.31,.41,y))*(1-arm),headWeight=smooth(.74,.82,y),knee=1-smooth(.12,.23,y);
-  indices.set([0,1,arm>leg?(x<0?2:3):(x<0?4:5),x<0?6:7],i*4);
-  const limb=Math.max(arm,leg);weights.set([Math.max(0,1-headWeight-limb),headWeight,limb*(leg>arm?1-knee:1),leg>arm?limb*knee:0],i*4);
+  // Write directly into the buffers: avoid two short-lived JS arrays for
+  // every vertex while the initial hero is becoming interactive.
+  const offset=i*4,limb=Math.max(arm,leg);
+  indices[offset]=0;indices[offset+1]=1;indices[offset+2]=arm>leg?(x<0?2:3):(x<0?4:5);indices[offset+3]=x<0?6:7;
+  weights[offset]=Math.max(0,1-headWeight-limb);weights[offset+1]=headWeight;weights[offset+2]=limb*(leg>arm?1-knee:1);weights[offset+3]=leg>arm?limb*knee:0;
+  if(i>0&&i%8192===0){
+   if(globalThis.scheduler?.yield)await globalThis.scheduler.yield();
+   else await new Promise(resolve=>setTimeout(resolve,0));
+  }
  }
  geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(indices,4));geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute(weights,4));
  const mesh=new THREE.SkinnedMesh(geometry,source.material);mesh.add(body);mesh.bind(new THREE.Skeleton(bones));mesh.normalizeSkinWeights();mesh.frustumCulled=false;
@@ -34,6 +41,9 @@ export async function createHeroRobot(canvas){
  const glowContext=glowCanvas.getContext('2d'),glowGradient=glowContext.createRadialGradient(32,32,1,32,32,32);glowGradient.addColorStop(0,'#ffffff');glowGradient.addColorStop(.16,'#ffffffcc');glowGradient.addColorStop(1,'#ffffff00');glowContext.fillStyle=glowGradient;glowContext.fillRect(0,0,64,64);
  const glowTexture=new THREE.CanvasTexture(glowCanvas),glowMaterial=new THREE.SpriteMaterial({map:glowTexture,color:0xffdda0,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending});
  const glowGroup=new THREE.Group();for(const x of [-.052,.052]){const eye=new THREE.Sprite(glowMaterial);eye.position.set(x,.065,.25);eye.scale.set(.105,.105,.105);glowGroup.add(eye);}head.add(glowGroup);glowGroup.visible=false;
+ // Let supporting drivers compile the unchanged shaders asynchronously rather
+ // than making the first visible robot frame block on shader compilation.
+ await renderer.compileAsync(scene,camera);
  const motion=matchMedia('(prefers-reduced-motion: reduce)');
  const pose=(object,key,target,blend)=>{object.rotation[key]=THREE.MathUtils.lerp(object.rotation[key],target,blend);};
  const easePose=q=>q*q*(3-2*q),smoothSpawn=easePose;
@@ -77,7 +87,7 @@ export async function createHeroRobot(canvas){
   }
   if(!motion.matches)frame=requestAnimationFrame(paint);
  };
- const wake=()=>{if(!frame&&!disposed)frame=requestAnimationFrame(paint);};
+ const wake=()=>{if(!frame&&!disposed&&visible&&!document.hidden)frame=requestAnimationFrame(paint);};
  const sync=()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;}else wake();};
  document.addEventListener('visibilitychange',sync);motion.addEventListener('change',wake);wake();
  return {

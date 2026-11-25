@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ArchiveFace, ArchiveMark } from './ArchiveProjectFace.jsx';
 import { archiveColors, archiveLightColors, archiveImages } from './workArchiveMarks.js';
+import { projectCaseNotes } from './projectCaseNotes.js';
+import './project-case-study.css';
 
 const FACE_WIDTH=1200,FACE_HEIGHT=840;
 const flows=[
@@ -28,14 +30,14 @@ function centeredFace(){
  return projection([{x,y},{x:x+width,y},{x:x+width,y:y+height},{x,y:y+height}]);
 }
 export default function ProjectArchiveDialog({projects,initial,scene,githubUrl,onClosed,onSound}){
- const [index,setIndex]=useState(initial),[phase,setPhase]=useState('opening');
+ const [index,setIndex]=useState(initial),[phase,setPhase]=useState('opening'),[tab,setTab]=useState('Overview'),[feature,setFeature]=useState(0);
  const dialog=useRef(null),flight=useRef(null),detail=useRef(null),backdrop=useRef(null),current=useRef(initial);
  const closing=useRef(false),alive=useRef(true),animations=useRef([]),opener=useRef(document.activeElement),closeRef=useRef(null);
  const animate=(node,frames,options)=>{const animation=node.animate(frames,{fill:'both',...options});animations.current.push(animation);return animation;};
  useEffect(()=>{
   alive.current=true;
   const modal=dialog.current,body=document.body,oldOverflow=body.style.overflow,oldPadding=body.style.paddingRight;
-  const gap=innerWidth-document.documentElement.clientWidth;body.style.overflow='hidden';if(gap)body.style.paddingRight=`${gap}px`;
+  const gap=CSS.supports('scrollbar-gutter: stable')?0:innerWidth-document.documentElement.clientWidth;body.style.overflow='hidden';if(gap)body.style.paddingRight=`${gap}px`;
   modal.showModal();scene.current?.hideCard(initial,true);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,duration=reduced?160:960,target=centeredFace();
   const from=projection(scene.current?.getCorners(initial));
@@ -68,24 +70,28 @@ export default function ProjectArchiveDialog({projects,initial,scene,githubUrl,o
  closeRef.current=close;
  const change=next=>{
   if(phase!=='open'||closing.current)return;onSound?.('click',next);
-  scene.current?.hideCard(current.current,false);scene.current?.hideCard(next,true);current.current=next;setIndex(next);
+  scene.current?.hideCard(current.current,false);scene.current?.hideCard(next,true);current.current=next;setIndex(next);setTab('Overview');setFeature(0);
   detail.current.scrollTo({top:0,behavior:'instant'});
  };
  const project=projects[index];
+ const notes=projectCaseNotes[index];
  return createPortal(<dialog ref={dialog} className={`wa-dialog wa-${phase}`} aria-labelledby="wa-project-title" style={{'--wa-accent':archiveColors[index],'--wa-light-accent':archiveLightColors[index]}}>
   <div ref={backdrop} className="wa-dialog-backdrop" onClick={close}/>
   <div ref={flight} className="wa-flight" aria-hidden="true"><ArchiveFace project={project} index={index}/></div>
   <div ref={detail} className="wa-detail" inert={phase!=='open'?true:undefined}>
-   <div className="wa-detail-top"><span className="wa-monogram">BB<span> / WORK ARCHIVE</span></span><button data-sound="silent" type="button" onClick={close}>↙ <span>Back to the archive</span></button></div>
-   <article className="wa-case" key={index}>
-    <div className="wa-case-kicker"><span>SELECTED WORK / {project.number}</span><span>{project.eyebrow}</span></div>
-    <div className="wa-case-hero">
-     <div className="wa-case-summary"><div className="wa-case-title"><ArchiveMark index={index}/><h2 id="wa-project-title">{project.title}</h2></div><p className="wa-case-intro">{project.description}</p><div className="wa-case-tags" aria-label="Technologies">{project.tags.map(tag=><span key={tag}>{tag}</span>)}</div><a className="wa-github-link" href={githubUrl} target="_blank" rel="noreferrer">Explore on GitHub <span>↗</span></a></div>
-     <div className="wa-case-media"><img src={`/project-images/${archiveImages[project.visual]}.svg`} alt={`${project.title} system illustration`}/></div>
+   <div className="wa-detail-top"><span className="wa-monogram">BB<span> / PROJECT NOTES</span></span><span className="wa-detail-position">{project.number} — {String(projects.length).padStart(2,'0')}</span><button data-sound="silent" type="button" onClick={close} aria-label="Close project and return to archive"><span>Back to archive</span><span className="wa-close-icon" aria-hidden="true">×</span></button></div>
+   <article className="wa-case wa-compact-case" key={index}>
+    <header className="wa-compact-heading" data-long-title={project.title.length>28}><div><span className="wa-case-label">{project.eyebrow}</span><h2 id="wa-project-title">{project.title}</h2></div><ArchiveMark index={index}/></header>
+    <div className="wa-compact-body">
+     <div className="wa-live-visual" aria-hidden="true"><img src={`/project-images/${archiveImages[project.visual]}.svg`} alt=""/><svg className="wa-signal-orbit" viewBox="0 0 300 300" fill="none"><circle cx="150" cy="150" r="108"/><circle cx="150" cy="150" r="130"/><circle className="wa-signal-dot" cx="150" cy="42" r="4"/></svg><span className="wa-visual-caption"><i/> {notes.output}</span></div>
+     <div className="wa-inspector">
+      <div className="wa-inspector-tabs" role="tablist" aria-label="Project details">{['Overview','System','Details'].map(label=><button key={label} id={`wa-tab-${label}`} type="button" role="tab" aria-selected={tab===label} aria-controls="wa-inspector-panel" tabIndex={tab===label?0:-1} onClick={()=>setTab(label)} onKeyDown={event=>{const options=['Overview','System','Details'];let next;if(event.key==='ArrowRight')next=options[(options.indexOf(label)+1)%3];if(event.key==='ArrowLeft')next=options[(options.indexOf(label)+2)%3];if(event.key==='Home')next=options[0];if(event.key==='End')next=options[2];if(next){event.preventDefault();setTab(next);event.currentTarget.parentElement.querySelector(`#wa-tab-${next}`)?.focus();}}}>{label}</button>)}</div>
+      <section id="wa-inspector-panel" className="wa-inspector-panel" role="tabpanel" aria-labelledby={`wa-tab-${tab}`} tabIndex={0} key={tab}>
+       {tab==='Overview'?<><span className="wa-case-label">THE IDEA</span><p className="wa-inspector-lead">{project.description}</p><p className="wa-inspector-copy wa-purpose">{notes.purpose}</p><div className="wa-case-tags" aria-label="Technologies">{project.tags.map(tag=><span key={tag}>{tag}</span>)}</div><a className="wa-github-link" href={githubUrl} target="_blank" rel="noreferrer">Browse my GitHub <span>↗</span></a></>:tab==='System'?<><span className="wa-case-label">HOW IT CONNECTS</span><ol className="wa-compact-flow">{flows[index].map((step,i)=><li key={step} style={{'--step':i}}><span>0{i+1}</span><strong>{step}</strong><i aria-hidden="true"/></li>)}</ol><p className="wa-inspector-copy">{project.detail}</p></>:<><div className="wa-feature-picker" aria-label="Capability details">{notes.features.map(([title],i)=><button type="button" key={title} aria-label={`Read about ${title}`} aria-pressed={feature===i} onClick={()=>setFeature(i)}>0{i+1}</button>)}</div><div className="wa-detail-features">{notes.features.map(([title,description],i)=><div key={title} className={feature===i?'is-selected':''}><span>0{i+1}</span><div><h3>{title}</h3><p>{description}</p></div></div>)}</div><p className="wa-compact-note">{notes.consideration}</p></>}
+      </section>
+     </div>
     </div>
-    <div className="wa-case-context"><div><span className="wa-case-label">THE APPROACH</span><h3>Behind the system.</h3></div><p>{project.detail}</p></div>
-    <div className="wa-flow-section"><span className="wa-case-label">SYSTEM FLOW</span><ol className="wa-system-flow">{flows[index].map((step,i)=><li key={step}><span className="wa-flow-number">0{i+1}</span><strong>{step}</strong>{i<3&&<span className="wa-flow-arrow" aria-hidden="true">↗</span>}</li>)}</ol></div>
-    <nav className="wa-case-nav" aria-label="Project navigation"><button data-sound="silent" onClick={()=>change((index+projects.length-1)%projects.length)}>← Previous project</button><span>{project.number} / 05</span><button data-sound="silent" onClick={()=>change((index+1)%projects.length)}>Next project →</button></nav>
+    <nav className="wa-case-nav" aria-label="Project navigation"><button data-sound="silent" onClick={()=>change((index+projects.length-1)%projects.length)}>← Previous project</button><span>{project.number} / {String(projects.length).padStart(2,'0')}</span><button data-sound="silent" onClick={()=>change((index+1)%projects.length)}>Next project →</button></nav>
    </article>
   </div>
  </dialog>,document.body);

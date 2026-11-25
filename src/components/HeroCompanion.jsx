@@ -12,12 +12,14 @@ export default function HeroCompanion(){
  const enteredAt=useRef(performance.now()),root=useRef(null),canvas=useRef(null),engine=useRef(null),audio=useRef(null),interaction=useRef(null),greeted=useRef(false),previousQuote=useRef(null);
  const [ready,setReady]=useState(false),[conversation,setConversation]=useState(''),[videoRequest,setVideoRequest]=useState(0),[quote,setQuote]=useState(null);
  useEffect(()=>{
-  let alive=true,scene;
-  import('./heroRobotScene.js').then(async({createHeroRobot})=>{
+  let alive=true,scene,timer;
+  const titleWindow=new Promise(resolve=>{timer=setTimeout(resolve,1100);});
+  Promise.all([import('./heroRobotScene.js'),titleWindow]).then(async([{createHeroRobot}])=>{
+   if(!alive)return;
    scene=await createHeroRobot(canvas.current);if(!alive){scene.dispose();return;}
    engine.current=scene;setReady(true);
   }).catch(()=>{if(alive)root.current.dataset.failed='true';});
-  return()=>{alive=false;engine.current=null;scene?.dispose();};
+  return()=>{alive=false;clearTimeout(timer);engine.current=null;scene?.dispose();};
  },[]);
  useEffect(()=>{
   const sound=createHeroRobotSound();audio.current=sound;
