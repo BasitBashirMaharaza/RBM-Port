@@ -26,10 +26,10 @@
 @media(prefers-reduced-motion:reduce){.bcv-explore-cue,.bcv-explore-cue path,.bcv-book-header>button .bcv-power-rocker,.bcv-control-deck>button::after,.bcv-deck-display::after{animation:none!important}.bcv-power-rocker,.bcv-control-deck>button{transition:none!important}}
 
 /* A single full-sized paper layer, with no independently moving tiles. */
-.bcv-continuous-leaf .bcv-page-strip{width:100%;backface-visibility:visible}
-.bcv-continuous-leaf .bcv-strip-face{backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:translateZ(.05px)}
-.bcv-continuous-leaf .bcv-strip-back{transform:rotateY(180deg) translateZ(.05px)}
-.bcv-continuous-leaf .bcv-strip-content{width:100%!important;left:0!important}
+.bcv-continuous-leaf .bcv-page-strip{width:100%;backface-visibility:visible;will-change:transform}
+.bcv-continuous-leaf .bcv-strip-face{backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:translateZ(.5px);background:#f2eddf}
+.bcv-continuous-leaf .bcv-strip-back{transform:rotateY(180deg) translateZ(.5px)}
+.bcv-continuous-leaf .bcv-strip-content{width:100%!important;left:0!important;contain:paint;isolation:isolate;transform-style:flat}
 .bcv-dialog .bcv-music-mosaic .bcv-album-row,.bcv-dialog .bcv-music-art *{animation-play-state:paused!important}
 
 

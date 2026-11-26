@@ -24,6 +24,12 @@ function poses(progress,_width,board=false){
 
 export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed, onSound }) {
  const item=beyondBooks[index];
+ // Warm only the opened book's small artwork while its cover arrives. A hidden
+ // reverse face must not wait until halfway through a turn to decode its photos.
+ useEffect(()=>{
+  const artwork=[...new Set(item.entries.map(entry=>entry.cover).filter(Boolean))];
+  artwork.forEach(src=>{const image=new Image();image.decoding='async';image.src=src;image.decode().catch(()=>{});});
+ },[item.id]);
  const {audio,player,events,selectPreview,finishPreview,reset:stopMusic}=useMusicPreviewPlayer(item.id);
  const [selectedTrail,setSelectedTrail]=useState(null);
  const [selectedSong,setSelectedSong]=useState(null),[discFlight,setDiscFlight]=useState(null),[selectedMovie,setSelectedMovie]=useState(null),[selectedGame,setSelectedGame]=useState(null),[selectedSocial,setSelectedSocial]=useState(null);
@@ -68,13 +74,13 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
   transition.current=null;pageRef.current=next;
   // Commit the resting faces before cancelling the completed moving sheet.
   flushSync(()=>{setPage(next);setTurn(null);});
-  if(pendingClose.current)requestAnimationFrame(()=>{if(next===-1)exit.current();else turnAction.current(next-1);});
+  if(pendingClose.current)requestAnimationFrame(()=>{if(next===2)exit.current();else turnAction.current(next+1);});
  };
  const turnTo=(next,manual=false)=>{
   if((player.loading&&!pendingClose.current)||transition.current||next===pageRef.current||next< -1||next>2)return false;
   onSound?.(pageRef.current===-1?'hinge':next===-1||next===2?'cover':'page');
   if(reduced()){
-   if(!manual){setPage(next);pageRef.current=next;if(pendingClose.current)requestAnimationFrame(()=>{if(next===-1)exit.current();else turnAction.current(next-1);});}
+   if(!manual){setPage(next);pageRef.current=next;if(pendingClose.current)requestAnimationFrame(()=>{if(next===2)exit.current();else turnAction.current(next+1);});}
    return false;
   }
   const current={from:pageRef.current,to:next,forward:next>pageRef.current,manual};
@@ -84,8 +90,8 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
  const requestClose=()=>{
   if(pendingClose.current)return;onSound?.('powerOff');setDiscFlight(null);stopMusic();pendingClose.current=true;setClosing(true);
   const held=gesture.current;if(held&&rig.current?.hasPointerCapture(held.id))rig.current.releasePointerCapture(held.id);gesture.current=null;
-  if(transition.current){settle(!transition.current.forward);return;}
-  if(pageRef.current===-1)animateOut();else turnTo(pageRef.current-1);
+  if(transition.current){settle(transition.current.forward);return;}
+  if(pageRef.current===-1||pageRef.current===2)animateOut();else turnTo(pageRef.current+1);
  };
  const choose=next=>{
   if(transition.current||closing)return;
@@ -109,6 +115,19 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
   const samples=Array.from({length:61},(_,step)=>poses(turn.forward?step/60:1-step/60,width,board));
   const options={duration:pendingClose.current?720:duration,easing:turn.manual?'linear':'cubic-bezier(.65,0,.35,1)',fill:'both'};
   const leaves=strips.current.map((node,part)=>node.animate(samples.map((row,step)=>({offset:step/60,transform:row[part]})),options));
+  // Explicitly gate each face as it crosses the spine. Some mobile compositors
+  // otherwise keep promoted album images from the reverse face in the frame.
+  strips.current.forEach(node=>{
+   ['.bcv-strip-front','.bcv-strip-back'].forEach((selector,index)=>{
+    const visibleFirst=turn.forward?index===0:index===1;
+    leaves.push(node.querySelector(selector).animate([
+     {offset:0,visibility:visibleFirst?'visible':'hidden'},
+     {offset:.499,visibility:visibleFirst?'visible':'hidden'},
+     {offset:.5,visibility:visibleFirst?'hidden':'visible'},
+     {offset:1,visibility:visibleFirst?'hidden':'visible'},
+    ],options));
+   });
+  });
   const offset=value=>value===-1?'-25%':value===2?'25%':'0%';
   leaves.push(rig.current.animate([{transform:`translateX(${offset(turn.from)})`},{transform:`translateX(${offset(turn.to)})`}],options));
   animations.current=leaves;
@@ -158,7 +177,7 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
   window.addEventListener('resize',resize);return()=>window.removeEventListener('resize',resize);
  },[]);
  const start=event=>{
-  if(!event.isPrimary||event.button!==0||transition.current||closing||reduced()||event.target.closest('a,button,input,textarea,select,[data-music-control]'))return;
+  if(!event.isPrimary||event.button!==0||transition.current||closing||reduced()||event.target.closest('input,textarea,select,[data-music-control],.bcv-turntable'))return;
   suppress.current=false;gesture.current={id:event.pointerId,x:event.clientX,y:event.clientY,progress:0,started:false};
  };
  const move=event=>{
@@ -185,6 +204,10 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
    const rect=rig.current.getBoundingClientRect();turnTo(page+(event.clientX<rect.left+rect.width/2?-1:1));
   }
  };
+ const captureClick=event=>{
+  // A swipe that began on an album/cartridge is a page turn, not a detail tap.
+  if(suppress.current){suppress.current=false;event.preventDefault();event.stopPropagation();}
+ };
  const frontClosed=page===-1&&!turn,backClosed=page===2&&!turn;
  const turnControl=turn?(turn.forward?(turn.from===-1?'play':'next'):'back'):'';
  const endBoard=turn&&(turn.to===2||turn.from===2);
@@ -205,7 +228,7 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
   {discFlight&&<RecordFlight flight={discFlight} targetRoot={rig} onArrive={finishFlight}/>}
   <header className="bcv-book-header"><div><span>▶ BOOK {String(index+1).padStart(2,'0')} / {String(beyondBooks.length).padStart(2,'0')}</span><h2 id="bcv-book-title">{item.title}</h2></div><button type="button" data-sound="silent" onClick={requestClose} disabled={closing} aria-pressed={!closing} aria-label="Close personal book"><i key={item.id} className="bcv-power-rocker"><b aria-hidden="true"/>ON / OFF</i><span>{closing?'CLOSING…':'CLOSE · ESC'}</span></button></header>
   <div className="bcv-theatre">{frontClosed&&!closing&&<div className="bcv-explore-cue" key={item.id} aria-hidden="true"><span>Explore</span><svg viewBox="0 0 96 58" fill="none"><path pathLength="1" d="M5 8c22-3 8 27 37 23 23-4 32-5 43 18m-18-6 18 6-2-18"/></svg></div>}<div className="bcv-book-presentation" ref={presentation}>
-   <div ref={rig} className={'bcv-book-rig'+(frontClosed?' is-front-closed':'')+(backClosed?' is-back-closed':'')+(turn?' is-turning':'')} aria-busy={!!turn} onPointerDown={start} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onClick={clickPage}>
+   <div ref={rig} className={'bcv-book-rig'+(frontClosed?' is-front-closed':'')+(backClosed?' is-back-closed':'')+(turn?' is-turning':'')} aria-busy={!!turn} onPointerDown={start} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onClickCapture={captureClick} onClick={clickPage}>
     <div className="bcv-book-paper bcv-book-left" style={{visibility:frontClosed||left<0?'hidden':undefined}}>{backClosed?back:left>=0&&left<2&&surface(left,'left')}</div>
     <div className="bcv-book-paper bcv-book-right" style={{visibility:backClosed||endBoard?'hidden':undefined}}>{!endBoard&&(frontClosed?cover:right>=0&&right<2&&surface(right,'right'))}</div>
     {turn&&<div className="bcv-curved-leaf bcv-continuous-leaf" aria-hidden="true">{Array.from({length:segments},(_,part)=><div key={part} className="bcv-page-strip" ref={node=>{strips.current[part]=node;}} style={{width:`${100/segments}%`}}>
