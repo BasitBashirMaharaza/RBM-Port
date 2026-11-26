@@ -10,6 +10,7 @@ import RecordFlight from './RecordFlight.jsx';
 import CinemaDetails from './CinemaDetails.jsx';
 import GameDetails from './GameDetails.jsx';
 import SocialDetails from './SocialDetails.jsx';
+import MobileBeyondBookViewer from './MobileBeyondBookViewer.jsx';
 
 const segments=1;
 const duration=880;
@@ -21,7 +22,13 @@ function poses(progress,_width,board=false){
  return [`rotateY(${angle}rad) rotateZ(${lift}rad)`];
 }
 
-export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed, onSound }) {
+export default function BeyondBookViewer(props) {
+ const [mobile,setMobile]=useState(()=>matchMedia('(max-width:700px), (pointer:coarse) and (max-height:600px)').matches);
+ useEffect(()=>{const media=matchMedia('(max-width:700px), (pointer:coarse) and (max-height:600px)'),update=()=>setMobile(media.matches);media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[]);
+ return mobile?<MobileBeyondBookViewer {...props}/>:<DesktopBeyondBookViewer {...props}/>;
+}
+
+function DesktopBeyondBookViewer({ index, getOrigin, onChoose, onClosed, onSound }) {
  const item=beyondBooks[index];
  const {audio,player,events,selectPreview,finishPreview,reset:stopMusic}=useMusicPreviewPlayer(item.id);
  const [selectedTrail,setSelectedTrail]=useState(null);
