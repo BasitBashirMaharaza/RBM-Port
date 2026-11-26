@@ -687,7 +687,8 @@ function App() {
     if (event.pointerType === 'touch') {
       event.currentTarget.classList.add('profile-hint-visible');
       window.clearTimeout(profileHintTimer.current);
-      profileHintTimer.current = window.setTimeout(() => event.currentTarget.classList.remove('profile-hint-visible'), 1800);
+      const portrait = event.currentTarget;
+      profileHintTimer.current = window.setTimeout(() => portrait.classList.remove('profile-hint-visible'), 1800);
     }
     const now = Date.now();
     const last = lastVoicePress.current;

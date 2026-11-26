@@ -8,8 +8,8 @@ to the reference's `/components/ui` path within this Vite project's source root.
 
 Vite already transpiles TSX. This portfolio uses plain CSS rather than Tailwind;
 the reference's utilities are implemented as scoped CSS with its perspective,
-ring transforms and scroll runway. The requested refinements add compact,
-opaque 16px-deep cards with front/back faces, closer spacing, faster rotation,
+ring transforms and local wheel input. The refinements add larger,
+opaque 16px-deep cards with front/back faces, responsive spacing, faster rotation,
 and the trail video. No new
 runtime dependency is needed. Existing collection data, theme artwork, book
 viewers, music previews, keyboard controls, and reduced-motion behavior remain.
@@ -27,7 +27,8 @@ For a future fully typed shadcn/Tailwind setup (optional, not required here):
 
 The supplied reference's frame-by-frame React state updates are replaced by one
 visible-only animation frame loop that updates the ring transform directly.
-Scroll geometry is measured on resize, not during scrolling.
+Wheel input is attached only to the gallery and consumed only over a card;
+there is no global scroll-to-rotation listener.
 Images are decoded ahead of entry; the original-resolution local JPGs are reused.
 The muted trail video is buffered near entry and plays only when its card faces
 the viewer. It pauses offscreen, in hidden tabs, for reduced motion, and while
@@ -40,3 +41,16 @@ space for page content, and adjusts text, labels, and controls for phones.
 Stable small viewport units prevent browser toolbars from resizing the book;
 height-only resize events no longer cancel a turn. Swipe and page-click
 handlers exclude inputs and music controls. Native pinch zoom remains available.
+
+The collection now fits a single viewport. Its earlier left-aligned handwritten
+caption, serif heading, and underline are restored. Cards use viewport-bounded
+sizes and a wider responsive ring. Wheel input rotates the gallery only over a
+book; the heading, controls, gaps, and surrounding page scroll normally.
+Horizontal book dragging remains local, while vertical touch gestures keep
+native page scrolling. The pause button is removed; reduced motion, inactive-tab
+pausing, and pausing for the open book viewer remain supported.
+
+Browsing uses a critically damped rotation spring that retains velocity when
+direction changes. Rapid arrow presses queue from the requested card, and wheel
+gestures settle onto a card before automatic rotation resumes. Drag release uses
+the same settling motion. Reduced motion keeps immediate selection.

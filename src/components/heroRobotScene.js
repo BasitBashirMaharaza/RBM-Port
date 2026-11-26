@@ -36,25 +36,28 @@ export async function createHeroRobot(canvas){
  geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(indices,4));geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute(weights,4));
  const mesh=new THREE.SkinnedMesh(geometry,source.material);mesh.add(body);mesh.bind(new THREE.Skeleton(bones));mesh.normalizeSkinWeights();mesh.frustumCulled=false;
  const group=new THREE.Group();group.add(mesh);scene.add(group);group.rotation.y=-.14;
- // Six real mesh pieces share the original UVs/material and vertex buffers.
+ // Seven real mesh pieces (including the front tablet) share the original UVs/material and vertex buffers.
  // Build their index lists once, yielding during startup rather than allocating during a fall.
- const fragments=new THREE.Group(),parts=[],buckets=Array.from({length:6},()=>({indices:[],sum:new THREE.Vector3(),count:0}));
+ const fragments=new THREE.Group(),parts=[],buckets=Array.from({length:7},()=>({indices:[],sum:new THREE.Vector3(),count:0}));
  const triangles=geometry.index?.count||positions.count;
  for(let i=0;i<triangles;i+=3){
   const a=geometry.index?geometry.index.getX(i):i,b=geometry.index?geometry.index.getX(i+1):i+1,c=geometry.index?geometry.index.getX(i+2):i+2;
   const x=(positions.getX(a)+positions.getX(b)+positions.getX(c))/3,y=(positions.getY(a)+positions.getY(b)+positions.getY(c))/3,z=(positions.getZ(a)+positions.getZ(b)+positions.getZ(c))/3;
-  const part=y>.75?0:Math.abs(x)>.185&&y>.3?(x<0?2:3):y<.38?(x<0?4:5):1,bucket=buckets[part];
+  const tablet=y>.38&&y<.61&&z>.13&&Math.abs(x)<.19;
+  const part=tablet?6:y>.61?0:Math.abs(x)>.185&&y>.3?(x<0?2:3):y<.38?(x<0?4:5):1,bucket=buckets[part];
   bucket.indices.push(a,b,c);bucket.sum.x+=x;bucket.sum.y+=y;bucket.sum.z+=z;bucket.count++;
   if(i>0&&i%24576===0){if(globalThis.scheduler?.yield)await globalThis.scheduler.yield();else await new Promise(resolve=>setTimeout(resolve,0));}
  }
- const scatter=[new THREE.Vector3(.25,-.36,.04),new THREE.Vector3(-.025,-.12,.025),new THREE.Vector3(-.24,-.18,.03),new THREE.Vector3(.24,-.22,.02),new THREE.Vector3(-.12,-.015,.04),new THREE.Vector3(.14,-.03,-.025)];
- const turns=[new THREE.Vector3(.4,.3,-.7),new THREE.Vector3(-.15,-.2,.25),new THREE.Vector3(.4,-.2,-.9),new THREE.Vector3(-.4,.3,.85),new THREE.Vector3(.7,.2,-.4),new THREE.Vector3(-.6,-.2,.5)];
+ const scatter=[new THREE.Vector3(.16,-.08,.04),new THREE.Vector3(-.025,-.12,.025),new THREE.Vector3(-.24,-.18,.03),new THREE.Vector3(.24,-.22,.02),new THREE.Vector3(-.12,-.015,.04),new THREE.Vector3(.14,-.03,-.025),new THREE.Vector3(.28,-.19,.12)];
+ const turns=[new THREE.Vector3(.4,.3,-.7),new THREE.Vector3(-.15,-.2,.25),new THREE.Vector3(.4,-.2,-.9),new THREE.Vector3(-.4,.3,.85),new THREE.Vector3(.7,.2,-.4),new THREE.Vector3(-.6,-.2,.5),new THREE.Vector3(.25,.5,-.45)];
+ // Each piece has its own docking window across the three-second repair.
+ const docking=[.7,0,.43,.56,.04,.17,.3];
  buckets.forEach((bucket,i)=>{
   if(!bucket.count)return;const piece=new THREE.BufferGeometry();for(const [name,attribute] of Object.entries(geometry.attributes))if(!name.startsWith('skin'))piece.setAttribute(name,attribute);
-  piece.setIndex(bucket.indices);const center=bucket.sum.multiplyScalar(1/bucket.count),pivot=new THREE.Group(),shell=new THREE.Mesh(piece,source.material);shell.position.copy(center).negate();pivot.position.copy(center);pivot.add(shell);fragments.add(pivot);parts.push({pivot,center,offset:scatter[i],turn:turns[i],geometry:piece});
+  piece.setIndex(bucket.indices);const center=bucket.sum.multiplyScalar(1/bucket.count),pivot=new THREE.Group(),shell=new THREE.Mesh(piece,source.material);shell.position.copy(center).negate();pivot.position.copy(center);pivot.add(shell);fragments.add(pivot);parts.push({pivot,center,dockAt:docking[i],offset:scatter[i],turn:turns[i],geometry:piece});
  });fragments.visible=false;group.add(fragments);
 
- let frame=0,last=0,visible=true,disposed=false,phase='waiting',progress=0,direction=1,mood='curious',gait=0,fearSide=1,projecting=false,cursorX=0,cursorY=0,tracking=false,gesture='wave',gestureProgress=0,projectionSurface=null,projectionContext=null;
+ let frame=0,last=0,visible=true,disposed=false,phase='waiting',progress=0,direction=1,mood='curious',gait=0,fearSide=1,projecting=false,cursorX=0,cursorY=0,tracking=false,gesture='wave',gestureProgress=0,carryLean=0,projectionSurface=null,projectionContext=null;
  const glowCanvas=document.createElement('canvas');glowCanvas.width=glowCanvas.height=64;
  const glowContext=glowCanvas.getContext('2d'),glowGradient=glowContext.createRadialGradient(32,32,1,32,32,32);glowGradient.addColorStop(0,'#ffffff');glowGradient.addColorStop(.16,'#ffffffcc');glowGradient.addColorStop(1,'#ffffff00');glowContext.fillStyle=glowGradient;glowContext.fillRect(0,0,64,64);
  const glowTexture=new THREE.CanvasTexture(glowCanvas),glowMaterial=new THREE.SpriteMaterial({map:glowTexture,color:0xffdda0,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending});
@@ -71,7 +74,8 @@ export async function createHeroRobot(canvas){
    const dt=Math.min(.06,(now-last)/1000||.033);last=now;gait+=dt;
    const t=now/1000,q=progress,quiet=motion.matches,blend=quiet?1:1-Math.exp(-dt*13);
    const rest=phase==='resting',sit=rest?1:phase==='sittingDown'?easePose(q):phase==='standingUp'?1-easePose(q):0;
-   const walk=phase==='walking',climb=phase==='climbing',jump=phase==='jumping',launch=phase==='takeoff',land=phase==='landing';
+   const walk=phase==='walking',climb=phase==='climbing',jump=phase==='jumping'||phase==='returning',launch=phase==='takeoff',land=phase==='landing';
+   const carried=phase==='grasping'||phase==='carrying',held=phase==='holding',dropping=phase==='dropping';
    const repair=phase==='falling'||phase==='scattered'||phase==='reassembling',stumble=phase==='stumbling',recover=phase==='recovering';
    const hesitating=phase==='hesitating',afraid=mood==='afraid'||mood==='bashful'||hesitating;
    const travel=walk||jump||launch||land||hesitating||phase==='standingUp';
@@ -79,33 +83,38 @@ export async function createHeroRobot(canvas){
    const compression=phase==='spawn'?(1-smoothSpawn(q))*.7:launch?Math.sin(q*Math.PI/2):land?Math.sin(q*Math.PI):0;
    const happy=['happy','delighted','proud'].includes(mood),sad=mood==='sad'||mood==='sleepy',angry=mood==='angry',surprised=mood==='surprised';
    const gesturing=rest&&gestureProgress<1&&!quiet,wave=gesturing&&gesture==='wave',stretch=gesturing&&gesture==='stretch',think=gesturing&&gesture==='think',cheer=(gesturing&&gesture==='cheer')||recover;
-   const turn=projecting||repair||stumble||recover?0:climb?-.9:travel?direction*1.2:-.15;
+   const turn=projecting||repair||stumble||recover||carried||held||dropping?0:climb?-.9:travel?direction*1.2:-.15;
    pose(group,'y',quiet?-.15:turn,blend*.7);
    group.position.y=THREE.MathUtils.lerp(group.position.y,-.34*sit-compression*.035+(walk?Math.abs(step)*.018:0),blend);
-   pose(group,'z',quiet?0:stumble?-direction*Math.sin(q*Math.PI)*.28:walk?-direction*.045:rest?(afraid?fearSide*.07:Math.sin(t*1.2)*.018):0,blend);
+   pose(group,'z',quiet?0:carried?-carryLean*.12:dropping?Math.sin(q*Math.PI)*.12:stumble?-direction*Math.sin(q*Math.PI)*.28:walk?-direction*.045:rest?(afraid?fearSide*.07:Math.sin(t*1.2)*.018):0,blend);
    pose(group,'x',quiet?0:stumble?Math.sin(q*Math.PI)*.1:walk?.08:launch?.13:0,blend);
    head.position.y=THREE.MathUtils.lerp(head.position.y,.75+(happy?.006:0),blend);
-   pose(head,'x',quiet?0:tracking?cursorY*.28:think?.22:stretch?-.2:cheer?-.1:surprised?-.14:hesitating?.52:afraid?.2:sad?.32:angry?-.12:rest?Math.sin(t*1.5)*.055:climb?-.12:phase==='spawn'?-.16:-.025,blend);
-   pose(head,'y',quiet?0:projecting?0:tracking?cursorX*.48:think?.28:afraid?fearSide*.28:angry?Math.sin(t*12)*.13:rest?Math.sin(t*.9)*.1:0,blend);
+   pose(head,'x',quiet?0:carried?-.12:held?-.06:dropping?-.2:tracking?cursorY*.28:think?.22:stretch?-.2:cheer?-.1:surprised?-.14:hesitating?.52:afraid?.2:sad?.32:angry?-.12:rest?Math.sin(t*1.5)*.055:climb?-.12:phase==='spawn'?-.16:-.025,blend);
+   pose(head,'y',quiet?0:carried?carryLean*.22:projecting?0:tracking?cursorX*.48:think?.28:afraid?fearSide*.28:angry?Math.sin(t*12)*.13:rest?Math.sin(t*.9)*.1:0,blend);
    pose(head,'z',quiet?0:afraid?-fearSide*.09:think?-.16:sad?-.13:happy?.1:rest?Math.sin(t*.8)*.05:0,blend);
    const swing=quiet?0:step*stride,fold=jump?Math.sin(q*Math.PI)*.5:compression*.3;
-   pose(leftLeg,'x',-1.48*sit+swing*(1-sit)-fold,blend);
-   pose(rightLeg,'x',-1.48*sit-swing*(1-sit)-fold,blend);
+   pose(leftLeg,'x',carried?.12+Math.sin(t*5)*.07:dropping?Math.sin(q*Math.PI*4)*.22:-1.48*sit+swing*(1-sit)-fold,blend);
+   pose(rightLeg,'x',carried?.12-Math.sin(t*5)*.07:dropping?-Math.sin(q*Math.PI*4)*.22:-1.48*sit-swing*(1-sit)-fold,blend);
    const dangle=quiet?0:Math.sin(t*2.9)*.12*sit;
-   pose(leftKnee,'x',1.58*sit+dangle+Math.max(0,-swing)*1.35+fold*1.5,blend);
-   pose(rightKnee,'x',1.58*sit-dangle+Math.max(0,swing)*1.35+fold*1.5,blend);
+   pose(leftKnee,'x',carried?.35:1.58*sit+dangle+Math.max(0,-swing)*1.35+fold*1.5,blend);
+   pose(rightKnee,'x',carried?.35:1.58*sit-dangle+Math.max(0,swing)*1.35+fold*1.5,blend);
    const armSwing=quiet?0:step*(walk?.32:climb?.75:0);
-   pose(leftArm,'x',stumble?Math.sin(q*Math.PI)*-.65:stretch?-1.2:cheer?-.8:afraid?-.35:angry?.65:climb?-1.35+armSwing:jump?-.65:walk?-armSwing:sad?.25:0,blend);
-   pose(rightArm,'x',stumble?Math.sin(q*Math.PI)*-.65:think?-1.3:stretch?-1.2:cheer?-.8:afraid?-.35:angry?.65:climb?-1.35-armSwing:jump?-.65:walk?armSwing:sad?.25:0,blend);
-   pose(leftArm,'z',quiet?.1:stretch?1.6:cheer?.9:stumble?Math.sin(q*Math.PI)*.8:afraid?-.25+Math.sin(t*13)*.018:angry?-.35:jump?.4:rest?.15:0,blend);
-   pose(rightArm,'z',quiet?-.1:stretch?-1.6:think?-.45:cheer?-.9:stumble?-Math.sin(q*Math.PI)*.8:afraid?.25-Math.sin(t*13)*.018:wave?-1.9+Math.sin(t*10)*.28:angry?.35:jump?-.4:rest?-.15:0,blend);
+   pose(leftArm,'x',carried?-.3:held?-.2:dropping?-.6:stumble?Math.sin(q*Math.PI)*-.65:stretch?-1.2:cheer?-.8:afraid?-.35:angry?.65:climb?-1.35+armSwing:jump?-.65:walk?-armSwing:sad?.25:0,blend);
+   pose(rightArm,'x',carried?-.3:held?-.2:dropping?-.6:stumble?Math.sin(q*Math.PI)*-.65:think?-1.3:stretch?-1.2:cheer?-.8:afraid?-.35:angry?.65:climb?-1.35-armSwing:jump?-.65:walk?armSwing:sad?.25:0,blend);
+   pose(leftArm,'z',carried?2.65:dropping?1.5:quiet?.1:stretch?1.6:cheer?.9:stumble?Math.sin(q*Math.PI)*.8:afraid?-.25+Math.sin(t*13)*.018:angry?-.35:jump?.4:rest?.15:0,blend);
+   pose(rightArm,'z',carried?-2.65:dropping?-1.5:quiet?-.1:stretch?-1.6:think?-.45:cheer?-.9:stumble?-Math.sin(q*Math.PI)*.8:afraid?.25-Math.sin(t*13)*.018:wave?-1.9+Math.sin(t*10)*.28:angry?.35:jump?-.4:rest?-.15:0,blend);
    pose(leftArm,'y',angry?-.7:0,blend);pose(rightArm,'y',angry?.7:0,blend);
    glowMaterial.color.setHex(projecting?0xffdda0:angry?0xe9aa7d:happy?0xc4e6b3:0xffdda0);
    glowMaterial.opacity=THREE.MathUtils.lerp(glowMaterial.opacity,projecting?.85:happy?.07:surprised?.1:.025,quiet?1:blend);glowGroup.visible=glowMaterial.opacity>.01;
    mesh.visible=!repair;fragments.visible=repair;
    if(repair){
-    const spread=phase==='falling'?easePose(q):phase==='reassembling'?1-easePose(q):1;
-    for(const part of parts){part.pivot.position.copy(part.center).addScaledVector(part.offset,spread);if(phase==='falling')part.pivot.position.y+=Math.sin(q*Math.PI)*.09;part.pivot.rotation.set(part.turn.x*spread,part.turn.y*spread,part.turn.z*spread);}
+    for(const part of parts){
+     const dock=THREE.MathUtils.clamp((q-part.dockAt)/.3,0,1);
+     const spread=quiet?0:phase==='falling'?easePose(q):phase==='reassembling'?1-easePose(dock):1;
+     part.pivot.position.copy(part.center).addScaledVector(part.offset,spread);
+     if(phase==='falling')part.pivot.position.y+=Math.sin(q*Math.PI)*.09;
+     part.pivot.rotation.set(part.turn.x*spread,part.turn.y*spread,part.turn.z*spread);
+    }
    }
    renderer.render(scene,camera);
    if(projectionContext){projectionContext.clearRect(0,0,projectionSurface.width,projectionSurface.height);projectionContext.drawImage(canvas,0,0,projectionSurface.width,projectionSurface.height);}
@@ -116,7 +125,7 @@ export async function createHeroRobot(canvas){
  const sync=()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;}else wake();};
  document.addEventListener('visibilitychange',sync);motion.addEventListener('change',wake);wake();
  return {
-  setMotion(state){phase=state.phase;progress=state.progress;direction=state.direction||direction;mood=state.mood;fearSide=state.fearSide||fearSide;cursorX=state.cursorX||0;cursorY=state.cursorY||0;tracking=Boolean(state.tracking);gesture=state.gesture||'wave';gestureProgress=state.gestureProgress||0;wake();},
+  setMotion(state){phase=state.phase;progress=state.progress;carryLean=state.carryLean||0;direction=state.direction||direction;mood=state.mood;fearSide=state.fearSide||fearSide;cursorX=state.cursorX||0;cursorY=state.cursorY||0;tracking=Boolean(state.tracking);gesture=state.gesture||'wave';gestureProgress=state.gestureProgress||0;wake();},
   getEyeOrigin(){const point=glowGroup.localToWorld(new THREE.Vector3(0,.065,.25)).project(camera),rect=canvas.getBoundingClientRect();return{x:rect.left+(point.x+1)*rect.width/2,y:rect.top+(1-point.y)*rect.height/2};},
   getProjectionFrame(){const rect=canvas.getBoundingClientRect(),eyes=glowGroup.children.map(eye=>{const point=eye.getWorldPosition(new THREE.Vector3()).project(camera);return{x:rect.left+(point.x+1)*rect.width/2,y:rect.top+(1-point.y)*rect.height/2};});return{rect:{x:rect.left,y:rect.top,width:rect.width,height:rect.height},eyes};},
   setProjection(value,surface){projecting=value;projectionSurface=value?surface:null;projectionContext=projectionSurface?.getContext('2d')||null;if(projectionSurface){projectionSurface.width=canvas.width;projectionSurface.height=canvas.height;}wake();},

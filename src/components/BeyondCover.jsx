@@ -39,10 +39,10 @@ export const BeyondCover = memo(function BeyondCover({ item, back=false, live=tr
  return <div className={'bcv-cover-art cover-'+item.id+(back?' is-back-cover':'')+(!back&&item.video?' has-live-cover':'')} style={{'--jacket':item.color,'--jacket-ink':item.ink}}>
    {!back&&item.video&&<LivingCover item={item} live={live}/>}
    {!back&&item.id==='trails'&&<TrekkingCover live={live}/>}
-   {!back&&item.id==='music'&&<MusicMosaicCover entries={item.entries} live={live}/>}
-   {!back&&item.id==='cinema'&&<CinemaCover entries={item.entries} live={live}/>}
-   {!back&&item.id==='games'&&<GameCover entries={item.entries} live={live}/>}
-   {!back&&item.id==='social'&&<SocialCover entries={item.entries} live={live}/>}
+   {!back&&!item.video&&item.id==='music'&&<MusicMosaicCover entries={item.entries} live={live}/>}
+   {!back&&!item.video&&item.id==='cinema'&&<CinemaCover entries={item.entries} live={live}/>}
+   {!back&&!item.video&&item.id==='games'&&<GameCover entries={item.entries} live={live}/>}
+   {!back&&!item.video&&item.id==='social'&&<SocialCover entries={item.entries} live={live}/>}
    <div className="bcv-cover-grain" />
    {(back||(item.id!=='music'&&item.id!=='cinema'&&item.id!=='games'&&item.id!=='social'&&item.id!=='trails'))&&<span className="bcv-cover-catalogue">BASIT BASHIR <i>·</i> OFF THE CLOCK</span>}
    {back?<div className="bcv-back-inscription"><span>Beyond the CV</span><h3>{item.note}</h3><svg viewBox="0 0 140 24"><path d="M4 18C42 3 78 22 134 9" fill="none" stroke="currentColor" /></svg><small>THE STORY CONTINUES.</small></div>:item.id==='music'||item.id==='cinema'||item.id==='games'||item.id==='social'||item.id==='trails'?null:<>

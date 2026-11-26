@@ -71,7 +71,7 @@ export default function MorphOrb({ value, onChange, onValidate, onSubmit, onFail
     event.preventDefault();
     if (disabled || busy || phase === 'success') return;
     const message = value.trim();
-    if (!message || !onValidate?.(message)) { setShake(true); window.setTimeout(() => setShake(false), 180); return; }
+    if (!onValidate?.(message)) { setShake(true); window.setTimeout(() => setShake(false), 180); return; }
     aborted.current = false;
     const request = onSubmit(message);
     setPhase('sending');
@@ -90,8 +90,8 @@ export default function MorphOrb({ value, onChange, onValidate, onSubmit, onFail
   return <div className={`mo-root${shake ? ' is-shaking' : ''}`} data-phase={phase}>
     <form className="mo-input" onSubmit={submit} noValidate>
       <svg className="mo-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M10 3.5l1.7 4.8 4.8 1.7-4.8 1.7L10 16.5l-1.7-4.8L3.5 10l4.8-1.7L10 3.5z" /></svg>
-      <textarea className="mo-field" value={value} onChange={(event) => onChange(event.target.value)} maxLength="5000" rows="2" placeholder="Write your message…" aria-label="Message" disabled={disabled || busy} />
-      <button type="submit" className="mo-send" aria-label="Send message" title="Send message" disabled={disabled || busy}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M12 19V5"/><path d="M5.5 11.5L12 5l6.5 6.5"/></svg></button>
+      <textarea id="contact-compose-message" className="mo-field" aria-required="true" value={value} onChange={(event) => onChange(event.target.value)} maxLength="5000" rows="2" placeholder="Write your message…" aria-label="Message" disabled={disabled || busy} />
+      <button type="submit" className="mo-send" aria-label="Send message" title="Send message" disabled={disabled || busy}><span className="mo-send-label">Send message</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M12 19V5"/><path d="M5.5 11.5L12 5l6.5 6.5"/></svg></button>
     </form>
     {phase !== 'idle' && <section className="delivery-stage" aria-live="polite">
       <DeliverySphere phase={phase} />

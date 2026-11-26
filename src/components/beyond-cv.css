@@ -279,3 +279,8 @@ html[data-theme='light'] .bcv-shelf-book>.bcv-volume-edge{box-shadow:0 23px 25px
 .bcv-curved-shelf .tgh-tile{font:inherit}
 
 .bcv-shelf-navigation{display:grid;grid-template-columns:44px auto 44px;justify-content:center;column-gap:12px;row-gap:8px}.bcv-shelf-instruction{grid-column:1/-1;justify-self:center;font:400 7px/1.6 'DM Mono',monospace;letter-spacing:.12em;color:var(--muted)}.bcv-catalogue{transform:translateY(6px)}@media(max-width:700px){.bcv-shelf-controls{gap:14px}.bcv-shelf-navigation{column-gap:8px}}
+
+/* Preserve the full portrait artwork of the supplied cover films. */
+:is(.cover-music,.cover-games,.cover-social,.cover-cinema).has-live-cover .bcv-living-cover { background:#24262b; }
+:is(.cover-music,.cover-games,.cover-social,.cover-cinema).has-live-cover .bcv-living-cover :is(video,img) { object-fit:contain; }
+:is(.cover-music,.cover-games,.cover-social,.cover-cinema).has-live-cover::after { display:none; }

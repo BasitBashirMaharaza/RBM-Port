@@ -11,3 +11,10 @@
   width: 100%;
   height: 100%;
 }
+
+/* Metric labels use their own tracking rather than the large title's.
+   Chromium also reads the canvas element's computed text spacing. */
+.tech-text-canvas {
+  letter-spacing: 0;
+  word-spacing: 0;
+}

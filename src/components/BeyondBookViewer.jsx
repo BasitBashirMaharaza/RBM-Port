@@ -74,13 +74,13 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
   transition.current=null;pageRef.current=next;
   // Commit the resting faces before cancelling the completed moving sheet.
   flushSync(()=>{setPage(next);setTurn(null);});
-  if(pendingClose.current)requestAnimationFrame(()=>{if(next===2)exit.current();else turnAction.current(next+1);});
+  if(pendingClose.current)requestAnimationFrame(()=>{if(next===-1)exit.current();else turnAction.current(next-1);});
  };
  const turnTo=(next,manual=false)=>{
   if((player.loading&&!pendingClose.current)||transition.current||next===pageRef.current||next< -1||next>2)return false;
   onSound?.(pageRef.current===-1?'hinge':next===-1||next===2?'cover':'page');
   if(reduced()){
-   if(!manual){setPage(next);pageRef.current=next;if(pendingClose.current)requestAnimationFrame(()=>{if(next===2)exit.current();else turnAction.current(next+1);});}
+   if(!manual){setPage(next);pageRef.current=next;if(pendingClose.current)requestAnimationFrame(()=>{if(next===-1)exit.current();else turnAction.current(next-1);});}
    return false;
   }
   const current={from:pageRef.current,to:next,forward:next>pageRef.current,manual};
@@ -90,8 +90,10 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
  const requestClose=()=>{
   if(pendingClose.current)return;onSound?.('powerOff');setDiscFlight(null);stopMusic();pendingClose.current=true;setClosing(true);
   const held=gesture.current;if(held&&rig.current?.hasPointerCapture(held.id))rig.current.releasePointerCapture(held.id);gesture.current=null;
-  if(transition.current){settle(transition.current.forward);return;}
-  if(pageRef.current===-1||pageRef.current===2)animateOut();else turnTo(pageRef.current+1);
+  // Close by retracing the book's opening: reverse an unfinished forward
+  // turn, then fold the preceding pages back to the front cover exactly once.
+  if(transition.current){settle(!transition.current.forward);return;}
+  if(pageRef.current===-1)animateOut();else turnTo(pageRef.current-1);
  };
  const choose=next=>{
   if(transition.current||closing)return;
@@ -211,7 +213,7 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
  const frontClosed=page===-1&&!turn,backClosed=page===2&&!turn;
  const turnControl=turn?(turn.forward?(turn.from===-1?'play':'next'):'back'):'';
  const endBoard=turn&&(turn.to===2||turn.from===2);
- const cover=entryReady?<BeyondCover item={item} live={frontClosed&&!closing}/>:<div className="bcv-cover-art bcv-entry-jacket"><img src={`/beyond-cv/jackets/${item.id}-${document.documentElement.dataset.theme==='light'?'light':'dark'}.jpg`} alt="" draggable="false"/></div>;
+ const cover=entryReady?<BeyondCover item={item} live={frontClosed&&!closing}/>:<div className="bcv-cover-art bcv-entry-jacket"><img src={item.videoPoster || `/beyond-cv/jackets/${item.id}-${document.documentElement.dataset.theme==='light'?'light':'dark'}.jpg`} style={item.video?{objectFit:'contain',background:'#24262b'}:undefined} alt="" draggable="false"/></div>;
  const back=<BeyondCover item={item} back/>;
  const surface=(spread,side)=><BeyondPage item={item} spread={spread} side={side} onTrailSelect={(entry,trailIndex,anchor)=>setSelectedTrail({entry,index:trailIndex,anchor})} onSongSelect={(song,trackIndex,anchor)=>setSelectedSong({song,index:trackIndex,anchor})} onMovieSelect={(entry,movieIndex,anchor)=>{onSound?.('projectorOpen');setSelectedMovie({entry,index:movieIndex,anchor});}} onGameSelect={(entry,gameIndex,anchor)=>{onSound?.('gameOpen');setSelectedGame({entry,index:gameIndex,anchor});}} onSocialSelect={(entry,profileIndex,anchor)=>{onSound?.('socialOpen');setSelectedSocial({entry,index:profileIndex,anchor});}} player={player} interactive={!turn&&!closing}/>;
  const left=turn?(turn.forward?turn.from:turn.to):page;

@@ -1,0 +1,79 @@
+/* Contact composer only; the existing full-screen delivery stage keeps its skin. */
+.email-contact-redesigned { --compose-bg:#151a1c;--compose-ink:#eff3ef;--compose-muted:#a4b2af;--compose-line:#cfdfdb24;--compose-field:#ffffff04;--compose-accent:#c1badf;--compose-button:#d8dfcf;--compose-button-ink:#1d2927;--compose-glow:#a8d5c712;--compose-error:#f2b5ab; }
+html[data-theme='light'] .email-contact-redesigned { --compose-bg:#f5f6f0;--compose-ink:#273b37;--compose-muted:#637771;--compose-line:#415e4d29;--compose-field:#ffffff72;--compose-accent:#786891;--compose-button:#344c41;--compose-button-ink:#f5f6ed;--compose-glow:#a0bdb923;--compose-error:#a33f43; }
+.email-contact-redesigned:not(.is-morphing) { background:#090f11b3; }
+html[data-theme='light'] .email-contact-redesigned:not(.is-morphing) { background:#36433d66; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-dialog { display:grid;grid-template-columns:225px minmax(0,1fr);align-content:start;width:min(100%,820px);max-height:calc(100dvh - 36px);overflow:auto;border:1px solid var(--compose-line);border-radius:20px;background:var(--compose-bg);color:var(--compose-ink);box-shadow:0 34px 100px #0005,inset 0 1px 0 #f4fff814; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-dialog::before { inset:0;z-index:0;opacity:1;pointer-events:none;filter:none;background:radial-gradient(ellipse at 10% 10%,var(--compose-glow),transparent 45%),radial-gradient(ellipse at 90% 80%,#a9a1d40a,transparent 40%);background-size:auto;animation:compose-reflection 12s ease-in-out infinite alternate; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-dialog::after { display:none; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-titlebar { grid-column:1/-1;position:relative;z-index:1;min-height:58px;padding:0 22px;gap:13px;border-bottom:1px solid var(--compose-line);color:var(--compose-muted);font:400 10px/1.4 'DM Mono',monospace;letter-spacing:.03em; }
+.email-contact-redesigned .contact-compose-wordmark { color:var(--compose-ink);font:italic 600 27px/1 Georgia,serif;letter-spacing:-.1em;padding-right:15px;border-right:1px solid var(--compose-line); }
+.email-contact-redesigned:not(.is-morphing) .email-contact-titlebar .email-contact-close { display:grid;place-items:center;width:34px;height:34px;margin-left:auto;padding:0;border:1px solid var(--compose-line);border-radius:50%;background:transparent;color:var(--compose-muted); }
+.email-contact-redesigned .email-contact-close svg { width:18px;height:18px;stroke:currentColor;stroke-width:1.3;stroke-linecap:round; }
+.email-contact-redesigned .contact-compose-intro { position:relative;z-index:1;display:flex;flex-direction:column;gap:26px;padding:30px 25px 26px;border-right:1px solid var(--compose-line);background:linear-gradient(155deg,var(--compose-glow),transparent 70%); }
+.email-contact-redesigned .contact-compose-identity { display:flex;align-items:center;gap:10px;color:var(--compose-ink);font:500 11px/1.5 Manrope,system-ui,sans-serif; }
+.email-contact-redesigned .contact-compose-identity img { width:36px;height:36px;border:1px solid var(--compose-line);border-radius:50%;object-fit:cover;filter:grayscale(1); }
+.email-contact-redesigned .contact-compose-identity small { display:block;margin-top:2px;color:var(--compose-muted);font-size:9px;font-weight:400; }
+.email-contact-redesigned .contact-compose-invitation { margin-top:20px; }
+.email-contact-redesigned .contact-compose-invitation>span { display:block;max-width:140px;color:var(--compose-muted);font:400 8px/1.8 'DM Mono',monospace;letter-spacing:.12em; }
+.email-contact-redesigned .contact-compose-invitation h3 { margin:17px 0 19px;color:var(--compose-ink);font:400 39px/1.06 Georgia,serif;letter-spacing:-.055em; }
+.email-contact-redesigned .contact-compose-invitation h3 em { color:var(--compose-accent);font-weight:400; }
+.email-contact-redesigned .contact-compose-invitation p { margin:0;color:var(--compose-muted);font:400 11px/1.85 Manrope,system-ui,sans-serif; }
+.email-contact-redesigned .contact-compose-signal { display:block;width:100%;height:auto;margin:auto 0 0;overflow:visible;stroke:var(--compose-line);stroke-width:1; }
+.email-contact-redesigned .contact-compose-signal g { stroke:var(--compose-accent);fill:var(--compose-field); }
+.email-contact-redesigned .compose-signal-light { stroke:url(#compose-signal-ink);stroke-width:1.5;stroke-dasharray:20 260;animation:compose-signal-travel 6s linear infinite; }
+.email-contact-redesigned .contact-compose-signoff { color:var(--compose-muted);font:400 8px/1.8 'DM Mono',monospace;letter-spacing:.03em; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-content { min-width:0;padding:31px 32px 25px; }
+.email-contact-redesigned .contact-compose-eyebrow { display:block;margin-bottom:12px;color:var(--compose-accent);font:400 8px/1.5 'DM Mono',monospace;letter-spacing:.16em; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-content h2 { margin:0 0 9px;color:var(--compose-ink);font:500 clamp(27px,3.5vw,33px)/1.15 Manrope,system-ui,sans-serif;letter-spacing:-.055em;text-shadow:none; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-content h2 span { color:var(--compose-accent); }
+.email-contact-redesigned .contact-compose-subtitle { margin:0 0 26px;color:var(--compose-muted);font:400 11px/1.7 Manrope,system-ui,sans-serif; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-fields { gap:19px; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-row { grid-template-columns:1fr 1fr;gap:15px; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-content label { display:grid;gap:9px;width:100%;color:var(--compose-muted);font:500 10px/1.3 Manrope,system-ui,sans-serif;text-shadow:none;letter-spacing:.02em;cursor:text;transform:none;transition:color 180ms ease; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-content input { display:block;box-sizing:border-box;width:100%;min-width:0;min-height:47px;padding:12px 13px;border:1px solid var(--compose-line);border-radius:9px;background:var(--compose-field);color:var(--compose-ink);box-shadow:inset 0 1px 0 #ffffff04;font:400 13px/1.5 Manrope,system-ui,sans-serif;letter-spacing:0;text-shadow:none;outline:0;transition:border-color 180ms ease,background-color 180ms ease,box-shadow 180ms ease; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-content input::placeholder,.email-contact-redesigned:not(.is-morphing) .email-contact-content textarea::placeholder { color:var(--compose-muted);opacity:.65; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-content input:focus { border-color:var(--compose-accent);background:color-mix(in srgb,var(--compose-field) 80%,var(--compose-accent) 5%);box-shadow:0 0 0 3px color-mix(in srgb,var(--compose-accent) 10%,transparent); }
+.email-contact-redesigned:not(.is-morphing) .email-contact-content label:focus-within { color:var(--compose-accent);transform:none;text-shadow:none; }
+.email-contact-redesigned .contact-compose-message-heading { display:flex;justify-content:space-between;align-items:center;gap:16px;margin:22px 0 9px; }
+.email-contact-redesigned .contact-compose-message-heading>span { flex:none;color:var(--compose-muted);font:400 8px/1.2 'DM Mono',monospace;font-variant-numeric:tabular-nums; }
+.email-contact-redesigned:not(.is-morphing) .mo-root { margin:0; }
+.email-contact-redesigned:not(.is-morphing) .mo-input { display:grid;grid-template-columns:1fr auto;gap:8px;min-height:0;padding:12px;border:1px solid var(--compose-line);border-radius:11px;background:var(--compose-field);box-shadow:none;transition:border-color 180ms ease,box-shadow 180ms ease; }
+.email-contact-redesigned:not(.is-morphing) .mo-input:focus-within { border-color:var(--compose-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--compose-accent) 10%,transparent); }
+.email-contact-redesigned:not(.is-morphing) .mo-spark { display:none; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-content textarea.mo-field { grid-column:1/-1;display:block;box-sizing:border-box;width:100%;height:94px;min-height:94px;max-height:180px;margin:0;padding:2px 1px;border:0;border-radius:0;box-shadow:none;resize:vertical;background:transparent;color:var(--compose-ink);font:400 14px/1.7 Manrope,system-ui,sans-serif;letter-spacing:0;outline:0; }
+.email-contact-redesigned:not(.is-morphing) .mo-send { grid-column:2;justify-self:end;display:inline-flex;align-items:center;justify-content:center;gap:14px;width:auto;min-height:40px;padding:0 14px;border:1px solid color-mix(in srgb,var(--compose-button) 75%,transparent);border-radius:7px;background:var(--compose-button);color:var(--compose-button-ink);filter:none;box-shadow:inset 0 1px 0 #ffffff19; }
+.email-contact-redesigned .mo-send-label { font:600 11px/1.2 Manrope,system-ui,sans-serif;letter-spacing:0; }
+.email-contact-redesigned:not(.is-morphing) .mo-send svg { width:17px;height:17px;transform:rotate(45deg); }
+.email-contact-redesigned:not(.is-morphing) .email-contact-note { margin:14px 0 0;color:var(--compose-muted);font:400 9px/1.6 Manrope,system-ui,sans-serif; }
+.email-contact-redesigned:not(.is-morphing) .email-contact-error { margin:13px 0 0;color:var(--compose-error);font:400 11px/1.6 Manrope,system-ui,sans-serif; }
+.email-contact-redesigned .email-contact-dialog:focus-visible { outline:none; }
+.email-contact-redesigned button { touch-action:manipulation;-webkit-tap-highlight-color:transparent; }
+.email-contact-redesigned:not(.is-morphing) :is(button,input,textarea):focus-visible { outline:2px solid var(--compose-accent);outline-offset:3px; }
+.email-contact-redesigned:not(.is-morphing) :is(input,textarea):focus-visible { outline:none; }
+@media(hover:hover) and (pointer:fine) {
+ .email-contact-redesigned:not(.is-morphing) .email-contact-content input:hover { border-color:color-mix(in srgb,var(--compose-accent) 60%,var(--compose-line));background:var(--compose-field); }
+ .email-contact-redesigned:not(.is-morphing) .email-contact-content input:focus:hover { border-color:var(--compose-accent); }
+ .email-contact-redesigned:not(.is-morphing) .email-contact-close:hover { color:var(--compose-ink);background:var(--compose-field); }
+ .email-contact-redesigned:not(.is-morphing) .mo-send:hover:not(:disabled) { filter:brightness(1.06);transform:translateY(-1px); }
+}
+@keyframes compose-reflection { to { opacity:.55; } }
+@keyframes compose-signal-travel { to { stroke-dashoffset:-280; } }
+@media(max-width:700px) {
+ .email-contact-redesigned:not(.is-morphing) { padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left)); }
+ .email-contact-redesigned:not(.is-morphing) .email-contact-dialog { grid-template-columns:1fr;max-height:calc(100dvh - 24px);border-radius:17px; }
+ .email-contact-redesigned:not(.is-morphing) .email-contact-titlebar { min-height:51px;padding:0 19px; }
+ .email-contact-redesigned .contact-compose-intro { display:block;padding:15px 22px;border-right:0;border-bottom:1px solid var(--compose-line); }
+ .email-contact-redesigned .contact-compose-invitation,.email-contact-redesigned .contact-compose-signal,.email-contact-redesigned .contact-compose-signoff { display:none; }
+ .email-contact-redesigned:not(.is-morphing) .email-contact-content { padding:24px 22px 21px; }
+ .email-contact-redesigned:not(.is-morphing) .email-contact-row { grid-template-columns:1fr;gap:18px; }
+ .email-contact-redesigned:not(.is-morphing) .email-contact-content input { font-size:16px;min-height:47px; }
+ .email-contact-redesigned:not(.is-morphing) .email-contact-content textarea.mo-field { font-size:16px;height:94px;min-height:94px; }
+ .email-contact-redesigned:not(.is-morphing) .email-contact-content h2 { font-size:29px; }
+ .email-contact-redesigned .contact-compose-subtitle { margin-bottom:24px; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .email-contact-redesigned:not(.is-morphing) .email-contact-dialog::before,.email-contact-redesigned .compose-signal-light { animation:none; }
+ .email-contact-redesigned:not(.is-morphing) :is(input,textarea,label,.mo-input,.mo-send) { transition:none; }
+ .email-contact-redesigned:not(.is-morphing) .mo-send:hover { transform:none; }
+}

@@ -1,3 +1,5 @@
+import {createPortal} from 'react-dom';
+import useRobotCarry from './useRobotCarry.js';
 import RobotDisplayText from './RobotDisplayText.jsx';
 import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import IntroPoster from '../IntroPoster.jsx';
@@ -9,7 +11,7 @@ import './hero-companion.css';
 import './robot-conversation.css';
 
 export default function HeroCompanion(){
- const enteredAt=useRef(performance.now()),root=useRef(null),canvas=useRef(null),engine=useRef(null),audio=useRef(null),interaction=useRef(null),greeted=useRef(false),previousQuote=useRef(null);
+ const enteredAt=useRef(performance.now()),root=useRef(null),hand=useRef(null),canvas=useRef(null),engine=useRef(null),audio=useRef(null),interaction=useRef(null),greeted=useRef(false),previousQuote=useRef(null);
  const [ready,setReady]=useState(false),[conversation,setConversation]=useState(''),[videoRequest,setVideoRequest]=useState(0),[quote,setQuote]=useState(null);
  useEffect(()=>{
   let alive=true,scene,timer;
@@ -26,7 +28,9 @@ export default function HeroCompanion(){
   const unlock=()=>sound.unlock();document.addEventListener('pointerdown',unlock,{passive:true});document.addEventListener('keydown',unlock);
   return()=>{audio.current=null;document.removeEventListener('pointerdown',unlock);document.removeEventListener('keydown',unlock);sound.dispose();};
  },[]);
- useHeroRobotMotion({ready,root,engine,audio,interaction,enteredAt});
+ const pickedUp=useCallback(()=>setConversation(''),[]);
+ useHeroRobotMotion({ready,root,hand,engine,audio,interaction,enteredAt});
+ useRobotCarry({ready,root,hand,interaction,onPickUp:pickedUp});
  useLayoutEffect(()=>{
   if(!conversation)return;const align=()=>{const rect=root.current.getBoundingClientRect(),width=innerWidth<=600?208:228,left=Math.max(12-rect.left,Math.min((rect.width-width)/2,innerWidth-12-width-rect.left));root.current.style.setProperty('--robot-chat-left',left+'px');root.current.style.setProperty('--robot-chat-tail',Math.max(12,Math.min(width-20,rect.width/2-left))+'px');const bubble=root.current.querySelector('.hero-robot-chat');root.current.toggleAttribute('data-chat-below',rect.top-(bubble?.offsetHeight||200)-8<12);};align();window.addEventListener('resize',align);return()=>window.removeEventListener('resize',align);
  },[conversation]);
@@ -60,6 +64,8 @@ export default function HeroCompanion(){
  </span>:null;
  return <div ref={root} className="hero-companion" data-ready={ready} data-phase="waiting" data-mood="curious" data-conversation={conversation}>
   <IntroPoster heroMode onHeroClick={talk} heroBubble={bubble} videoRequest={videoRequest} heroExpanded={Boolean(conversation)} character={<canvas ref={canvas} className="hero-robot-canvas" aria-hidden="true"/>}/>
+  <svg className="hero-hold-progress" viewBox="0 0 76 76" fill="none" aria-hidden="true"><circle cx="38" cy="38" r="35" pathLength="1"/></svg>
+  {createPortal(<span ref={hand} className="robot-carry-cursor" aria-hidden="true"><svg viewBox="0 0 32 36" fill="none"><defs><linearGradient id="robot-carry-glove" x1="5" y1="5" x2="27" y2="32" gradientUnits="userSpaceOnUse"><stop stopColor="#f4f6f8"/><stop offset="1" stopColor="#a8b4bf"/></linearGradient></defs><path d="M9 19V8a2 2 0 0 1 4 0v8V5a2 2 0 0 1 4 0v11V7a2 2 0 0 1 4 0v10v-6a2 2 0 0 1 4 0v12c0 6-3 9-9 9-4 0-6-2-8-5l-5-7c-2-3 1-6 4-3l2 2Z" fill="url(#robot-carry-glove)" stroke="#56636e" strokeWidth="1.2" strokeLinejoin="round"/><path d="M12 20v4m5-5v5m5-4v4" stroke="#7f8e9b" strokeLinecap="round"/></svg></span>,document.body)}
   {quote&&<RobotQuoteDialog quote={quote.text} origin={quote.origin} onProjection={project} getProjectionFrame={projectionFrame} onClose={()=>{setQuote(null);setConversation('options');requestAnimationFrame(()=>root.current?.querySelector('.intro-poster')?.focus({preventScroll:true}));}}/>}
  </div>;
 }

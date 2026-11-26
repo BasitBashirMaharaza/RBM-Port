@@ -513,6 +513,9 @@ const TechText = ({
 
       if (!s.labels) return;
       ctx.font = LABEL_FONT;
+      // Title tracking must not reverse or spread these small metric labels.
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+      if ('wordSpacing' in ctx) ctx.wordSpacing = '0px';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'bottom';
       ctx.fillStyle = accent;
@@ -535,6 +538,9 @@ const TechText = ({
       ctx.fillStyle = accent;
       ctx.lineWidth = 1;
       ctx.font = LABEL_FONT;
+      // Title tracking must not reverse or spread these small metric labels.
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+      if ('wordSpacing' in ctx) ctx.wordSpacing = '0px';
       ctx.textBaseline = 'middle';
       ctx.textAlign = room ? 'left' : 'right';
       view.lines.forEach((line, k) => {
@@ -814,6 +820,7 @@ const TechText = ({
         frame.index = focus;
       }
       frame.alpha = approach(frame.alpha, focus >= 0 && s.selection ? 1 : 0, dt, 0.1);
+      if (focus < 0 && frame.alpha < 0.01) { frame.alpha = 0; frame.index = -1; }
 
       glyphs.forEach((glyph, i) => {
         const target = introducing

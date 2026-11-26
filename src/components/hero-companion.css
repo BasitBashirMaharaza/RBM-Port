@@ -15,3 +15,17 @@
 .hero-companion .hero-robot-chat{bottom:calc(var(--robot-size,72px) + 5px)}
 .hero-companion[data-chat-below] .hero-robot-chat{bottom:auto;top:calc(var(--robot-size,72px) + 8px)}
 .hero-companion[data-chat-below] .hero-robot-chat::after{bottom:auto;top:-5px;rotate:225deg}
+
+/* A short hold confirms pickup without changing ordinary click behavior. */
+.hero-companion .intro-poster{touch-action:none;-webkit-touch-callout:none;user-select:none}
+.hero-hold-progress{position:absolute;inset:-2px;width:calc(100% + 4px);height:calc(100% + 4px);pointer-events:none;opacity:0;transform:rotate(-90deg)}
+.hero-hold-progress circle{stroke:var(--accent);stroke-width:1.2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+.hero-companion[data-holding='pending'] .hero-hold-progress{opacity:.7}
+.hero-companion[data-holding='pending'] .hero-hold-progress circle{animation:robot-pickup-hold 2s linear both}
+.robot-carry-cursor{position:fixed;left:0;top:0;z-index:9999;width:32px;height:36px;pointer-events:none;opacity:0;filter:drop-shadow(0 2px 2px #0003)}
+.robot-carry-cursor svg{display:block;width:100%;height:100%}
+html.robot-carry-active,html.robot-carry-active *{cursor:none!important}
+html.robot-carry-active .robot-carry-cursor{opacity:1}
+.hero-companion[data-phase='grasping'],.hero-companion[data-phase='carrying']{z-index:30}
+@keyframes robot-pickup-hold{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.hero-companion[data-holding='pending'] .hero-hold-progress circle{animation:none;stroke-dashoffset:.7}}

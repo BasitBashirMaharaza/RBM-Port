@@ -12,11 +12,11 @@ const subtitles = ['Lakes, forests & open skies.', 'A little space. A little sou
 
 export default memo(function BeyondCvSection() {
   const gallery = useRef(null), section = useRef(null), stage = useRef(null), origin = useRef(null), sound = useRef(null);
-  const [active, setActive] = useState(0), [opened, setOpened] = useState(null), [paused, setPaused] = useState(false);
+  const [active, setActive] = useState(0), [opened, setOpened] = useState(null);
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
   const items = useMemo(() => beyondBooks.map((book, index) => ({
     common: book.title, binomial: subtitles[index],
-    photo: { url: `/beyond-cv/jackets/${book.id}-${theme}.jpg`, video: book.id === 'trails' ? '/beyond-cv/trails/trail-film.mp4' : undefined, text: `${book.title} — Basit’s personal collection`, by: 'CURATED BY BASIT BASHIR' },
+    photo: { url: book.videoPoster || `/beyond-cv/jackets/${book.id}-${theme}.jpg`, fit: book.video ? 'contain' : 'cover', caption: !book.video, video: book.video || (book.id === 'trails' ? '/beyond-cv/trails/trail-film.mp4' : undefined), text: `${book.title} — Basit’s personal collection`, by: 'CURATED BY BASIT BASHIR' },
   })), [theme]);
   useEffect(() => {
     const effects = createBeyondBookSound(); sound.current = effects;
@@ -56,13 +56,13 @@ export default memo(function BeyondCvSection() {
 
   return <section ref={section} className="beyond-cv-section bcv-circular-section" id="beyond-cv" aria-labelledby="beyond-cv-title">
     <div className="bcv-circular-sticky" ref={stage}>
-      <header className="bcv-circular-heading">
-        <span>THE PERSONAL COLLECTION</span>
-        <h2 id="beyond-cv-title">Beyond the <em>CV</em></h2>
-        <p>A glimpse into what drives me — beyond work, beyond code.</p>
+      <header className="bcv-heading bcv-circular-heading container">
+        <p className="bcv-kicker">the things that never fit on<br/>a CV <span aria-hidden="true">↘</span></p>
+        <h2 id="beyond-cv-title">Beyond the <em>CV</em><svg viewBox="0 0 400 25" fill="none" aria-hidden="true"><path d="M4 20C89 1 276 7 392 10"/></svg></h2>
+        <p className="bcv-introduction">A glimpse into what drives me —<br/>beyond work, beyond code.</p>
       </header>
-      <CircularGallery ref={gallery} items={items} radius={300} autoRotateSpeed={.18} scrollRoot={section}
-        paused={paused || opened !== null} onActiveChange={setActive} onActivate={open}
+      <CircularGallery ref={gallery} items={items} radius={380} autoRotateSpeed={.18}
+        paused={opened !== null} onActiveChange={setActive} onActivate={open}
         onHover={index => sound.current?.play('hover', (index / (count - 1) - .5) * .8)}/>
       <footer className="bcv-circular-controls">
         <div className="bcv-circular-index"><span>{String(active + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}</span><strong>{beyondBooks[active].title}</strong></div>
@@ -70,9 +70,8 @@ export default memo(function BeyondCvSection() {
           <button type="button" data-sound="silent" aria-label="Previous personal book" onClick={() => step(-1)}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m13 6-6 6 6 6M7 12h12"/></svg></button>
           <div className="bcv-circular-dots">{beyondBooks.map((book, index) => <button type="button" data-sound="silent" key={book.id} aria-label={`Select ${book.title}`} aria-current={index === active ? 'true' : undefined} onClick={() => select(index)}><i/></button>)}</div>
           <button type="button" data-sound="silent" aria-label="Next personal book" onClick={() => step(1)}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m11 6 6 6-6 6M17 12H5"/></svg></button>
-          <button type="button" data-sound="silent" aria-label={paused ? 'Resume gallery motion' : 'Pause gallery motion'} onClick={() => setPaused(value => !value)}><svg viewBox="0 0 24 24" aria-hidden="true" className="bcv-play-glyph">{paused?<path d="m9 5 10 7-10 7Z"/>:<path d="M7 5h3v14H7Zm7 0h3v14h-3Z"/>}</svg></button>
         </nav>
-        <p>SCROLL TO ROTATE <span>↓</span><small>Drag to explore · select to open</small></p>
+        <p>SCROLL OVER A CARD <span>↓</span><small>Drag to explore · select to open</small></p>
       </footer>
     </div>
     <Suspense fallback={null}>{opened && <BeyondBookViewer index={opened.index} getOrigin={getOrigin} onChoose={chooseBook} onClosed={closeBook} onSound={kind => sound.current?.play(kind, 0, beyondBooks[opened.index].id)}/>}</Suspense>

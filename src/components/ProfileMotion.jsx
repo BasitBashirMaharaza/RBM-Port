@@ -33,35 +33,24 @@ export function ProfileTagline(){
 }
 
 export function ProfileAnnotations(){
- const root=useRef(null);const {playing,reduced}=useProfileActivity(root);
- const order=useRef(null),cursor=useRef(0),started=useRef(false);
- const [shown,setShown]=useState([]);
+ const root=useRef(null);
+ const [visible,setVisible]=useState(false),[reduced,setReduced]=useState(false);
  useEffect(()=>{
-  // Clear Thinker leads; every other label appears once in a shuffled cycle.
-  const tail=[1,2,3,4,5];for(let i=tail.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[tail[i],tail[j]]=[tail[j],tail[i]];}
-  order.current=[0,...tail];
+  const portrait=root.current?.closest('.about-profile-sketch')?.querySelector('.about-profile-portrait');
+  if(!portrait)return undefined;
+  const preference=matchMedia('(prefers-reduced-motion: reduce)');
+  const sync=()=>setReduced(preference.matches);sync();
+  // Observe the portrait itself, so either scroll direction replays the whole
+  // group only when the visitor actually reaches the image.
+  const observer=new IntersectionObserver(([entry])=>setVisible(entry.isIntersecting&&entry.intersectionRatio>=.22),{threshold:[0,.22],rootMargin:'-8% 0px -10% 0px'});
+  observer.observe(portrait);preference.addEventListener('change',sync);
+  return()=>{observer.disconnect();preference.removeEventListener('change',sync);};
  },[]);
- useEffect(()=>{
-  if(!playing)return undefined;
-  const step=()=>{
-   cursor.current=(cursor.current+1)%(traits.length*2);
-   const count=cursor.current<=traits.length?cursor.current:traits.length*2-cursor.current;
-   if(count===0){
-    const next=[0,1,2,3,4,5];
-    for(let i=next.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[next[i],next[j]]=[next[j],next[i]];}
-    order.current=next;
-   }
-   setShown(order.current.slice(0,count));
-  };
-  if(!started.current){started.current=true;step();}
-  const timer=setInterval(step,1200);return()=>clearInterval(timer);
- },[playing]);
+ const revealed=reduced||visible;
  return <>
-  <svg ref={root} className="about-profile-arrows profile-cycling-arrows" viewBox="0 0 400 320" preserveAspectRatio="none" aria-hidden="true">{traits.map(([id,,path],i)=>{
-   const visible=reduced||shown.includes(i);
-   return <motion.path key={id} d={path} initial={{opacity:0,pathLength:0}} animate={{opacity:visible?1:0,pathLength:visible?1:0}} transition={{duration:reduced?0:visible ? .38 : .18,delay:reduced||!visible?0:.18,ease:[.22,1,.36,1]}}/>;
-  })}</svg>
-  {traits.map(([id,label],i)=>{const visible=reduced||shown.includes(i);return <motion.span key={id} className={'about-profile-note profile-cycling-note note-'+id} data-trait={id} data-visible={visible?'true':'false'} initial={{opacity:0,clipPath:'inset(0 100% 0 0)'}} animate={{opacity:visible?1:0,clipPath:visible?'inset(0 0% 0 0)':'inset(0 100% 0 0)'}} transition={{duration:reduced?0:visible ? .3 : .18,delay:reduced||visible?0:.18,ease:[.22,1,.36,1]}}>{label}</motion.span>;})}
+  <svg ref={root} className="about-profile-arrows profile-cycling-arrows" data-revealed={revealed?'true':'false'} viewBox="0 0 400 320" preserveAspectRatio="none" aria-hidden="true">{traits.map(([id,,path])=><motion.path key={id} d={path} initial={{opacity:0,pathLength:0}} animate={{opacity:revealed?1:0,pathLength:revealed?1:0}} transition={{duration:reduced?0:revealed?.5:.18,ease:[.23,1,.32,1]}}/>)}</svg>
+  {traits.map(([id,label])=><motion.span key={id} className={'about-profile-note profile-cycling-note note-'+id} data-trait={id} data-visible={revealed?'true':'false'} initial={{opacity:0,clipPath:'inset(0 100% 0 0)'}} animate={{opacity:revealed?1:0,clipPath:revealed?'inset(0 0% 0 0)':'inset(0 100% 0 0)'}} transition={{duration:reduced?0:revealed?.5:.18,ease:[.23,1,.32,1]}}>{label}</motion.span>)}
+
  </>;
 }
 

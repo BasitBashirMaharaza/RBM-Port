@@ -22,6 +22,9 @@ export function createHeroRobotSound(){
   if(kind==='jump'){foley(650,1550,.24,.009,pan);tone([190,310,365],.22,.003,pan);}
   else if(kind==='landing'){foley(850,330,.115,.011,pan);tone([155,100,76],.14,.004,pan);}
   else if(kind==='stumble'){foley(550,280,.16,.005,pan);tone([220,140,160],.17,.0025,pan);}
+  else if(kind==='pickup'){tone([490,740,900],.26,.006,pan);foley(1600,2100,.07,.002,pan);}
+  else if(kind==='drop'){tone([700,420,230],.34,.004,pan);foley(1100,500,.18,.002,pan);}
+  else if(kind==='breakdown'){foley(1650,600,.17,.004,pan);tone([280,190,250],.22,.003,pan);}
   else if(kind==='repair'){foley(2200,1300,.24,.004,pan);tone([340,510,680],.32,.004,pan);}
   else if(kind==='touch'){tone([610,840,720],.15,.007,pan);foley(2100,1500,.06,.006,pan);}
   else if(kind==='click'){
