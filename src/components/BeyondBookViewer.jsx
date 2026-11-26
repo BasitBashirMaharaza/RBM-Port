@@ -10,7 +10,7 @@ import RecordFlight from './RecordFlight.jsx';
 import CinemaDetails from './CinemaDetails.jsx';
 import GameDetails from './GameDetails.jsx';
 import SocialDetails from './SocialDetails.jsx';
-import MobileBeyondBookViewer from './MobileBeyondBookViewer.jsx';
+import './responsive-book-spread.css';
 
 const segments=1;
 const duration=880;
@@ -22,13 +22,7 @@ function poses(progress,_width,board=false){
  return [`rotateY(${angle}rad) rotateZ(${lift}rad)`];
 }
 
-export default function BeyondBookViewer(props) {
- const [mobile,setMobile]=useState(()=>matchMedia('(max-width:700px), (pointer:coarse) and (max-height:600px)').matches);
- useEffect(()=>{const media=matchMedia('(max-width:700px), (pointer:coarse) and (max-height:600px)'),update=()=>setMobile(media.matches);media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[]);
- return mobile?<MobileBeyondBookViewer {...props}/>:<DesktopBeyondBookViewer {...props}/>;
-}
-
-function DesktopBeyondBookViewer({ index, getOrigin, onChoose, onClosed, onSound }) {
+export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed, onSound }) {
  const item=beyondBooks[index];
  const {audio,player,events,selectPreview,finishPreview,reset:stopMusic}=useMusicPreviewPlayer(item.id);
  const [selectedTrail,setSelectedTrail]=useState(null);
@@ -152,13 +146,19 @@ function DesktopBeyondBookViewer({ index, getOrigin, onChoose, onClosed, onSound
   return()=>document.removeEventListener('keydown',keys);
  },[closing]);
  useEffect(()=>{
+  let viewportWidth=document.documentElement.clientWidth;
   const resize=()=>{
+   const nextWidth=document.documentElement.clientWidth;
+   // Mobile browser chrome changes height while scrolling. It must not
+   // interrupt a page turn; only reframe when the actual layout width changes.
+   if(Math.abs(nextWidth-viewportWidth)<2)return;
+   viewportWidth=nextWidth;
    if(transition.current){animations.current.forEach(a=>a.cancel());finish(false);}
   };
   window.addEventListener('resize',resize);return()=>window.removeEventListener('resize',resize);
  },[]);
  const start=event=>{
-  if(!event.isPrimary||event.button!==0||transition.current||closing||reduced()||event.target.closest('a,button'))return;
+  if(!event.isPrimary||event.button!==0||transition.current||closing||reduced()||event.target.closest('a,button,input,textarea,select,[data-music-control]'))return;
   suppress.current=false;gesture.current={id:event.pointerId,x:event.clientX,y:event.clientY,progress:0,started:false};
  };
  const move=event=>{
@@ -179,7 +179,7 @@ function DesktopBeyondBookViewer({ index, getOrigin, onChoose, onClosed, onSound
  };
  const clickPage=event=>{
   if(suppress.current){suppress.current=false;event.preventDefault();return;}
-  if(event.target.closest('a,button')||closing)return;
+  if(event.target.closest('a,button,input,textarea,select,[data-music-control]')||closing)return;
   if(event.target===rig.current){requestClose();return;}
   if(page===-1)turnTo(0);else if(page===2)turnTo(1);else{
    const rect=rig.current.getBoundingClientRect();turnTo(page+(event.clientX<rect.left+rect.width/2?-1:1));
@@ -195,7 +195,7 @@ function DesktopBeyondBookViewer({ index, getOrigin, onChoose, onClosed, onSound
  const right=endBoard?1:turn?(turn.forward?turn.to:turn.from):page;
  const front=endBoard?surface(1,'right'):turn?.from===-1||turn?.to===-1?cover:turn&&surface(turn.forward?turn.from:turn.to,'right');
  const reverse=endBoard?back:turn&&surface(turn.forward?turn.to:turn.from,'left');
- return <dialog ref={dialog} className="bcv-dialog" data-entering={entryReady?undefined:"true"} data-book-theme={item.id} data-record-loading={player.loading?'true':undefined} data-turn-control={turnControl} data-power={closing?'off':'on'} aria-labelledby="bcv-book-title" onCancel={event=>{event.preventDefault();requestClose();}} onClick={event=>{if(!event.target.closest('.bcv-book-rig,.bcv-control-deck,.bcv-book-picker,.bcv-book-header'))requestClose();}}>
+ return <dialog ref={dialog} className="bcv-dialog bcv-spread-dialog" data-entering={entryReady?undefined:"true"} data-book-theme={item.id} data-record-loading={player.loading?'true':undefined} data-turn-control={turnControl} data-power={closing?'off':'on'} aria-labelledby="bcv-book-title" onCancel={event=>{event.preventDefault();requestClose();}} onClick={event=>{if(!event.target.closest('.bcv-book-rig,.bcv-control-deck,.bcv-book-picker,.bcv-book-header'))requestClose();}}>
   {item.id==='music'&&<audio ref={audio} preload="none" {...events}/>} 
   {selectedTrail&&<TrekDetails entry={selectedTrail.entry} index={selectedTrail.index} anchor={selectedTrail.anchor} onClosed={()=>setSelectedTrail(null)}/>}
   {selectedSong&&<SongDetails song={selectedSong.song} index={selectedSong.index} anchor={selectedSong.anchor} onPreview={previewSong} onClosed={()=>setSelectedSong(null)}/>}

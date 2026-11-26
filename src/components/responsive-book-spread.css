@@ -1,0 +1,49 @@
+/* One shared book and hinged sheet on every screen; phone pages stay side by side. */
+@media(max-width:700px){
+ .bcv-dialog.bcv-spread-dialog{--leaf-width:min(calc((100vw - 16px)/2),calc((100svh - 190px)/1.85));--leaf-height:calc(var(--leaf-width)*1.85);height:100svh;padding:16px 8px max(12px,env(safe-area-inset-bottom));background:var(--bg);overscroll-behavior:contain}
+ .bcv-spread-dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}
+ .bcv-spread-dialog .bcv-book-header{padding:0 10px;align-items:center;min-height:60px}
+ .bcv-spread-dialog .bcv-book-header h2{font-size:23px;line-height:1.15;margin-top:8px}
+ .bcv-spread-dialog .bcv-book-header>button{min-width:44px;min-height:44px}
+ .bcv-spread-dialog .bcv-book-rig{touch-action:pan-y pinch-zoom}
+ .bcv-spread-dialog .bcv-paper-page{padding:12% 7% 7%}
+ .bcv-spread-dialog .bcv-paper-page h3{font-size:16px;line-height:1.15}
+ .bcv-spread-dialog .bcv-page-lead{font-size:10px;line-height:1.5}
+ .bcv-spread-dialog .bcv-page-eyebrow{font-size:7px;line-height:1.4;letter-spacing:.05em}
+ .bcv-spread-dialog .bcv-song-tile-caption,.bcv-spread-dialog .bcv-cartridge-caption,.bcv-spread-dialog .bcv-film-reel-caption{font-size:9px;line-height:1.35}
+ .bcv-spread-dialog .bcv-song-tile-caption strong,.bcv-spread-dialog .bcv-cartridge-caption strong{white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+ .bcv-spread-dialog .bcv-song-tile{gap:3px;transform:none}
+ .bcv-spread-dialog .bcv-song-tiles{gap:3% 6%;padding:2% 0 0}
+ .bcv-spread-dialog .bcv-turntable-info strong{font-size:10px;line-height:1.4}
+ .bcv-spread-dialog .bcv-turntable-info small{font-size:8px;line-height:1.4}
+ .bcv-spread-dialog .bcv-turntable-volume{font-size:8px}
+ .bcv-spread-dialog .bcv-turntable-seek{gap:3px;font-size:8px}
+ .bcv-spread-dialog .is-turntable-page .bcv-music-inscription{font-size:10px;line-height:1.35;margin:5px 0 0}
+ .bcv-spread-dialog .is-turntable-page .bcv-music-page-footer{display:none}
+ .bcv-spread-dialog .bcv-turntable-info small{font-size:7px;line-height:1.35}
+ .bcv-spread-dialog .bcv-gaming-header .bcv-page-eyebrow,.bcv-spread-dialog .bcv-cinema-heading .bcv-page-eyebrow{font-size:7px}
+ .bcv-spread-dialog .bcv-book-console{gap:8px;padding-top:10px}
+ .bcv-spread-dialog .bcv-control-deck{transform:none;margin:0;padding:8px;gap:8px}
+ .bcv-spread-dialog .bcv-control-deck>button{min-width:48px;min-height:48px}
+ .bcv-spread-dialog .bcv-book-picker{gap:6px}
+ .bcv-spread-dialog .bcv-book-picker>button{font-size:9px;min-height:40px;padding:10px 7px}
+ .bcv-spread-dialog .bcv-book-picker>div{gap:5px}
+ .bcv-spread-dialog .bcv-book-console>p{font-size:7px;letter-spacing:.04em;margin:0}
+ .bcv-spread-dialog .bcv-explore-cue{top:calc(50% - var(--leaf-height)*.5 - 52px)}
+}
+@media(max-width:360px){
+ .bcv-dialog.bcv-spread-dialog{--leaf-height:calc(var(--leaf-width)*2.05)}
+ .bcv-spread-dialog .is-turntable-page .bcv-music-inscription{display:none}
+ .bcv-spread-dialog .bcv-turntable{gap:4px}
+ .bcv-spread-dialog .bcv-turntable-info strong{font-size:9px;line-height:1.3}
+ .bcv-spread-dialog .bcv-turntable-info small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+}
+@media(pointer:coarse) and (max-height:500px){
+ .bcv-dialog.bcv-spread-dialog{--leaf-width:min(36vw,calc((100svh - 135px)/1.5));--leaf-height:calc(var(--leaf-width)*1.5);height:100svh;padding:8px 14px;background:var(--bg)}
+ .bcv-spread-dialog .bcv-book-header{min-height:36px}
+ .bcv-spread-dialog .bcv-book-header h2{font-size:19px;margin:4px 0}
+ .bcv-spread-dialog .bcv-control-deck{transform:none;margin:0;padding:4px}
+ .bcv-spread-dialog .bcv-control-deck>button{min-height:36px;min-width:44px}
+ .bcv-spread-dialog .bcv-book-picker>button{min-height:30px;padding:5px 8px}
+ .bcv-spread-dialog .bcv-book-console{gap:4px;padding-top:4px}
+}

@@ -33,11 +33,10 @@ The muted trail video is buffered near entry and plays only when its card faces
 the viewer. It pauses offscreen, in hidden tabs, for reduced motion, and while
 the gallery or its book viewer is paused.
 
-On phones, `MobileBeyondBookViewer.jsx` presents the existing four content pages
-individually instead of shrinking a two-page spread. A full 180-degree hinged
-sheet opens the cover and turns pages over their replacements in 560ms, with
-separate front and back faces rather than a slide transition. The reader uses a stable small
-viewport height so browser toolbar changes do not cancel a page turn. Swipe
-gestures exclude links, buttons, inputs, and music controls. Music preview
-selection takes the visitor to the full-size turntable page, with play/pause,
-seeking and volume preserved. Desktop retains the original two-page reader.
+Phones and desktops use the same `BeyondBookViewer.jsx` and its 180-degree
+hinged-sheet animation. Both pages remain visible together on phones.
+`responsive-book-spread.css` maximizes the spread's width, allows more vertical
+space for page content, and adjusts text, labels, and controls for phones.
+Stable small viewport units prevent browser toolbars from resizing the book;
+height-only resize events no longer cancel a turn. Swipe and page-click
+handlers exclude inputs and music controls. Native pinch zoom remains available.
