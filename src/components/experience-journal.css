@@ -1982,3 +1982,25 @@ html[data-theme] .journal-back-art { border-right-color:color-mix(in srgb,var(--
 @media(prefers-reduced-motion:reduce){.weather-bird-flight{animation:none;opacity:.65;transform:translate(70px,-30px)}.weather-bird-wing{animation:none}}
 /* The scroll float writes only the independent translate channel; page-turn transforms stay intact. */
 @media(prefers-reduced-motion:reduce){.journal-presentation{translate:none!important}}
+
+/* Moving paper carries one stable raster; pause ornament while its hinge is in motion. */
+.journal-book.is-turning *{animation-play-state:paused!important}
+.journal-leaf{will-change:transform}
+.journal-leaf-front,.journal-leaf-back{transform-style:flat;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.journal-leaf-front{transform:translateZ(.2px)}
+.journal-leaf-back{transform:rotateY(180deg) translateZ(.2px)}
+.journal-leaf-light{inset:0 -40%;background:linear-gradient(90deg,transparent 12%,#352a192e 42%,#ffffff24 53%,transparent 80%);will-change:transform,opacity}
+.journal-book .journal-bookmark{transform:translateX(0);transform-origin:left center;opacity:1;visibility:visible;transition:transform 280ms cubic-bezier(.23,1,.32,1) 70ms,opacity 220ms ease-out 70ms,visibility 0s 0s;filter:none}
+.journal-book .journal-bookmark.bookmark-read{transform-origin:right center}
+.journal-book .journal-bookmark[aria-current='page']{opacity:0;visibility:hidden;transform:translateX(-9px);transition-delay:0s,0s,220ms;pointer-events:none}
+.journal-book .journal-bookmark.bookmark-read[aria-current='page']{transform:translateX(9px)}
+.journal-book.is-turning .journal-bookmark{opacity:0;visibility:hidden;transform:translateX(-9px) rotate(-2deg);pointer-events:none;transition-delay:0s,0s,220ms}
+.journal-book.is-turning .journal-bookmark.bookmark-read{transform:translateX(9px) rotate(2deg)}
+@media(hover:hover) and (pointer:fine){.journal-book:not(.is-turning) .journal-bookmark:not(:disabled):hover{transform:translateX(3px) rotate(1deg);filter:none;transition-delay:0s}.journal-book:not(.is-turning) .journal-bookmark.bookmark-read:not(:disabled):hover{transform:translateX(-3px) rotate(-1deg)}}
+@media(max-width:700px){.journal-book.is-turning .journal-leaf{contain:layout style}.journal-book.is-turning .journal-page-content{scrollbar-width:none}.journal-book.is-turning .chapter-paper-light,.journal-book.is-turning .identity-cursor-light{display:none}}
+/* Restrained cover illumination, only on dark-mode boards. */
+html[data-theme='dark'] .journal-front-art:after,html[data-theme='dark'] .journal-back-art:after{content:'';position:absolute;inset:0;z-index:5;border-radius:inherit;pointer-events:none;background:radial-gradient(ellipse at 10% 5%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 45%),radial-gradient(ellipse at 90% 95%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 40%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 16%,transparent),inset 0 0 24px color-mix(in srgb,var(--accent) 7%,transparent);animation:journal-cover-illumination 7s ease-in-out infinite alternate;animation-play-state:paused}
+html[data-theme='dark'] .is-in-view .journal-front-art:after,html[data-theme='dark'] .is-in-view .journal-back-art:after{animation-play-state:running}
+html[data-theme='dark'] .journal-book.is-turning .journal-front-art:after,html[data-theme='dark'] .journal-book.is-turning .journal-back-art:after{animation-play-state:paused}
+@keyframes journal-cover-illumination{from{opacity:.4}to{opacity:.85}}
+@media(prefers-reduced-motion:reduce){.journal-book .journal-bookmark{transition:none!important}.journal-front-art:after,.journal-back-art:after{animation:none!important;opacity:.6}}

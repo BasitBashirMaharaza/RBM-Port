@@ -32,3 +32,8 @@
 .bcv-continuous-leaf .bcv-strip-content{width:100%!important;left:0!important}
 .bcv-dialog .bcv-music-mosaic .bcv-album-row,.bcv-dialog .bcv-music-art *{animation-play-state:paused!important}
 
+
+/* Fly the already decoded jacket first; mount live cover art after it has landed. */
+.bcv-entry-jacket>img{display:block;width:100%;height:100%;object-fit:cover}.bcv-dialog[data-entering='true'] *{animation-play-state:paused!important}.bcv-dialog[data-entering='true'] .bcv-book-presentation{will-change:transform,opacity}
+
+.bcv-book-rig.is-turning *,.bcv-book-rig.is-turning *:before,.bcv-book-rig.is-turning *:after{animation-play-state:paused!important}

@@ -1,0 +1,12 @@
+.tilted-grid-hero{position:relative;width:100%;height:100%;overflow:hidden;container-type:size;touch-action:pan-y;user-select:none;cursor:grab}.tilted-grid-hero:active{cursor:grabbing}.tgh-band{position:absolute;inset:0;transition:opacity 500ms ease-out}.tgh-tile{position:absolute;display:block;margin:0;padding:0;border:0;background:transparent;transform-style:preserve-3d;cursor:pointer;color:var(--text);touch-action:pan-y}.tgh-tile:focus-visible{outline:2px solid var(--bcv-accent,var(--accent));outline-offset:6px}.tgh-facet{position:absolute;top:0;display:block;overflow:hidden;background:var(--surface)}.tgh-first{border-top-left-radius:8px;border-bottom-left-radius:8px}.tgh-last{border-top-right-radius:8px;border-bottom-right-radius:8px}.tgh-facet img{position:absolute;top:0;display:block;max-width:none;object-fit:cover;pointer-events:none;-webkit-user-drag:none}@media(prefers-reduced-motion:reduce){.tgh-band{transition:none}.tgh-tile{animation-play-state:paused!important}}
+
+/* Transparent backfaces and feathered opacity prevent a bright edge at entry. */
+.tgh-facet{background:transparent;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+
+.tilted-grid-hero[data-visible='false']>.tgh-band{opacity:0!important}
+
+/* A flat button outline cuts across the bent image. Follow its actual curved perimeter. */
+.tilted-grid-hero .tgh-tile:focus-visible{outline:0 solid transparent!important}.tgh-tile:focus-visible>.tgh-facet:after{content:'';position:absolute;inset:0;z-index:2;border-top:2px solid var(--bcv-accent,var(--accent));border-bottom:2px solid var(--bcv-accent,var(--accent));pointer-events:none}.tgh-tile:focus-visible>.tgh-first:after{border-left:2px solid var(--bcv-accent,var(--accent));border-radius:8px 0 0 8px}.tgh-tile:focus-visible>.tgh-last:after{border-right:2px solid var(--bcv-accent,var(--accent));border-radius:0 8px 8px 0}
+
+/* Freeze the complete reference band; the global short-animation rule must not collapse it. */
+@media(prefers-reduced-motion:reduce){.tilted-grid-hero .tgh-tile{animation-duration:var(--tgh-period)!important;animation-iteration-count:infinite!important;animation-play-state:paused!important}}

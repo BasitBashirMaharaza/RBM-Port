@@ -52,3 +52,32 @@
 @media(max-width:700px){.wa-dialog .wa-compact-heading[data-long-title=true] h2{font-size:20px}.wa-compact-body{grid-template-rows:48px minmax(0,1fr)}.wa-compact-flow{gap:6px;margin:10px 0}.wa-compact-flow li{padding:9px;gap:6px}.wa-compact-flow strong{font-size:11px;line-height:1.4}.wa-compact-note{font-size:10.5px;line-height:1.7}}
 /* The compact phone graphic remains unobscured; its summary is in the tabs. */
 @media(max-width:700px){.wa-live-visual{grid-template-rows:minmax(0,1fr)}.wa-visual-caption{display:none}}
+
+/* Archive light: decorative layers stay beneath the stationary, readable inspector. */
+.wa-dialog .wa-detail{isolation:isolate;background:var(--bg)}
+.wa-dialog .wa-compact-case{position:relative;z-index:1}
+.wa-dialog .wa-detail-top .wa-monogram{font:500 14px/1.4 Manrope,sans-serif;letter-spacing:-.025em}
+.wa-case-ambient{position:absolute;inset:0;z-index:0;overflow:hidden;border-radius:inherit;pointer-events:none;contain:strict}
+.wa-case-ambient:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,color-mix(in srgb,var(--wa-accent) 4%,transparent) 1px,transparent 1px),linear-gradient(color-mix(in srgb,var(--wa-accent) 4%,transparent) 1px,transparent 1px);background-size:64px 64px;mask-image:linear-gradient(135deg,#000,transparent 55%,#000);opacity:.6}
+.wa-case-ambient>i{display:block;position:absolute;pointer-events:none}
+.wa-ambient-wash{inset:-12%;background:radial-gradient(ellipse at 12% 75%,color-mix(in srgb,var(--wa-accent) 15%,transparent),transparent 51%),radial-gradient(ellipse at 85% 15%,color-mix(in srgb,var(--wa-accent) 10%,transparent),transparent 48%);animation:wa-ambient-drift 18s ease-in-out infinite alternate;animation-play-state:paused}
+.wa-ambient-trace{inset:0;background:linear-gradient(125deg,transparent 25%,color-mix(in srgb,var(--wa-accent) 6%,transparent) 45%,transparent 65%);animation:wa-ambient-pass 24s ease-in-out infinite alternate;animation-play-state:paused}
+.wa-open .wa-case-ambient:not([data-paused='true'])>.wa-ambient-wash,.wa-open .wa-case-ambient:not([data-paused='true'])>.wa-ambient-trace{animation-play-state:running}
+.wa-ambient-reflection{left:calc(50% - 190px);top:calc(50% - 190px);width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--wa-accent) 12%,transparent),transparent 68%);opacity:0;transition:transform 240ms cubic-bezier(.23,1,.32,1),opacity 240ms ease-out}
+.wa-case-ambient[data-active='true']>.wa-ambient-reflection{opacity:1}
+@keyframes wa-ambient-drift{from{transform:translate3d(-2%,-1%,0) rotate(-3deg)}to{transform:translate3d(3%,2%,0) rotate(3deg)}}
+@keyframes wa-ambient-pass{from{transform:translate3d(-14%,0,0);opacity:.3}to{transform:translate3d(14%,0,0);opacity:.8}}
+@media(max-width:700px){.wa-dialog .wa-detail-top .wa-monogram{font-size:12px}.wa-case-ambient:before{background-size:48px 48px}.wa-ambient-trace{display:none}}
+@media(hover:none),(pointer:coarse){.wa-ambient-reflection{display:none}}
+@media(prefers-reduced-motion:reduce){.wa-case-ambient>.wa-ambient-wash,.wa-case-ambient>.wa-ambient-trace{animation:none!important}.wa-ambient-reflection{display:none}}
+
+/* Corner reflections frame the inspector; ambient light continues into the backdrop. */
+.wa-dialog .wa-detail:before{content:'';position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background:radial-gradient(ellipse 220px 160px at 0 0,color-mix(in srgb,var(--wa-accent) 10%,transparent),transparent),radial-gradient(ellipse 220px 160px at 100% 100%,color-mix(in srgb,var(--wa-accent) 12%,transparent),transparent)}
+.wa-dialog .wa-detail:after{content:'';position:absolute;inset:0;z-index:6;border-radius:inherit;padding:1px;pointer-events:none;background:radial-gradient(ellipse at top left,color-mix(in srgb,var(--wa-accent) 80%,var(--text)),transparent 40%),radial-gradient(ellipse at bottom right,var(--wa-accent),transparent 40%),radial-gradient(ellipse at top right,color-mix(in srgb,var(--wa-accent) 45%,transparent),transparent 30%),radial-gradient(ellipse at bottom left,color-mix(in srgb,var(--wa-accent) 45%,transparent),transparent 30%);mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.wa-dialog .wa-dialog-backdrop{overflow:hidden;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.wa-dialog-backdrop:before,.wa-dialog-backdrop:after{content:'';position:absolute;inset:-10%;pointer-events:none;animation:wa-surround-light 22s ease-in-out infinite alternate;animation-play-state:paused;background:radial-gradient(ellipse at 12% 22%,color-mix(in srgb,var(--wa-accent) 15%,transparent),transparent 42%),radial-gradient(ellipse at 90% 80%,color-mix(in srgb,var(--wa-accent) 12%,transparent),transparent 44%)}
+.wa-dialog-backdrop:after{background:radial-gradient(ellipse at 80% 12%,color-mix(in srgb,var(--wa-accent) 9%,transparent),transparent 45%),radial-gradient(ellipse at 15% 88%,color-mix(in srgb,var(--wa-accent) 10%,transparent),transparent 42%);animation-duration:29s;animation-direction:alternate-reverse}
+.wa-open:not([data-ambient-paused='true']) .wa-dialog-backdrop:before,.wa-open:not([data-ambient-paused='true']) .wa-dialog-backdrop:after{animation-play-state:running}
+@keyframes wa-surround-light{from{transform:translate3d(-3%,-2%,0) scale(1);opacity:.5}to{transform:translate3d(3%,2%,0) scale(1.05);opacity:1}}
+@media(max-width:700px){.wa-dialog .wa-dialog-backdrop{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.wa-dialog-backdrop:after{display:none}}
+@media(prefers-reduced-motion:reduce){.wa-dialog-backdrop:before,.wa-dialog-backdrop:after{animation:none!important}}

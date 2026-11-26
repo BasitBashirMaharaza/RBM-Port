@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import './experience-journal.css';
 import contributions from './journal-contributions.json';
@@ -173,11 +173,11 @@ const chapterWorkflows = [
   { title: 'Visibility, measured', steps: ['Search visibility', 'Organic reach', 'Campaign signals'], note: 'SEO and multi-channel web analytics, connected through performance measurement.' },
 ];
 
-function ChapterIdentityCard({ item, index, revealAt }) {
+function ChapterIdentityCard({ item, index, revealAt, turning }) {
   const card = useRef(null);
   useLayoutEffect(() => {
     const element = card.current;
-    if (!element) return undefined;
+    if (!element || turning) return undefined;
     let frame = 0;
     const preference = matchMedia('(prefers-reduced-motion: reduce)');
     const reduced = preference.matches;
@@ -207,7 +207,7 @@ function ChapterIdentityCard({ item, index, revealAt }) {
     const stopForReducedMotion = () => { if(preference.matches) reveal?.finish(); };
     preference.addEventListener('change',stopForReducedMotion);
     return () => { observer.disconnect();cancelAnimationFrame(frame);reveal?.cancel();preference.removeEventListener('change',stopForReducedMotion); };
-  },[index,revealAt]);
+  },[index,revealAt,turning]);
   return (
     <div ref={card} className={'pharmacy-center-card chapter-identity-card identity-' + index}>
       <svg className="identity-living-surface" viewBox="0 0 700 200" fill="none" preserveAspectRatio="none" aria-hidden="true">
@@ -246,11 +246,12 @@ function ChapterWorkflow({ workflow }) {
   return <div className="chapter-workflow"><span className="journal-note-tape" aria-hidden="true" /><span className="journal-eyebrow">In practice</span><h4>{workflow.title}</h4><ol>{workflow.steps.map(step=><li key={step}>{step}</li>)}</ol></div>;
 }
 
-function JournalNoteArea({ className, children }) {
+function JournalNoteArea({ className, children, paused }) {
   const viewport = useRef(null);
   const content = useRef(null);
   const [directions,setDirections] = useState({up:false,down:false});
   useEffect(() => {
+    if(paused)return undefined;
     let frame=0;
     const update = () => {
       frame=0;
@@ -268,7 +269,7 @@ function JournalNoteArea({ className, children }) {
     const node=viewport.current;
     update();
     return () => {cancelAnimationFrame(frame);observer.disconnect();node?.removeEventListener('scroll',schedule);};
-  },[]);
+  },[paused]);
   const scroll = (direction) => {
     const node=viewport.current;
     node?.scrollBy({top:direction*Math.max(110,node.clientHeight*.65),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
@@ -279,7 +280,7 @@ function JournalNoteArea({ className, children }) {
   </div>;
 }
 
-function ChapterSpreadPage({ item, index, side, revealAt }) {
+function ChapterSpreadPage({ item, index, side, revealAt, mobile, turning }) {
   const workflow = chapterWorkflows[index];
   const leftPoints = index === 0 ? item.points.slice(0,2) : item.points.slice(0,1);
   const rightPoints = index === 0 ? item.points.slice(2) : item.points.slice(1);
@@ -287,31 +288,31 @@ function ChapterSpreadPage({ item, index, side, revealAt }) {
     <div className={'journal-page-content journal-' + side + ' journal-pharmacy-page journal-chapter-spread'} data-chapter={index}>
       <ChapterPaperAtmosphere index={index} />
       <div className="chapter-paper-light" aria-hidden="true" />
-      <div className="pharmacy-desktop">
+      {!mobile && <div className="pharmacy-desktop">
         {side === 'left' ? <>
           <span className="journal-eyebrow">{item.label}</span>
           <h3 className="pharmacy-role">{item.role}</h3>
           <div className="journal-date-stamp"><span>FIELD NOTES</span><strong>{item.period}</strong></div>
-          <JournalNoteArea className={'pharmacy-notes pharmacy-left-notes' + (workflow ? ' chapter-notes-with-workflow' : '')}>
+          <JournalNoteArea paused={turning} className={'pharmacy-notes pharmacy-left-notes' + (workflow ? ' chapter-notes-with-workflow' : '')}>
             <ul>{leftPoints.map((point,noteIndex)=><li key={point} className={'journal-impact-note note-tone-' + noteIndex}><i className={'journal-paper-pin' + (noteIndex % 2 ? ' pin-silver' : '')} aria-hidden="true" />{point}</li>)}</ul>
             <ChapterWorkflow workflow={workflow} />
           </JournalNoteArea>
         </> : <>
           <div className="journal-summary-note pharmacy-summary"><span className="journal-tape" aria-hidden="true" /><p className="journal-summary">{chapterNotes[index]}</p></div>
           <div className="pharmacy-working-knowledge"><span className="journal-eyebrow">Working knowledge</span><div className="journal-tags">{item.tags.map(tag=><span key={tag}>{tag}</span>)}</div></div>
-          <JournalNoteArea className="pharmacy-notes pharmacy-right-notes"><ul>{rightPoints.map(point=><li key={point} className="journal-impact-note note-tone-2"><span className="journal-note-tape" aria-hidden="true" />{point}</li>)}</ul>
+          <JournalNoteArea paused={turning} className="pharmacy-notes pharmacy-right-notes"><ul>{rightPoints.map(point=><li key={point} className="journal-impact-note note-tone-2"><span className="journal-note-tape" aria-hidden="true" />{point}</li>)}</ul>
             {workflow && <aside className="chapter-observation"><i className="journal-paper-pin pin-silver" aria-hidden="true" /><span className="journal-eyebrow">Field observation</span><p>{workflow.note}</p></aside>}
           </JournalNoteArea>
           <span className="journal-handwriting pharmacy-signoff">Experience, put into practice.</span>
           <span className="journal-folio">{String(index+1).padStart(2,'0')}</span>
         </>}
-        <div className={'pharmacy-center-half pharmacy-half-' + side} aria-hidden={side === 'left' ? true : undefined}><ChapterIdentityCard item={item} index={index} revealAt={revealAt} /></div>
-      </div>
-      {side === 'right' && <JournalNoteArea className="pharmacy-mobile">
+        <div className={'pharmacy-center-half pharmacy-half-' + side} aria-hidden={side === 'left' ? true : undefined}><ChapterIdentityCard item={item} index={index} revealAt={revealAt} turning={turning} /></div>
+      </div>}
+      {mobile && side === 'right' && <JournalNoteArea paused={turning} className="pharmacy-mobile">
         <span className="journal-eyebrow">{item.label}</span>
         <h3>{item.role}</h3>
         <div className="journal-date-stamp"><span>FIELD NOTES</span><strong>{item.period}</strong></div>
-        <ChapterIdentityCard item={item} index={index} revealAt={revealAt} />
+        <ChapterIdentityCard item={item} index={index} revealAt={revealAt} turning={turning} />
         <p className="journal-summary">{chapterNotes[index]}</p>
         <ul className="pharmacy-notes">{item.points.map((point,noteIndex)=><li key={point} className={'journal-impact-note note-tone-' + noteIndex}><i className={'journal-paper-pin' + (noteIndex % 2 ? ' pin-silver' : '')} aria-hidden="true" />{point}</li>)}</ul>
         <ChapterWorkflow workflow={workflow} />
@@ -323,8 +324,8 @@ function ChapterSpreadPage({ item, index, side, revealAt }) {
   );
 }
 
-function Page({ item, index, side, revealAt }) {
-  if (item) return <ChapterSpreadPage item={item} index={index} side={side} revealAt={revealAt} />;
+const Page = memo(function Page({ item, index, side, revealAt, mobile, turning }) {
+  if (item) return <ChapterSpreadPage item={item} index={index} side={side} revealAt={revealAt} mobile={mobile} turning={turning} />;
   if (!item) {
     return (
       <div className={'journal-page-content journal-finale journal-' + side} data-chapter="closing">
@@ -345,7 +346,7 @@ function Page({ item, index, side, revealAt }) {
       </div>
     );
   }
-}
+});
 
 function Arrow({ back = false }) {
   return (
@@ -357,6 +358,8 @@ function Arrow({ back = false }) {
 
 export default function ExperienceJournal({ items }) {
   const [page, setPage] = useState(-1);
+  const [mobile,setMobile] = useState(()=>matchMedia('(max-width:700px)').matches);
+  useEffect(()=>{const media=matchMedia('(max-width:700px)'),change=()=>setMobile(media.matches);media.addEventListener('change',change);return()=>media.removeEventListener('change',change);},[]);
   const [contributionsOpen, setContributionsOpen] = useState(false);
   const contributionTrigger = useRef(null);
   const [turn, setTurn] = useState(null);
@@ -435,6 +438,7 @@ export default function ExperienceJournal({ items }) {
   const gestureRef = useRef(null);
   const suppressClick = useRef(false);
   const releaseRef = useRef(null);
+  const scrubFrame = useRef(0),scrubProgress = useRef(0);
   const lastPage = items.length;
   const backCoverPage = lastPage + 1;
 
@@ -481,7 +485,7 @@ export default function ExperienceJournal({ items }) {
   const select = (next, manual = false) => {
     if (transitionRef.current || next === page || next < -1 || next > backCoverPage) return false;
     resetIdentityHover();
-    if (next >= 0 && next < items.length) revealTimes.current[next] = (document.timeline.currentTime || 0) + (reduced ? 0 : 650);
+    if (next >= 0 && next < items.length) revealTimes.current[next] = (document.timeline.currentTime || 0) + (reduced ? 0 : 900);
     playPaperSound(page, next);
     if (reduced) {
       if (!manual) setPage(next);
@@ -496,7 +500,11 @@ export default function ExperienceJournal({ items }) {
   const scrub = (progress) => {
     const bounded = Math.max(0, Math.min(1, progress));
     if (gestureRef.current) gestureRef.current.progress = bounded;
-    animationsRef.current.forEach((animation) => { animation.currentTime = bounded * 1000; });
+    scrubProgress.current=bounded;
+    if(!scrubFrame.current)scrubFrame.current=requestAnimationFrame(()=>{
+      scrubFrame.current=0;
+      animationsRef.current.forEach(animation=>{animation.currentTime=scrubProgress.current*1000;});
+    });
   };
 
   const settle = (complete) => {
@@ -505,6 +513,7 @@ export default function ExperienceJournal({ items }) {
       releaseRef.current = complete;
       return;
     }
+    if(scrubFrame.current){cancelAnimationFrame(scrubFrame.current);scrubFrame.current=0;animationsRef.current.forEach(animation=>{animation.currentTime=scrubProgress.current*1000;});}
     const animations = animationsRef.current;
     animations.forEach((animation) => {
       animation.playbackRate = complete ? 1.15 : -1.5;
@@ -519,22 +528,30 @@ export default function ExperienceJournal({ items }) {
     const endOpen = turn.from === backCoverPage;
     const fromAngle = endOpen ? -180 : turn.forward ? 0 : -180;
     const toAngle = turn.forward ? -180 : 0;
-    const mobile = window.matchMedia('(max-width: 700px)').matches;
     const closedOffset = mobile ? '0%' : '-25%';
     const fromOffset = endOpen ? (mobile ? '100%' : '25%') : turn.from === -1 ? closedOffset : '0%';
     const toOffset = endClose ? (mobile ? '100%' : '25%') : turn.to === -1 ? closedOffset : '0%';
-    const options = { duration: 1000, easing: turn.manual ? 'linear' : 'cubic-bezier(.77,0,.175,1)', fill: 'both' };
-    const leafAnimation = leafRef.current.animate([
-      { transform: 'rotateY(' + fromAngle + 'deg)' },
-      { transform: 'rotateY(' + toAngle + 'deg)' },
-    ], options);
+    const options = { duration: 1000, easing: turn.manual ? 'linear' : 'ease-in-out', fill: 'both' };
+    const paper = turn.from !== -1 && turn.to !== -1 && !endClose && !endOpen;
+    // A single printed sheet flexes at the free edge: no sliced or cloned page textures.
+    const frames=Array.from({length:9},(_,i)=>{
+      const p=i/8,bow=paper?Math.sin(Math.PI*p):0,wave=paper?Math.sin(Math.PI*2*p):0;
+      const angle=fromAngle+(toAngle-fromAngle)*p;
+      return {offset:p,transform:`rotateY(${angle}deg) rotateX(${bow*(turn.forward?-1.2:1.2)}deg) skewY(${wave*(turn.forward?1:-1)}deg) scaleX(${1-bow*.018})`};
+    });
+    const leafAnimation = leafRef.current.animate(frames, options);
     const bookAnimation = bookRef.current.animate([
       { transform: 'translateX(' + fromOffset + ')' },
       { transform: 'translateX(' + toOffset + ')' },
     ], options);
-    const shadeAnimations = [...leafRef.current.querySelectorAll('.journal-leaf-light')].map((node) =>
-      node.animate([{ opacity: 0 }, { opacity: .55, offset: .5 }, { opacity: 0 }], options));
+    const shadeAnimations = [...leafRef.current.querySelectorAll('.journal-leaf-light')].flatMap(node=>[
+      node.animate([{opacity:0},{opacity:.36,offset:.45},{opacity:0}],options),
+      node.animate([{transform:'translateX(40%)'},{transform:'translateX(-35%)'}],options),
+    ]);
     animationsRef.current = [leafAnimation, bookAnimation, ...shadeAnimations];
+    // Give every timeline the same document-clock origin, also when scrubbing backwards.
+    const start=document.timeline.currentTime;
+    animationsRef.current.forEach(animation=>{animation.startTime=start;});
     if (turn.manual) {
       animationsRef.current.forEach((animation) => animation.pause());
       scrub(gestureRef.current?.progress || 0);
@@ -547,6 +564,7 @@ export default function ExperienceJournal({ items }) {
       leafAnimation.finished.then(() => finish(true)).catch(() => {});
     }
     return () => {
+      cancelAnimationFrame(scrubFrame.current);scrubFrame.current=0;
       animationsRef.current.forEach((animation) => animation.cancel());
       animationsRef.current = [];
     };
@@ -555,6 +573,7 @@ export default function ExperienceJournal({ items }) {
   useEffect(() => () => {
     transitionRef.current = null;
     cancelAnimationFrame(identityHover.current.frame);
+    cancelAnimationFrame(scrubFrame.current);
     journalSound.current?.dispose();
     journalSound.current = null;
     animationsRef.current.forEach((animation) => animation.cancel());
@@ -608,11 +627,11 @@ export default function ExperienceJournal({ items }) {
   const rightIndex = endClosing ? turn.from : endOpening ? turn.to : turn ? (turn.forward ? turn.to : turn.from) : page;
   const cover = <Cover items={items} />;
   const backCover = <Cover items={items} back />;
-  const renderPage = (index, side) => <Page item={items[index]} index={index} side={side} revealAt={revealTimes.current[index]} />;
+  const renderPage = (index, side) => <Page item={items[index]} index={index} side={side} revealAt={revealTimes.current[index]} mobile={mobile} turning={!!turn} />;
   const endPage = endClosing ? turn.from : endOpening ? turn.to : lastPage;
   const leafFront = endClosing || endOpening ? (endPage === -1 ? cover : renderPage(endPage, 'right')) :
     turn?.from === -1 || turn?.to === -1 ? cover : turn && renderPage(turn.forward ? turn.from : turn.to, 'right');
-  const leafBack = endClosing || endOpening ? backCover : turn && renderPage(turn.forward ? turn.to : turn.from, 'left');
+  const leafBack = endClosing || endOpening ? backCover : turn && renderPage(turn.forward ? turn.to : turn.from, mobile ? 'right' : 'left');
 
   return (
     <div ref={regionRef} className={'experience-journal' + (hintReady ? ' journal-has-arrived' : '')} data-sound="silent" role="region" aria-label="Experience journal" onPointerDownCapture={(event) => { markInteraction();if(event.pointerType !== 'mouse') playNoteSound(event); }} onPointerOver={playNoteSound} onPointerMove={moveIdentityHover} onPointerLeave={resetIdentityHover} onClickCapture={markInteraction}
@@ -630,7 +649,7 @@ export default function ExperienceJournal({ items }) {
           onClickCapture={(event) => { if (suppressClick.current) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; } }}>
           <div className="journal-cover-aura" aria-hidden="true" />
           <div className="journal-paper journal-base-left" style={{ visibility: leftIndex < 0 || closed ? 'hidden' : undefined }}>
-            {backClosed ? <button data-sound="silent" className="journal-cover-button" onClick={() => select(lastPage)} aria-label="Reopen the experience journal">{backCover}</button> : leftIndex >= 0 && leftIndex <= lastPage && renderPage(leftIndex, 'left')}
+            {backClosed ? <button data-sound="silent" className="journal-cover-button" onClick={() => select(lastPage)} aria-label="Reopen the experience journal">{backCover}</button> : !mobile && leftIndex >= 0 && leftIndex <= lastPage && renderPage(leftIndex, 'left')}
           </div>
           <div className="journal-paper journal-base-right" style={{ visibility: backClosed || endClosing || endOpening ? 'hidden' : undefined }}>
             {closed || rightIndex === -1 ? <Cover items={items} onOpen={() => select(0)} onContributions={(event) => {

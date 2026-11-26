@@ -32,6 +32,7 @@ function centeredFace(){
 export default function ProjectArchiveDialog({projects,initial,scene,githubUrl,onClosed,onSound}){
  const [index,setIndex]=useState(initial),[phase,setPhase]=useState('opening'),[tab,setTab]=useState('Overview'),[feature,setFeature]=useState(0);
  const dialog=useRef(null),flight=useRef(null),detail=useRef(null),backdrop=useRef(null),current=useRef(initial);
+ const ambient=useRef(null),reflection=useRef(null);
  const closing=useRef(false),alive=useRef(true),animations=useRef([]),opener=useRef(document.activeElement),closeRef=useRef(null);
  const animate=(node,frames,options)=>{const animation=node.animate(frames,{fill:'both',...options});animations.current.push(animation);return animation;};
  useEffect(()=>{
@@ -56,6 +57,24 @@ export default function ProjectArchiveDialog({projects,initial,scene,githubUrl,o
   modal.addEventListener('cancel',cancel);window.addEventListener('resize',resize);
   return ()=>{alive.current=false;animations.current.forEach(a=>a.cancel());modal.removeEventListener('cancel',cancel);window.removeEventListener('resize',resize);modal.close();body.style.overflow=oldOverflow;body.style.paddingRight=oldPadding;scene.current?.hideCard(current.current,false);scene.current?.setOpening(false);opener.current?.focus?.({preventScroll:true});};
  },[]);
+ // Pointer light is an independent composited layer; content never follows the cursor.
+ useEffect(()=>{
+  if(phase!=='open')return;
+  const panel=detail.current,light=reflection.current,background=ambient.current;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)'),fine=matchMedia('(hover: hover) and (pointer: fine)');
+  let frame=0,x=0,y=0;
+  const reset=()=>{cancelAnimationFrame(frame);frame=0;background.dataset.active='false';light.style.transform='translate3d(0,0,0)';};
+  const move=event=>{
+   if(reduced.matches||!fine.matches||event.pointerType!=='mouse')return;
+   const rect=panel.getBoundingClientRect();x=event.clientX-rect.left-rect.width/2;y=event.clientY-rect.top-rect.height/2;
+   if(!frame)frame=requestAnimationFrame(()=>{frame=0;light.style.transform=`translate3d(${x}px,${y}px,0)`;background.dataset.active='true';});
+  };
+  const visibility=()=>{background.dataset.paused=String(document.hidden);dialog.current.dataset.ambientPaused=String(document.hidden);if(document.hidden)reset();};
+  const preference=()=>{if(reduced.matches||!fine.matches)reset();};
+  panel.addEventListener('pointermove',move,{passive:true});panel.addEventListener('pointerleave',reset);
+  document.addEventListener('visibilitychange',visibility);reduced.addEventListener('change',preference);fine.addEventListener('change',preference);visibility();
+  return()=>{reset();panel.removeEventListener('pointermove',move);panel.removeEventListener('pointerleave',reset);document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener('change',preference);fine.removeEventListener('change',preference);};
+ },[phase]);
  const close=async()=>{
   if(closing.current)return;closing.current=true;onSound?.('return',current.current);
   const visibleFlight=getComputedStyle(flight.current),from=visibleFlight.transform,flightOpacity=Number(visibleFlight.opacity),detailOpacity=getComputedStyle(detail.current).opacity,backdropOpacity=getComputedStyle(backdrop.current).opacity;
@@ -79,7 +98,8 @@ export default function ProjectArchiveDialog({projects,initial,scene,githubUrl,o
   <div ref={backdrop} className="wa-dialog-backdrop" onClick={close}/>
   <div ref={flight} className="wa-flight" aria-hidden="true"><ArchiveFace project={project} index={index}/></div>
   <div ref={detail} className="wa-detail" inert={phase!=='open'?true:undefined}>
-   <div className="wa-detail-top"><span className="wa-monogram">BB<span> / PROJECT NOTES</span></span><span className="wa-detail-position">{project.number} — {String(projects.length).padStart(2,'0')}</span><button data-sound="silent" type="button" onClick={close} aria-label="Close project and return to archive"><span>Back to archive</span><span className="wa-close-icon" aria-hidden="true">×</span></button></div>
+   <div ref={ambient} className="wa-case-ambient" aria-hidden="true"><i className="wa-ambient-wash"/><i className="wa-ambient-trace"/><i ref={reflection} className="wa-ambient-reflection"/></div>
+   <div className="wa-detail-top"><span className="wa-monogram">Basit’s Project Notes</span><span className="wa-detail-position">{project.number} — {String(projects.length).padStart(2,'0')}</span><button data-sound="silent" type="button" onClick={close} aria-label="Close project and return to archive"><span>Back to archive</span><span className="wa-close-icon" aria-hidden="true">×</span></button></div>
    <article className="wa-case wa-compact-case" key={index}>
     <header className="wa-compact-heading" data-long-title={project.title.length>28}><div><span className="wa-case-label">{project.eyebrow}</span><h2 id="wa-project-title">{project.title}</h2></div><ArchiveMark index={index}/></header>
     <div className="wa-compact-body">

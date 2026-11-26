@@ -16,7 +16,7 @@ export default function ContactBirdFlight({ navigation }) {
     if (!header || !destination || !source || !bird) return;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     let frame = 0, timer = 0, started = false, finished = false;
-    let away = header.dataset.heroAway === 'true';
+    let away = header.dataset.heroAway === 'true', hasLeftHero = away;
     const sound = createContactBirdSound();
     const unlock = () => sound.unlock();
     window.addEventListener('pointerdown', unlock, { passive: true });
@@ -30,7 +30,7 @@ export default function ContactBirdFlight({ navigation }) {
       bird.hidden = true;
     };
     const start = () => {
-      if (finished || started || document.hidden || document.body.classList.contains('welcome-open')) return;
+      if (!hasLeftHero || finished || started || document.hidden || document.body.classList.contains('welcome-open')) return;
       if (away || document.documentElement.dataset.contactJourney==='running' || reduced.matches || header.dataset.navState === 'collapsed') { finish(); return; }
       started = true;
       sound.play();
@@ -65,7 +65,7 @@ export default function ContactBirdFlight({ navigation }) {
       frame = requestAnimationFrame(tick);
     };
     const queue = (delay = 450) => {
-      if (away || started || finished || document.body.classList.contains('welcome-open')) return;
+      if (!hasLeftHero || away || started || finished || document.body.classList.contains('welcome-open')) return;
       clearTimeout(timer);
       timer = window.setTimeout(start, delay);
     };
@@ -73,6 +73,7 @@ export default function ContactBirdFlight({ navigation }) {
       const nextAway = header.dataset.heroAway === 'true';
       if (nextAway !== away) {
         away = nextAway;
+        if (away) hasLeftHero = true;
         finish();
         if (!away) { started = false; finished = false; queue(900); }
         return;

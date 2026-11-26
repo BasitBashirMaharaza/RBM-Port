@@ -111,12 +111,12 @@ export default function JournalAtmosphere({ journalRef, bookRef }) {
       ctx.globalAlpha=1;
     };
     const tick=now=>{
-      frame=0;if(!visible||document.hidden)return;
+      frame=0;if(!visible||document.hidden||bookRef.current?.classList.contains('is-turning'))return;
       if(now-last>=33){time+=last?Math.min(.08,(now-last)/1000):0;last=now;draw();}
       frame=requestAnimationFrame(tick);
     };
     const schedule=()=>{
-      if(!visible||document.hidden)return;
+      if(!visible||document.hidden||bookRef.current?.classList.contains('is-turning'))return;
       if(preference.matches){draw();return;}
       if(!frame){last=0;frame=requestAnimationFrame(tick);}
     };

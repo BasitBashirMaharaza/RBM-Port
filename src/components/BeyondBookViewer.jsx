@@ -36,7 +36,7 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
  };
 
  const dialog=useRef(null),presentation=useRef(null),rig=useRef(null),strips=useRef([]);
- const [page,setPage]=useState(-1),[turn,setTurn]=useState(null),[closing,setClosing]=useState(false);
+ const [page,setPage]=useState(-1),[turn,setTurn]=useState(null),[closing,setClosing]=useState(false),[entryReady,setEntryReady]=useState(false);
  const transition=useRef(null),animations=useRef([]),gesture=useRef(null),suppress=useRef(false),release=useRef(null);
  const pageRef=useRef(page),exitStarted=useRef(false),pendingClose=useRef(false),exit=useRef(()=>{}),turnAction=useRef(()=>{});
  const origin=useRef(getOrigin);origin.current=getOrigin;pageRef.current=page;
@@ -119,6 +119,7 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
   return()=>{leaves.forEach(a=>a.cancel());animations.current=[];};
  },[turn]);
  useLayoutEffect(()=>{
+  let disposed=false;
   const element=dialog.current;element.showModal();
   const oldOverflow=document.body.style.overflow,oldPadding=document.body.style.paddingRight;
   const gap=CSS.supports('scrollbar-gutter: stable')?0:innerWidth-document.documentElement.clientWidth;
@@ -130,7 +131,8 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
   if(target&&!reduced()){
    entryAnimation.current=presentation.current.animate([{transform:`translate3d(${target.left+target.width/2-board.left-board.width/2}px,${target.top+target.height/2-board.top-board.height/2}px,0) scale(${target.width/board.width})`,opacity:.6},{transform:'translate3d(0,0,0) scale(1)',opacity:1}],{duration:650,easing:'cubic-bezier(.23,1,.32,1)',fill:'both'});
   }
-  return()=>{entryAnimation.current?.cancel();animations.current.forEach(a=>a.cancel());element.close();document.body.style.overflow=oldOverflow;document.body.style.paddingRight=oldPadding;};
+  if(entryAnimation.current)entryAnimation.current.finished.then(()=>{if(!disposed&&!exitStarted.current)setEntryReady(true);}).catch(()=>{});else setEntryReady(true);
+  return()=>{disposed=true;entryAnimation.current?.cancel();animations.current.forEach(a=>a.cancel());element.close();document.body.style.overflow=oldOverflow;document.body.style.paddingRight=oldPadding;};
  },[]);
  useEffect(()=>{
   const keys=event=>{
@@ -179,14 +181,14 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
  const frontClosed=page===-1&&!turn,backClosed=page===2&&!turn;
  const turnControl=turn?(turn.forward?(turn.from===-1?'play':'next'):'back'):'';
  const endBoard=turn&&(turn.to===2||turn.from===2);
- const cover=<BeyondCover item={item} live={frontClosed&&!closing}/>;
+ const cover=entryReady?<BeyondCover item={item} live={frontClosed&&!closing}/>:<div className="bcv-cover-art bcv-entry-jacket"><img src={`/beyond-cv/jackets/${item.id}-${document.documentElement.dataset.theme==='light'?'light':'dark'}.jpg`} alt="" draggable="false"/></div>;
  const back=<BeyondCover item={item} back/>;
  const surface=(spread,side)=><BeyondPage item={item} spread={spread} side={side} onTrailSelect={(entry,trailIndex,anchor)=>setSelectedTrail({entry,index:trailIndex,anchor})} onSongSelect={(song,trackIndex,anchor)=>setSelectedSong({song,index:trackIndex,anchor})} onMovieSelect={(entry,movieIndex,anchor)=>{onSound?.('projectorOpen');setSelectedMovie({entry,index:movieIndex,anchor});}} onGameSelect={(entry,gameIndex,anchor)=>{onSound?.('gameOpen');setSelectedGame({entry,index:gameIndex,anchor});}} onSocialSelect={(entry,profileIndex,anchor)=>{onSound?.('socialOpen');setSelectedSocial({entry,index:profileIndex,anchor});}} player={player} interactive={!turn&&!closing}/>;
  const left=turn?(turn.forward?turn.from:turn.to):page;
  const right=endBoard?1:turn?(turn.forward?turn.to:turn.from):page;
  const front=endBoard?surface(1,'right'):turn?.from===-1||turn?.to===-1?cover:turn&&surface(turn.forward?turn.from:turn.to,'right');
  const reverse=endBoard?back:turn&&surface(turn.forward?turn.to:turn.from,'left');
- return <dialog ref={dialog} className="bcv-dialog" data-book-theme={item.id} data-record-loading={player.loading?'true':undefined} data-turn-control={turnControl} data-power={closing?'off':'on'} aria-labelledby="bcv-book-title" onCancel={event=>{event.preventDefault();requestClose();}} onClick={event=>{if(!event.target.closest('.bcv-book-rig,.bcv-control-deck,.bcv-book-picker,.bcv-book-header'))requestClose();}}>
+ return <dialog ref={dialog} className="bcv-dialog" data-entering={entryReady?undefined:"true"} data-book-theme={item.id} data-record-loading={player.loading?'true':undefined} data-turn-control={turnControl} data-power={closing?'off':'on'} aria-labelledby="bcv-book-title" onCancel={event=>{event.preventDefault();requestClose();}} onClick={event=>{if(!event.target.closest('.bcv-book-rig,.bcv-control-deck,.bcv-book-picker,.bcv-book-header'))requestClose();}}>
   {item.id==='music'&&<audio ref={audio} preload="none" {...events}/>} 
   {selectedTrail&&<TrekDetails entry={selectedTrail.entry} index={selectedTrail.index} anchor={selectedTrail.anchor} onClosed={()=>setSelectedTrail(null)}/>}
   {selectedSong&&<SongDetails song={selectedSong.song} index={selectedSong.index} anchor={selectedSong.anchor} onPreview={previewSong} onClosed={()=>setSelectedSong(null)}/>}

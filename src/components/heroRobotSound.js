@@ -21,6 +21,8 @@ export function createHeroRobotSound(){
   const now=performance.now(),interval=kind==='touch'?450:80;if(now-last<interval&&!(kind==='click'&&lastKind!=='click'))return;last=now;lastKind=kind;stop();
   if(kind==='jump'){foley(650,1550,.24,.009,pan);tone([190,310,365],.22,.003,pan);}
   else if(kind==='landing'){foley(850,330,.115,.011,pan);tone([155,100,76],.14,.004,pan);}
+  else if(kind==='stumble'){foley(550,280,.16,.005,pan);tone([220,140,160],.17,.0025,pan);}
+  else if(kind==='repair'){foley(2200,1300,.24,.004,pan);tone([340,510,680],.32,.004,pan);}
   else if(kind==='touch'){tone([610,840,720],.15,.007,pan);foley(2100,1500,.06,.006,pan);}
   else if(kind==='click'){
    const pick=Math.floor(Math.random()*3),notes=[[580,790,960],[450,390,540],[540,830,680]][pick],duration=[.32,.28,.43][pick];tone(notes,duration,.011,pan);foley(1900,900,.055,.008,pan);

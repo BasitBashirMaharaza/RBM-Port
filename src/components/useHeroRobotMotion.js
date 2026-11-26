@@ -1,7 +1,7 @@
 import {useEffect} from 'react';
 
 const ease=q=>q*q*(3-2*q);
-const duration={waiting:3000,spawn:650,climbing:1700,walking:700,hesitating:850,takeoff:190,jumping:590,landing:220,sittingDown:650,resting:7000,standingUp:600};
+const duration={waiting:3000,spawn:650,climbing:1700,walking:700,hesitating:850,takeoff:190,jumping:590,landing:220,sittingDown:650,resting:7000,standingUp:600,stumbling:650,falling:520,scattered:850,reassembling:1250,recovering:800};
 
 // The controller owns travel; the renderer only owns the character's pose.
 // Time advances only while the hero is visible, preserving interrupted gestures.
@@ -9,18 +9,18 @@ export default function useHeroRobotMotion({ready,root,engine,audio,interaction,
  useEffect(()=>{
   if(!ready)return;
   const host=root.current,hero=host.closest('#home'),word=hero.querySelector('.hero-tech-word'),motion=matchMedia('(prefers-reduced-motion: reduce)');
-  let frame=0,last=0,visible=false,robotVisible=false,alive=true,time=Math.min(2900,performance.now()-enteredAt.current),phase='waiting',index=0,target=0,next=0,direction=1,points=[],climbHeight=80,walkFrom=0,walkTo=0,clock=0,lastAttention=0,moodUntil=0,mood='curious',pointer=false,pokes=[],inviting=false,minX=0,maxX=Infinity,trustUntil=0,fearSide=1,mouse=null,headX=0,headY=0,parentTop=0;
+  let frame=0,last=0,visible=false,robotVisible=false,alive=true,time=Math.min(2900,performance.now()-enteredAt.current),phase='waiting',index=0,target=0,next=0,direction=1,points=[],climbHeight=80,walkFrom=0,walkTo=0,clock=0,lastAttention=0,moodUntil=0,mood='curious',pointer=false,pokes=[],inviting=false,minX=0,maxX=Infinity,trustUntil=0,fearSide=1,mouse=null,headX=0,headY=0,parentTop=0,robotSize=72,jumpMs=590,gesture='wave',gestureStarted=0,nextMishap=28000+Math.random()*12000,mishap=false;
   const surfaceY=(point,offset=0)=>{const column=Math.round(point.width*.53+offset);return point.y+(point.contour[Math.max(0,Math.min(point.contour.length-1,column))]-point.centerTop);};
   const contours=new Map();
   const position=(x,y)=>{
-   const localX=Math.max(minX,Math.min(maxX,x));headX=localX-minX+38;headY=parentTop-window.scrollY+y+34;host.style.transform=`translate3d(${localX}px,${y}px,0)`;
-   if(inviting){const absoluteX=localX-minX+2,width=innerWidth<=600?208:228,left=Math.max(12-absoluteX,Math.min((72-width)/2,innerWidth-12-width-absoluteX));host.style.setProperty('--robot-chat-left',left+'px');host.style.setProperty('--robot-chat-tail',Math.max(12,Math.min(width-20,36-left))+'px');}
+   const localX=Math.max(minX,Math.min(maxX,x));headX=localX-minX+robotSize*.528;headY=parentTop-window.scrollY+y+robotSize*.472;host.style.transform=`translate3d(${localX}px,${y}px,0)`;
+   if(inviting){const absoluteX=localX-minX+2,width=innerWidth<=600?208:228,left=Math.max(12-absoluteX,Math.min((robotSize-width)/2,innerWidth-12-width-absoluteX));host.style.setProperty('--robot-chat-left',left+'px');host.style.setProperty('--robot-chat-tail',Math.max(12,Math.min(width-20,robotSize/2-left))+'px');}
   };
-  const enter=value=>{phase=value;time=0;host.dataset.phase=value;host.dataset.letter=String(index);host.dataset.target=String(target);if(value==='jumping')audio.current?.play('jump',(index/6-.5)*.8);if(value==='landing')audio.current?.play('landing',(index/6-.5)*.8);};
+  const enter=value=>{if(value==='resting'){gesture=['wave','stretch','think','peek','cheer'][Math.floor(Math.random()*5)];gestureStarted=clock;}if(value==='jumping'){const a=points[index],b=points[next];jumpMs=Math.max(430,Math.min(760,420+Math.abs(b.x-a.x)*1.4+Math.max(0,b.y-a.y)*.6));}phase=value;time=0;host.dataset.phase=value;host.dataset.letter=String(index);host.dataset.target=String(target);if(value==='jumping')audio.current?.play('jump',(index/6-.5)*.8);if(value==='landing')audio.current?.play('landing',(index/6-.5)*.8);if(value==='falling')audio.current?.play('stumble');if(value==='reassembling')audio.current?.play('repair');};
   const chooseTarget=()=>{const choices=[0,1,2,3,4,5,6].filter(i=>i!==index);target=choices[Math.floor(Math.random()*choices.length)];direction=Math.sign(target-index);};
   const measure=()=>{
    if(!alive)return;const parent=host.parentElement.getBoundingClientRect(),letters=[...word.querySelectorAll('.text-roll-width')],baseline=word.querySelector('.hero-tech-baseline').getBoundingClientRect().top;
-   parentTop=parent.top+window.scrollY;minX=2-parent.left;maxX=innerWidth-parent.left-74;
+   robotSize=host.offsetWidth||72;parentTop=parent.top+window.scrollY;minX=2-parent.left;maxX=innerWidth-parent.left-robotSize-2;
    const style=getComputedStyle(word),ctx=document.createElement('canvas').getContext('2d');ctx.font=`${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
    // Layout can move without the type changing. Reuse the expensive glyph
    // readback in that case; retain only the current font/size measurements.
@@ -30,14 +30,14 @@ export default function useHeroRobotMotion({ready,root,engine,audio,interaction,
    points=letters.slice(0,7).map((letter,i)=>{
     const rect=letter.getBoundingClientRect(),glyph='Portfolio'[i],metrics=ctx.measureText(glyph),ascent=metrics.actualBoundingBoxAscent||parseFloat(style.fontSize)*.7;
     const key=glyph+':'+rect.width,cached=contours.get(key);
-    if(cached)return{x:rect.left-parent.left+rect.width*.53-36,y:baseline-parent.top+cached.centerTop-65,width:rect.width,...cached};
+    if(cached)return{x:rect.left-parent.left+rect.width*.53-robotSize*.5,y:baseline-parent.top+cached.centerTop-robotSize*(65/72),width:rect.width,...cached};
     const raster=document.createElement('canvas');raster.width=Math.ceil(Math.max(rect.width,metrics.width)+16);raster.height=Math.ceil(parseFloat(style.fontSize)*1.5+16);
     const ink=raster.getContext('2d',{willReadFrequently:true});ink.font=ctx.font;ink.fillText(glyph,8,ascent+8);
     const pixels=ink.getImageData(0,0,raster.width,raster.height).data,contour=[];
     for(let x=0;x<Math.ceil(rect.width)+1;x++){let top=0;for(let y=0;y<raster.height;y++){if(pixels[(y*raster.width+x+8)*4+3]>90){top=y-ascent-8;break;}}contour.push(top||-ascent);}
     const centerTop=contour[Math.min(contour.length-1,Math.round(rect.width*.53))];
     contours.set(key,{contour,centerTop});
-    return{x:rect.left-parent.left+rect.width*.53-36,y:baseline-parent.top+centerTop-65,width:rect.width,contour,centerTop};
+    return{x:rect.left-parent.left+rect.width*.53-robotSize*.5,y:baseline-parent.top+centerTop-robotSize*(65/72),width:rect.width,contour,centerTop};
    });
    if(motion.matches&&points.length===7){index=6;host.style.opacity='1';enter('resting');position(points[6].x,points[6].y);engine.current?.setMotion({phase:'resting',progress:1,direction:0,mood:'happy'});}
   };
@@ -46,7 +46,7 @@ export default function useHeroRobotMotion({ready,root,engine,audio,interaction,
    if(event.pointerType&&event.pointerType!=='mouse')return;pointer=true;lastAttention=clock;
    const rect=host.getBoundingClientRect();fearSide=event.clientX<rect.left+rect.width/2?1:-1;
    audio.current?.play('touch',(index/6-.5)*.8);
-   if(mood!=='angry'||clock>moodUntil)setMood(phase==='resting'&&clock>=trustUntil?'afraid':'happy',2800);
+   if(mood!=='angry'||clock>moodUntil)setMood(phase==='resting'&&clock>=trustUntil?'bashful':'happy',2800);if(phase==='resting'){gesture='peek';gestureStarted=clock;}
   };
   const leave=()=>{pointer=false;lastAttention=clock;};
   const follow=event=>{if(event.pointerType==='mouse'||event.pointerType==='pen')mouse={x:event.clientX,y:event.clientY};};
@@ -54,7 +54,7 @@ export default function useHeroRobotMotion({ready,root,engine,audio,interaction,
   const poke=event=>{
    if(!event.target.closest('.intro-poster'))return;
    lastAttention=clock;trustUntil=clock+30000;pokes=pokes.filter(t=>clock-t<1600);pokes.push(clock);
-   setMood(pokes.length>=3?'angry':'happy',pokes.length>=3?2400:2600);
+   setMood(pokes.length>=3?'angry':pokes.length===2?'surprised':'delighted',pokes.length>=3?2400:2600);gesture=pokes.length>=3?'think':'cheer';gestureStarted=clock;
   };
   const beginWalk=()=>{walkFrom=0;walkTo=direction*Math.min(points[index].width*.22,20);enter('walking');};
   const transition=()=>{
@@ -67,8 +67,13 @@ export default function useHeroRobotMotion({ready,root,engine,audio,interaction,
    else if(phase==='jumping'){index=next;enter('landing');}
    else if(phase==='landing'){if(inviting)target=index;if(index===target)enter('sittingDown');else beginWalk();}
    else if(phase==='sittingDown'){enter('resting');setMood('happy',1800);}
-   else if(phase==='resting'){chooseTarget();enter('standingUp');}
-   else if(phase==='standingUp')beginWalk();
+   else if(phase==='resting'){mishap=!inviting&&!pointer&&clock>nextMishap&&Math.random()<.35;if(mishap){nextMishap=clock+50000+Math.random()*30000;setMood('surprised',5000);}else chooseTarget();enter('standingUp');}
+   else if(phase==='standingUp'){if(mishap)enter('stumbling');else beginWalk();}
+   else if(phase==='stumbling')enter('falling');
+   else if(phase==='falling')enter('scattered');
+   else if(phase==='scattered')enter('reassembling');
+   else if(phase==='reassembling'){setMood('proud',3200);enter('recovering');}
+   else if(phase==='recovering'){mishap=false;target=index;enter('sittingDown');}
   };
   const paint=now=>{
    frame=0;if(!visible||document.hidden||!alive)return;
@@ -76,13 +81,13 @@ export default function useHeroRobotMotion({ready,root,engine,audio,interaction,
    // Invitation/video interactions hold the current position and never interrupt a jump.
    const busy=inviting;
    const radius=Math.min(180,innerWidth*.28),dx=mouse?mouse.x-headX:0,dy=mouse?mouse.y-headY:0,near=Boolean(mouse)&&phase==='resting'&&!busy&&Math.hypot(dx,dy)<radius;
-   if(near&&!busy&&clock>=trustUntil&&mood!=='angry'){mood='afraid';fearSide=dx<0?1:-1;host.dataset.mood=mood;}
+   if(near&&!busy&&clock>=trustUntil&&mood!=='angry'){mood='bashful';fearSide=dx<0?1:-1;host.dataset.mood=mood;}
    const hold=(pointer||busy)&&phase==='resting';if(!hold)time+=dt;
-   if(clock>moodUntil){if(clock-lastAttention>18000&&!pointer&&!near&&!busy){setMood('sad',2600);lastAttention=clock;}else{mood=(pointer||near)?(clock>=trustUntil?'afraid':'happy'):'curious';host.dataset.mood=mood;}}
+   if(clock>moodUntil){if(clock-lastAttention>18000&&!pointer&&!near&&!busy){setMood('sleepy',2600);lastAttention=clock;}else{mood=(pointer||near)?(clock>=trustUntil?'afraid':'happy'):'curious';host.dataset.mood=mood;}}
    if(points.length===7){
     if(motion.matches){if(phase!=='resting'||index!==6){index=6;enter('resting');}host.style.opacity='1';position(points[6].x,points[6].y);engine.current?.setMotion({phase:'resting',progress:1,direction:0,mood});return;}
-    if(time>=duration[phase])transition();
-    const q=Math.min(1,time/duration[phase]),p=points[index];let x=p.x,y=p.y;
+    if(time>=(phase==='jumping'?jumpMs:duration[phase]))transition();
+    const q=Math.min(1,time/(phase==='jumping'?jumpMs:duration[phase])),p=points[index];let x=p.x,y=p.y;
     if(phase==='spawn'||phase==='climbing'){
      const progress=phase==='spawn'?0:ease(q);x=p.x-18*(1-progress);y=p.y+climbHeight*(1-progress);
      if(phase==='spawn'){x-=24*(1-ease(q));y+=14*(1-ease(q));host.style.opacity=String(ease(q));}else host.style.opacity='1';
@@ -90,10 +95,14 @@ export default function useHeroRobotMotion({ready,root,engine,audio,interaction,
     else if(phase==='hesitating'){x+=walkTo-direction*Math.sin(q*Math.PI)*2;y=surfaceY(p,walkTo);}
     else if(phase==='takeoff'){x+=walkTo;y=surfaceY(p,walkTo)+Math.sin(q*Math.PI/2)*2;}
     else if(phase==='jumping'){
-     const a=points[index],b=points[next],travel=ease(q);x=a.x+walkTo+(b.x-a.x-walkTo)*travel;
-     y=surfaceY(a,walkTo)+(b.y-surfaceY(a,walkTo))*q-Math.sin(q*Math.PI)*Math.min(34,Math.max(16,Math.abs(b.x-a.x)*.32));
-    }else if(phase==='landing'){y+=Math.sin(q*Math.PI)*2.5;}
-    position(x,y);engine.current?.setMotion({phase,progress:q,direction,mood,fearSide,cursorX:near?dx/radius:0,cursorY:near?dy/radius:0,tracking:near});
+     const a=points[index],b=points[next],travel=q;x=a.x+walkTo+(b.x-a.x-walkTo)*travel;
+     const launchY=surfaceY(a,walkTo)+2;
+     y=launchY+(b.y-launchY)*q-4*q*(1-q)*Math.min(robotSize*.48,Math.max(robotSize*.21,Math.abs(b.x-a.x)*.3));
+    }else if(phase==='landing'){y+=Math.sin(q*Math.PI)*2;}
+    else if(phase==='falling'){y+=ease(q)*robotSize*.12;}
+    else if(phase==='scattered'){y+=robotSize*.12;}
+    else if(phase==='reassembling'){y+=(1-ease(q))*robotSize*.12;}
+    position(x,y);engine.current?.setMotion({phase,progress:q,direction,mood,fearSide,cursorX:near?dx/radius:0,cursorY:near?dy/radius:0,tracking:near,gesture:busy?'listen':gesture,gestureProgress:Math.min(1,(clock-gestureStarted)/2600)});
    }
    frame=requestAnimationFrame(paint);
   };

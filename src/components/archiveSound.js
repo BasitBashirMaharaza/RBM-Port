@@ -5,28 +5,27 @@ export function createArchiveSound(){
  const enabled=()=>!disposed&&!document.hidden&&document.documentElement.dataset.sound!=='off';
  function unlock(){if(!enabled())return;try{const Engine=window.AudioContext||window.webkitAudioContext;if(!Engine)return;context||=new Engine({latencyHint:'interactive'});if(context.state==='suspended')context.resume().catch(()=>{});}catch{}}
  function stop(){for(const {source,gain} of active){try{gain.gain.cancelScheduledValues(context.currentTime);gain.gain.setTargetAtTime(0,context.currentTime,.009);source.stop(context.currentTime+.045);}catch{}}active=[];}
+ // A quiet electronic latch: fixed resonances, no noise wash or sweeping pitch.
  function playLid(kind){
-  const opening=kind==='open',duration=opening?.68:.56;
+  const opening=kind==='open',duration=opening?.42:.34;
   let buffer=lidBuffers.get(kind);
   if(!buffer){
    buffer=context.createBuffer(1,Math.ceil(context.sampleRate*duration),context.sampleRate);
-   const samples=buffer.getChannelData(0);let fibre=0,weight=0;
+   const samples=buffer.getChannelData(0),fundamental=opening?420:350;
+   const resonance=(t,hz,decay)=>t<0?0:(1-Math.exp(-t/.012))*Math.exp(-t/decay)*Math.sin(2*Math.PI*hz*t);
    for(let i=0;i<samples.length;i++){
-    const t=i/context.sampleRate,p=t/duration,n=Math.random()*2-1;
-    fibre=.88*fibre+.12*n;weight=.995*weight+.005*n;
-    const travel=opening?Math.exp(-Math.pow((p-.46)/.27,2)):Math.exp(-Math.pow((p-.35)/.23,2));
-    const seal=Math.exp(-Math.pow((p-(opening ? .14 : .79))/.045,2));
-    const body=Math.sin(2*Math.PI*(opening?118:87)*t)*seal;
-    const edge=Math.pow(Math.sin(Math.PI*p),1.6);
-    samples[i]=((fibre-weight)*travel*.7+n*travel*.012+weight*seal*.8+body*.035)*edge;
+    const t=i/context.sampleRate,tail=Math.min(1,(duration-t)/.05);
+    const body=resonance(t,fundamental,.095)*.16;
+    const overtone=resonance(t-.024,fundamental*1.5,.075)*.055;
+    const latch=resonance(t-(opening?.055:.11),fundamental*3,.028)*.022;
+    samples[i]=(body+overtone+latch)*tail;
    }
    lidBuffers.set(kind,buffer);
   }
   const source=context.createBufferSource(),filter=context.createBiquadFilter(),gain=context.createGain();
-  source.buffer=buffer;filter.type='lowpass';filter.Q.value=.55;
+  source.buffer=buffer;filter.type='lowpass';filter.Q.value=.5;filter.frequency.value=1900;
   const at=context.currentTime+.003;
-  filter.frequency.setValueAtTime(opening?1150:1450,at);filter.frequency.linearRampToValueAtTime(opening?2200:650,at+duration);
-  gain.gain.setValueAtTime(0,at);gain.gain.linearRampToValueAtTime(opening?.16:.18,at+.035);gain.gain.setValueAtTime(opening?.16:.18,at+duration-.07);gain.gain.linearRampToValueAtTime(0,at+duration);
+  gain.gain.setValueAtTime(.065,at);
   source.connect(filter).connect(gain).connect(context.destination);active.push({source,gain});
   source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();active=active.filter(voice=>voice.source!==source);};source.start(at);source.stop(at+duration+.02);
  }
