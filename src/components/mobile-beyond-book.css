@@ -6,7 +6,14 @@
 .bcv-mobile-header h2{font:400 24px/1.2 Georgia,serif;letter-spacing:-.025em;margin:5px 0 0;color:var(--text)}
 .bcv-mobile-header>button{display:grid;place-items:center;width:44px;height:44px;flex:none;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--bg-soft);color:var(--text);font:24px/1 Manrope,sans-serif;cursor:pointer}
 .bcv-mobile-stage{display:grid;place-items:center;min-height:0;container-type:size;perspective:1100px;touch-action:pan-y}
-.bcv-book-paper.bcv-mobile-paper{position:relative;width:min(100cqw,calc(100cqh * 2 / 3));height:min(100cqh,150cqw);border-radius:8px;overflow:hidden;box-shadow:0 10px 22px #0002;transform-origin:50% 50%;container-type:size;isolation:isolate;will-change:auto}
+.bcv-book-paper.bcv-mobile-paper{position:relative;width:min(100cqw,calc(100cqh * 2 / 3));height:min(100cqh,150cqw);border-radius:8px;overflow:visible;background:transparent;box-shadow:0 10px 22px #0002;transform-origin:50% 50%;container-type:size;isolation:auto;transform-style:preserve-3d;will-change:auto}
+.bcv-mobile-resting-face{position:absolute;inset:0;border-radius:8px;overflow:hidden;background:#f2eddf;container-type:size}
+.bcv-mobile-resting-face>.bcv-cover-art,.bcv-mobile-resting-face>.bcv-paper-page,.bcv-mobile-sheet-front>.bcv-cover-art,.bcv-mobile-sheet-front>.bcv-paper-page{position:absolute;inset:0;width:100%;height:100%;transform:none}
+.bcv-mobile-turn-sheet{position:absolute;inset:0;z-index:4;transform-style:preserve-3d;transform-origin:left center;pointer-events:none;will-change:transform}
+.bcv-mobile-sheet-front,.bcv-mobile-sheet-back{position:absolute;inset:0;border-radius:8px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;container-type:size;background:#f2eddf}
+.bcv-mobile-sheet-front{transform:translateZ(.1px);box-shadow:2px 0 8px #0002}
+.bcv-mobile-sheet-back{transform:rotateY(180deg) translateZ(.1px);background:linear-gradient(90deg,#ded8c8,#f8f4e8 12%,#f0ecdf);box-shadow:2px 0 8px #0002}
+.bcv-mobile-paper.is-turning *,.bcv-mobile-paper.is-turning *::before,.bcv-mobile-paper.is-turning *::after{animation-play-state:paused!important}
 .bcv-mobile-paper>.bcv-cover-art,.bcv-mobile-paper>.bcv-paper-page{position:absolute;inset:0;width:100%;height:100%;transform:none}
 .bcv-mobile-jacket>img{display:block;width:100%;height:100%;object-fit:cover}
 .bcv-mobile-paper .bcv-paper-page{padding:12% 8% 7%}

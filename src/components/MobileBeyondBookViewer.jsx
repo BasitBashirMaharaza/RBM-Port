@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { beyondBooks } from './beyondCvData.js';
 import { BeyondCover, BeyondPage } from './BeyondCover.jsx';
 import { SongDetails } from './MusicInteractions.jsx';
@@ -10,11 +11,12 @@ import SocialDetails from './SocialDetails.jsx';
 import TrekDetails from './TrekDetails.jsx';
 import './mobile-beyond-book.css';
 
-export default function MobileBeyondBookViewer({index,onChoose,onClosed,onSound}) {
- const item=beyondBooks[index],dialog=useRef(null),paper=useRef(null),gesture=useRef(null),animation=useRef(null),direction=useRef(1),opener=useRef(document.activeElement);
- const [page,setPage]=useState(0),[detail,setDetail]=useState(null),[flight,setFlight]=useState(null);
+export default function MobileBeyondBookViewer({index,getOrigin,onChoose,onClosed,onSound}) {
+ const item=beyondBooks[index],dialog=useRef(null),paper=useRef(null),sheet=useRef(null),gesture=useRef(null),animation=useRef(null),opener=useRef(document.activeElement),origin=useRef(getOrigin);
+ origin.current=getOrigin;
+ const [page,setPage]=useState(0),[turn,setTurn]=useState(null),[detail,setDetail]=useState(null),[flight,setFlight]=useState(null);
  const {audio,player,events,selectPreview,finishPreview,reset}=useMusicPreviewPlayer(item.id);
- useEffect(()=>{setPage(0);setDetail(null);setFlight(null);},[item.id]);
+ useEffect(()=>{setPage(0);setTurn(null);setDetail(null);setFlight(null);},[item.id]);
  useLayoutEffect(()=>{
   const node=dialog.current,body=document.body,html=document.documentElement;
   const bodyOverflow=body.style.overflow,htmlOverflow=html.style.overflow;
@@ -24,33 +26,46 @@ export default function MobileBeyondBookViewer({index,onChoose,onClosed,onSound}
  useLayoutEffect(()=>{
   const node=paper.current,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   animation.current?.cancel();
-  // A single paper face is animated, never cloned into moving page strips.
+  const from=origin.current?.(),box=node.getBoundingClientRect();
+  const start=from?`translate3d(${from.left+from.width/2-box.left-box.width/2}px,${from.top+from.height/2-box.top-box.height/2}px,0) scale(${from.width/box.width})`:'scale(.96)';
   animation.current=node.animate(reduced?[{opacity:.7},{opacity:1}]:[
-   {opacity:.65,transform:`perspective(1100px) translate3d(${direction.current*12}px,0,0) rotateY(${direction.current*9}deg)`},
-   {opacity:1,transform:'perspective(1100px) translate3d(0,0,0) rotateY(0deg)'}
-  ],{duration:reduced?90:240,easing:'cubic-bezier(.22,1,.36,1)'});
+   {opacity:.65,transform:start},
+   {opacity:1,transform:'translate3d(0,0,0) scale(1)'}
+  ],{duration:reduced?90:420,easing:'cubic-bezier(.22,1,.36,1)'});
   return()=>animation.current?.cancel();
- },[page,item.id]);
+ },[item.id]);
+ useLayoutEffect(()=>{
+  if(!turn||!sheet.current)return;
+  animation.current?.cancel();
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const start=turn.forward?0:-180,end=turn.forward?-180:0;
+  const moving=sheet.current.animate(reduced?[{opacity:turn.forward?1:0},{opacity:turn.forward?0:1}]:[
+   {transform:`rotateY(${start}deg)`},{transform:`rotateY(${end}deg)`}
+  ],{duration:reduced?90:560,easing:'cubic-bezier(.65,0,.35,1)',fill:'both'});
+  animation.current=moving;
+  moving.finished.then(()=>{flushSync(()=>{setPage(turn.to);setTurn(null);});}).catch(()=>{});
+  return()=>moving.cancel();
+ },[turn]);
  const change=next=>{
-  if(next<0||next>5||next===page)return;
-  direction.current=next>page?1:-1;onSound?.(page===0?'hinge':'page');setPage(next);
+  if(turn||next<0||next>5||next===page)return;
+  onSound?.(page===0?'hinge':'page');setTurn({from:page,to:next,forward:next>page});
  };
  const close=()=>{reset();onSound?.('close');onClosed();};
- const choose=next=>{reset();onSound?.('select');setPage(0);onChoose((next+beyondBooks.length)%beyondBooks.length);};
+ const choose=next=>{if(turn)return;reset();onSound?.('select');setPage(0);onChoose((next+beyondBooks.length)%beyondBooks.length);};
  const preview=(song,from)=>{
   const token=selectPreview(song);if(token===null)return;
-  setDetail(null);direction.current=-1;setPage(page===3?4:1);setFlight({song,from,token});
+  setDetail(null);setPage(page===3?4:1);setFlight({song,from,token});
  };
  const key=event=>{
   if(event.target.closest('input,textarea,select,[data-music-control]'))return;
   if(event.key==='ArrowRight'){event.preventDefault();change(page+1);}
   if(event.key==='ArrowLeft'){event.preventDefault();change(page-1);}
  };
- const surface=()=>{
-  if(page===0)return <div className="bcv-cover-art bcv-mobile-jacket"><img src={`/beyond-cv/jackets/${item.id}-${document.documentElement.dataset.theme==='light'?'light':'dark'}.jpg`} alt={`${item.title} cover`} decoding="async" draggable="false"/></div>;
-  if(page===5)return <BeyondCover item={item} back live={false}/>;
-  const spread=Math.floor((page-1)/2),side=(page-1)%2===0?'left':'right';
-  return <BeyondPage item={item} spread={spread} side={side} player={player} interactive
+ const surface=(number=page,interactive=!turn)=>{
+  if(number===0)return <div className="bcv-cover-art bcv-mobile-jacket"><img src={`/beyond-cv/jackets/${item.id}-${document.documentElement.dataset.theme==='light'?'light':'dark'}.jpg`} alt={`${item.title} cover`} decoding="async" draggable="false"/></div>;
+  if(number===5)return <BeyondCover item={item} back live={false}/>;
+  const spread=Math.floor((number-1)/2),side=(number-1)%2===0?'left':'right';
+  return <BeyondPage item={item} spread={spread} side={side} player={player} interactive={interactive}
    onSongSelect={(song,number,anchor)=>setDetail({kind:'song',entry:song,index:number,anchor})}
    onMovieSelect={(entry,number,anchor)=>setDetail({kind:'movie',entry,index:number,anchor})}
    onGameSelect={(entry,number,anchor)=>setDetail({kind:'game',entry,index:number,anchor})}
@@ -75,11 +90,16 @@ export default function MobileBeyondBookViewer({index,onChoose,onClosed,onSound}
    const dx=event.clientX-held.x,dy=event.clientY-held.y;
    if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.4)change(page+(dx<0?1:-1));
   }} onPointerCancel={()=>{gesture.current=null;}}>
-   <div ref={paper} className="bcv-book-paper bcv-mobile-paper" key={`${item.id}-${page}`}>{surface()}</div>
+   <div ref={paper} className={`bcv-book-paper bcv-mobile-paper${turn?' is-turning':''}`} aria-busy={!!turn}>
+    <div className="bcv-mobile-resting-face">{surface(turn?(turn.forward?turn.to:turn.from):page)}</div>
+    {turn&&<div ref={sheet} className="bcv-mobile-turn-sheet" aria-hidden="true" inert>
+     <div className="bcv-mobile-sheet-front">{surface(turn.forward?turn.from:turn.to,false)}</div><div className="bcv-mobile-sheet-back"/>
+    </div>}
+   </div>
   </div>
   <footer className="bcv-mobile-console">
-   <nav aria-label="Book page controls"><button type="button" aria-label="Previous page" disabled={page===0} onClick={()=>change(page-1)}>←</button><div><span>{page===0?'COVER':page===5?'BACK COVER':`PAGE ${page} OF 4`}</span><small>{page===0?'Open to explore':'Swipe to turn the page'}</small></div><button type="button" aria-label={page===0?'Open book':'Next page'} disabled={page===5} onClick={()=>change(page+1)}>→</button></nav>
-   <div className="bcv-mobile-book-picker"><button type="button" onClick={()=>choose(index-1)}>‹ Previous book</button><button type="button" onClick={()=>choose(index+1)}>Next book ›</button></div>
+   <nav aria-label="Book page controls"><button type="button" aria-label="Previous page" disabled={page===0||!!turn} onClick={()=>change(page-1)}>←</button><div><span>{page===0?'COVER':page===5?'BACK COVER':`PAGE ${page} OF 4`}</span><small>{turn?'Turning the page…':page===0?'Open to explore':'Swipe to turn the page'}</small></div><button type="button" aria-label={page===0?'Open book':'Next page'} disabled={page===5||!!turn} onClick={()=>change(page+1)}>→</button></nav>
+   <div className="bcv-mobile-book-picker"><button type="button" disabled={!!turn} onClick={()=>choose(index-1)}>‹ Previous book</button><button type="button" disabled={!!turn} onClick={()=>choose(index+1)}>Next book ›</button></div>
   </footer>
  </dialog>;
 }

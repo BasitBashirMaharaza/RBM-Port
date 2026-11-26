@@ -34,8 +34,9 @@ the viewer. It pauses offscreen, in hidden tabs, for reduced motion, and while
 the gallery or its book viewer is paused.
 
 On phones, `MobileBeyondBookViewer.jsx` presents the existing four content pages
-individually instead of shrinking a two-page spread. Only one paper face is
-mounted during a 240ms perspective transition. The reader uses a stable small
+individually instead of shrinking a two-page spread. A full 180-degree hinged
+sheet opens the cover and turns pages over their replacements in 560ms, with
+separate front and back faces rather than a slide transition. The reader uses a stable small
 viewport height so browser toolbar changes do not cancel a page turn. Swipe
 gestures exclude links, buttons, inputs, and music controls. Music preview
 selection takes the visitor to the full-size turntable page, with play/pause,
