@@ -60,9 +60,8 @@ export function createComputerEntrance(host,onComplete){
  // A soft contact shadow grounds the machine without an expensive shadow pass.
  const shadowCanvas=document.createElement('canvas');shadowCanvas.width=shadowCanvas.height=128;const sc=shadowCanvas.getContext('2d'),gradient=sc.createRadialGradient(64,64,0,64,64,64);gradient.addColorStop(0,'#0009');gradient.addColorStop(1,'#0000');sc.fillStyle=gradient;sc.fillRect(0,0,128,128);
  const shadowMap=new THREE.CanvasTexture(shadowCanvas),shadowGeo=new THREE.PlaneGeometry(10,8),shadowMat=new THREE.MeshBasicMaterial({map:shadowMap,transparent:true,depthWrite:false});[shadowMap,shadowGeo,shadowMat].forEach(r=>resources.add(r));const shadow=new THREE.Mesh(shadowGeo,shadowMat);shadow.rotation.x=-Math.PI/2;shadow.position.set(0,.01,1.4);scene.add(shadow);
- // Capture the actual introduction's typography and positions, rather than a tiny,
- // separately typeset approximation. Layout is read only when the texture changes.
- const introduction=host.closest('#education').querySelector('.lg-intro');
+ // Capture the actual desktop files, typography and positions for the screen handoff. Layout is read only when the texture changes.
+ const introduction=host.closest('#education').querySelector('.ld-desktop');
  let screenDisposed=false;
  function drawScreen(){
   if(screenDisposed||!introduction)return;
@@ -73,13 +72,19 @@ export function createComputerEntrance(host,onComplete){
   const right=Math.max(rect.right,...bounds.map(r=>r.right)),bottom=Math.max(rect.bottom,...bounds.map(r=>r.bottom));
   ctx.fillStyle=style.getPropertyValue('--lg-bg');
   // Canvas cannot resolve var() nested in color-mix; use the browser's resolved surface.
-  ctx.fillStyle=style.backgroundColor;ctx.fillRect(0,0,1200,960);
+  ctx.fillStyle=getComputedStyle(introduction).backgroundColor;ctx.fillRect(0,0,1200,960);
   const scale=Math.min(1000/(right-left),800/(bottom-top));
   ctx.save();ctx.translate((1200-(right-left)*scale)/2,(960-(bottom-top)*scale)/2);ctx.scale(scale,scale);ctx.translate(-left,-top);
-  const image=introduction.querySelector('img');
-  if(image?.complete&&image.naturalWidth){
-   const box=image.getBoundingClientRect(),ratio=Math.max(box.width/image.naturalWidth,box.height/image.naturalHeight),w=box.width/ratio,h=box.height/ratio;
-   ctx.save();ctx.beginPath();ctx.roundRect(box.left,box.top,box.width,box.height,8);ctx.clip();ctx.drawImage(image,(image.naturalWidth-w)/2,(image.naturalHeight-h)/2,w,h,box.left,box.top,box.width,box.height);ctx.restore();
+  for(const bar of introduction.querySelectorAll('.ld-desktop-menubar,.ld-desktop-taskbar')){
+   const box=bar.getBoundingClientRect();ctx.fillStyle=getComputedStyle(bar).backgroundColor;ctx.fillRect(box.left,box.top,box.width,box.height);
+  }
+  for(const file of introduction.querySelectorAll('.ld-desktop-file')){
+   const folder=file.querySelector('.ld-folder-icon'),paper=file.querySelector('.ld-document-icon');
+   if(folder){const box=folder.getBoundingClientRect();ctx.save();ctx.translate(box.left,box.top);ctx.scale(box.width/80,box.height/64);ctx.fillStyle=getComputedStyle(file).getPropertyValue('--file-color')||'#b3c596';ctx.beginPath();ctx.moveTo(7,16);ctx.lineTo(7,53);ctx.quadraticCurveTo(7,58,12,58);ctx.lineTo(68,58);ctx.quadraticCurveTo(73,58,73,53);ctx.lineTo(73,22);ctx.quadraticCurveTo(73,16,67,16);ctx.lineTo(38,16);ctx.lineTo(31,9);ctx.lineTo(13,9);ctx.quadraticCurveTo(7,9,7,16);ctx.fill();ctx.fillStyle='#ffffff2b';ctx.fillRect(8,25,64,31);ctx.restore();}
+   if(paper){const box=paper.getBoundingClientRect();ctx.fillStyle='#edf0e4';ctx.beginPath();ctx.roundRect(box.left,box.top,box.width,box.height,3);ctx.fill();}
+  }
+  for(const image of introduction.querySelectorAll('img')){
+   if(!image.complete||!image.naturalWidth)continue;const box=image.getBoundingClientRect(),ratio=Math.min(box.width/image.naturalWidth,box.height/image.naturalHeight),w=image.naturalWidth*ratio,h=image.naturalHeight*ratio;ctx.drawImage(image,box.left+(box.width-w)/2,box.top+(box.height-h)/2,w,h);
   }
   const walker=document.createTreeWalker(introduction,NodeFilter.SHOW_TEXT);
   while(walker.nextNode()){
@@ -94,7 +99,7 @@ export function createComputerEntrance(host,onComplete){
   }
   ctx.restore();texture.needsUpdate=true;host.dataset.screen='live-introduction';
  }
- const photo=introduction.querySelector('img');photo?.addEventListener('load',drawScreen);
+ const photo=introduction?.querySelector('img');photo?.addEventListener('load',drawScreen);
  const themeObserver=new MutationObserver(drawScreen);themeObserver.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
  document.fonts.ready.then(()=>{if(!screenDisposed)drawScreen();});drawScreen();
  let width=1,height=1,frame=0,elapsed=0,last=0,disposed=false,visible=false,completed=false,previousPhase='load';

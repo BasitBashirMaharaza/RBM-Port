@@ -1,0 +1,13 @@
+.mood-hosted-carousel{position:relative;width:100%}.mood-hosted-placeholder{height:100svh;width:100%;border-radius:8px;background:var(--surface)}.mood-hosted-placeholder.is-loading{animation:mood-placeholder 1.6s ease-in-out infinite alternate}.sr-anywhere-embed-host{width:100%}
+.mood-perimeter{position:absolute;inset:0;overflow:hidden;contain:strict;isolation:isolate;--mood-gap:14px}
+.mood-rail{position:absolute;overflow:hidden;isolation:isolate}.mood-rail.is-top,.mood-rail.is-bottom{left:0;right:0;height:25%}.mood-rail.is-top{top:0}.mood-rail.is-bottom{bottom:0}.mood-rail.is-left,.mood-rail.is-right{top:25%;bottom:25%;width:20%}.mood-rail.is-left{left:0}.mood-rail.is-right{right:0}
+.mood-rail-track{display:flex;gap:var(--mood-gap);width:max-content;height:max-content;will-change:transform}.mood-rail.is-left .mood-rail-track,.mood-rail.is-right .mood-rail-track{flex-direction:column}
+.mood-perimeter .mood-frame{position:relative;flex:none;display:block;margin:0;padding:0;border:0;border-radius:0;background:var(--mood-bg);overflow:hidden;cursor:pointer;touch-action:pan-y pinch-zoom;-webkit-tap-highlight-color:transparent}
+.mood-frame-face{position:relative;width:100%;height:100%;overflow:hidden;animation:mood-card-arrive 440ms cubic-bezier(.23,1,.32,1) var(--reveal-delay,0ms) both}
+.mood-frame img{display:block;width:100%;height:100%;object-fit:cover;filter:brightness(.82);transition:filter 240ms ease,scale 500ms cubic-bezier(.23,1,.32,1)}
+.mood-frame-face>span{position:absolute;right:12px;bottom:10px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#070a0880;color:#f4f0e8;opacity:0;transition:opacity 180ms ease}
+.mood-frame:focus-visible{outline:3px solid var(--mood-accent);outline-offset:-4px;z-index:2}.mood-frame:focus-visible .mood-frame-face>span{opacity:1}
+@media(hover:hover) and (pointer:fine){.mood-frame:hover img{filter:brightness(1);scale:1.035}.mood-frame:hover .mood-frame-face>span{opacity:1}}
+@media(max-width:700px){.mood-rail.is-left,.mood-rail.is-right{width:16%}}
+@keyframes mood-placeholder{to{opacity:.5}}@keyframes mood-card-arrive{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.mood-frame img,.mood-frame-face>span{transition:none}.mood-hosted-placeholder,.mood-frame-face{animation:none!important}}

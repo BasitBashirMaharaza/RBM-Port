@@ -32,3 +32,6 @@
 :root[data-theme="light"] .wa-project-picker,:root[data-theme="light"] .wa-fallback button{--wa-accent:var(--wa-light-accent)!important;color:var(--wa-accent)}
 :root[data-theme="light"] .wa-fallback button{background:var(--surface)}
 :root[data-theme="light"] .wa-picker-controls button[aria-pressed="true"] span{background:var(--wa-light-accent)}
+
+/* Six archive entries keep their touch targets inside the phone picker. */
+@media(max-width:700px){.wa-picker-controls{gap:8px}.wa-picker-controls>button{flex:0 0 44px}.wa-picker-controls>div{flex:1;min-width:0;justify-content:center}.wa-picker-controls>div button{width:26px;max-width:calc(100% / 6);flex:0 1 26px}}

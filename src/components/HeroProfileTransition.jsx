@@ -14,8 +14,10 @@ const topics = {
  work: { words: ['conversational AI', 'document intelligence', 'predictive systems'], icons: ['chat', 'document', 'network'] },
  toolkit: { words: ['Python & data', 'retrieval & AI', 'web & analytics'], icons: ['code', 'database', 'network'] },
  beyond: { words: ['trekking & camping', 'music & stories', 'beyond the CV'], icons: ['mountain', 'music', 'compass'] },
+ contact: { words: ['let’s build together', 'ideas into impact', 'start a conversation'], icons: ['chat', 'network', 'mail'] },
 };
 const iconPaths = {
+ mail:'M15 23h42v29H15V23Zm0 0 21 17 21-17M15 52l14-16m28 16L43 36',
  book:'M16 22c8-4 14-3 20 1 6-4 12-5 20-1v30c-8-4-14-3-20 1-6-4-12-5-20-1V22Zm20 1v30',
  study:'m22 48 5-14 21-17 7 8-23 18-10 5Zm5-14 5 9M20 56h34',
  cap:'m12 29 24-12 24 12-24 12-24-12Zm10 6v13c9 7 19 7 28 0V35M59 30v21',

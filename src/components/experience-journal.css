@@ -2004,3 +2004,10 @@ html[data-theme='dark'] .is-in-view .journal-front-art:after,html[data-theme='da
 html[data-theme='dark'] .journal-book.is-turning .journal-front-art:after,html[data-theme='dark'] .journal-book.is-turning .journal-back-art:after{animation-play-state:paused}
 @keyframes journal-cover-illumination{from{opacity:.4}to{opacity:.85}}
 @media(prefers-reduced-motion:reduce){.journal-book .journal-bookmark{transition:none!important}.journal-front-art:after,.journal-back-art:after{animation:none!important;opacity:.6}}
+
+/* A balanced cover after moving the contribution slip into the project archive. */
+.journal-front-art .journal-note-main{top:25%;left:9%;width:75%;padding:30px 20px 38px}
+.journal-front-art .journal-note-small{top:12%;right:8%;width:42%;padding:18px 12px}
+.journal-front-art .journal-note-list{top:61%;right:8%;width:66%;padding:23px 18px;gap:12px}
+.journal-front-art .journal-cover-stamp{top:67%;left:7%}
+@media(max-width:700px){.journal-front-art .journal-note-main{top:26%;padding:28px 18px 34px}.journal-front-art .journal-note-small{top:13%;padding:17px 10px}.journal-front-art .journal-note-list{top:61%;padding:22px 15px;gap:10px}.journal-front-art .journal-cover-stamp{top:70%;left:6%}}

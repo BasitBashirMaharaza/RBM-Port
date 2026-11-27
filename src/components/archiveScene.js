@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { archiveColors,archiveLightColors,archiveMarks } from './workArchiveMarks.js';
+import contributions from './journal-contributions.json';
 
 const ease=t=>t*t*(3-2*t);
 const mixColor=(a,b,amount)=>'#'+new THREE.Color(a).lerp(new THREE.Color(b),amount).getHexString();
@@ -25,7 +26,7 @@ function inscription(text,light,palette){
  const canvas=document.createElement('canvas');canvas.width=1800;canvas.height=180;const ctx=canvas.getContext('2d');ctx.font='500 48px monospace';ctx.fillStyle=light?palette.text:'#e2edc1';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,900,90);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;return texture;
 }
 
-export function createArchiveScene(host,projects,{onHover,onOpen,onReady,onError,onLidMotion}){
+export function createArchiveScene(host,projects,{onHover,onOpen,onReady,onError,onLidMotion,onContributions}){
  let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'});}catch{onError();return null;}
  const reduced=matchMedia('(prefers-reduced-motion: reduce)'),fine=matchMedia('(hover: hover) and (pointer: fine)');
  renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setClearColor(0,0);renderer.shadowMap.enabled=innerWidth>760;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.domElement.setAttribute('aria-hidden','true');host.prepend(renderer.domElement);
@@ -40,6 +41,25 @@ export function createArchiveScene(host,projects,{onHover,onOpen,onReady,onError
  for(const z of [-2.24,2.24])box(world,8.18,.018,.025,0,1.645,z,trim,.003);for(const x of [-4.035,4.035])box(world,.025,.018,4.45,x,1.645,0,trim,.003);
  const labelMaterial=new THREE.MeshBasicMaterial({transparent:true,depthWrite:false,toneMapped:false});const label=new THREE.Mesh(new THREE.PlaneGeometry(6.7,.67),labelMaterial);label.position.set(0,.96,2.313);world.add(label);
  const lid=new THREE.Group();lid.position.set(0,1.69,-2.26);world.add(lid);box(lid,8.2,.16,4.6,0,.02,2.26,outer);box(lid,7.98,.045,4.33,0,-.081,2.26,inner);for(const x of [-4.04,4.04])box(lid,.012,.012,4.48,x,-.11,2.26,trim,.002);for(const z of [.045,4.48])box(lid,8.08,.012,.012,0,-.11,z,trim,.002);
+ // The chart is printed on the lid's inside surface, so the real box geometry
+ // naturally occludes it and the chart follows every hinge and turntable motion.
+ const contributionCanvas=document.createElement('canvas');contributionCanvas.width=1500;contributionCanvas.height=740;
+ const contributionTexture=new THREE.CanvasTexture(contributionCanvas);contributionTexture.colorSpace=THREE.SRGBColorSpace;contributionTexture.anisotropy=4;
+ const contributionMaterial=new THREE.MeshBasicMaterial({map:contributionTexture,toneMapped:false});
+ const contributionPanel=new THREE.Mesh(new THREE.PlaneGeometry(7.55,3.75),contributionMaterial);contributionPanel.rotation.x=Math.PI/2;contributionPanel.position.set(0,-.118,2.3);lid.add(contributionPanel);
+ let contributionChart=null,contributionPalette=null;
+ const paintContribution=()=>{
+  const c=contributionCanvas.getContext('2d'),p=contributionPalette;if(!p)return;
+  const ink=light?p.text:'#e2edc1',muted=light?p.muted:'#a4b38e',bg=light?mixColor(p.surface,p.muted,.045):'#11190e';
+  c.fillStyle=bg;c.fillRect(0,0,1500,740);c.strokeStyle=light?'#71855d55':'#a5c56245';c.lineWidth=2;c.strokeRect(22,22,1456,696);
+  c.fillStyle=muted;c.font='500 21px monospace';c.fillText('GITHUB / THE WORK BETWEEN THE PROJECTS',64,78);
+  c.fillStyle=ink;c.font='500 48px sans-serif';c.fillText('Building in public.',62,145);
+  c.font='400 23px monospace';c.fillStyle=muted;c.textAlign='right';c.fillText(contributions.total+' PUBLIC CONTRIBUTIONS',1436,120);c.textAlign='left';
+  if(contributionChart)c.drawImage(contributionChart,0,0,contributionChart.width,contributionChart.height,64,178,1372,442);
+  c.strokeStyle=light?'#71855d44':'#a5c56233';c.beginPath();c.moveTo(64,640);c.lineTo(1436,640);c.stroke();
+  c.font='400 20px monospace';c.fillStyle=muted;c.fillText('SNAPSHOT / '+contributions.updated,64,686);c.textAlign='right';c.fillStyle=ink;c.fillText('EXPLORE THE SKYLINE  ↗',1436,686);c.textAlign='left';
+  contributionTexture.needsUpdate=true;
+ };
  for(const x of [-2.9,2.9]){const hinge=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,.55,16),trim);hinge.rotation.z=Math.PI/2;hinge.position.set(x,1.65,-2.24);world.add(hinge);}
  const shape=new THREE.Shape(),w=3.62,h=2.55,r=.15;shape.moveTo(-w/2+r,-h/2);shape.lineTo(w/2-r,-h/2);shape.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);shape.lineTo(w/2,h/2-r);shape.quadraticCurveTo(w/2,h/2,w/2-r,h/2);shape.lineTo(-w/2+r,h/2);shape.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);shape.lineTo(-w/2,-h/2+r);shape.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);
  const cardGeometry=new THREE.ExtrudeGeometry(shape,{depth:.065,bevelEnabled:true,bevelSize:.018,bevelThickness:.018,bevelSegments:3,steps:1,curveSegments:12});
@@ -64,7 +84,7 @@ export function createArchiveScene(host,projects,{onHover,onOpen,onReady,onError
  const contactShadow=new THREE.Mesh(new THREE.PlaneGeometry(12,7.5),contactMaterial);contactShadow.rotation.x=-Math.PI/2;contactShadow.position.y=-.025;scene.add(contactShadow);
  const reflector=null;
  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(25,25),new THREE.ShadowMaterial({opacity:.12}));shadow.rotation.x=-Math.PI/2;shadow.position.y=-.008;shadow.receiveShadow=true;scene.add(shadow);
- let frame=0,previous=0,elapsed=0,startTime=null,scrollDirty=true,scrollTarget=0,openness=0,visible=false,disposed=false,active=-1,opening=false,light=false,width=1,height=1,interactive=false,rotationTime=0,rotationRate=0,scrollTurn=0,scrollTurnTarget=0,hovering=false,lastRender=0,lastShadow=0,lidCueState='closed';
+ let frame=0,previous=0,elapsed=0,startTime=null,scrollDirty=true,scrollTarget=0,openness=0,visible=false,disposed=false,active=-1,opening=false,light=false,width=1,height=1,interactive=false,rotationTime=0,rotationRate=0,scrollTurn=0,scrollTurnTarget=0,hovering=false,lastRender=0,lastShadow=0,lidCueState='closed',contributionHover=0;
  const pointer=new THREE.Vector2(),raycaster=new THREE.Raycaster(),projected=new THREE.Vector3(),press={x:0,y:0,time:0};
  const tick=now=>{
   frame=0;if(disposed||!visible||document.hidden)return;
@@ -77,13 +97,19 @@ export function createArchiveScene(host,projects,{onHover,onOpen,onReady,onError
   // Schmitt thresholds: each cue fires once per physical opening/closing cycle.
   // Small scroll reversals midway through the lid travel cannot retrigger it.
   if(!opening&&lidCueState==='closed'&&openness>=.22){lidCueState='open';onLidMotion?.('open');}
-  else if(!opening&&lidCueState==='open'&&openness<=.08){lidCueState='closed';onLidMotion?.('close');}
+  else if(!opening&&lidCueState==='open'&&openness<=.08){lidCueState='closed',contributionHover=0;onLidMotion?.('close');}
 
   const lift=ease(THREE.MathUtils.clamp((openness-.46)/.5,0,1));
   lid.rotation.x=-THREE.MathUtils.degToRad(102)*ease(openness);let moving=intro<1||Math.abs(targetOpen-openness)>.0005;
   const state=openness>.95?'open':openness<.05?'closed':'moving';if(host.dataset.archiveState!==state)host.dataset.archiveState=state;
   const response=reduced.matches?1:1-Math.exp(-dt*14);
   cards.forEach(card=>{const target=active===card.index&&!opening?1:0;card.hover+=(target-card.hover)*response;if(Math.abs(target-card.hover)>.001)moving=true;else card.hover=target;card.group.position.y=.82+.7*lift+card.hover*.32;card.group.scale.y=.35+.65*lift;card.group.visible=!card.hidden;card.activeMaterial.opacity=card.hover;card.bodyMaterial.emissive.set(card.hover>.02?archiveColors[card.index]:light?'#526735':'#89a845');card.bodyMaterial.emissiveIntensity=(light?0:.09)+card.hover*(light?.08:.48);});
+  const contributionTarget=active===projects.length&&!opening?1:0;
+  contributionHover+=(contributionTarget-contributionHover)*response;
+  if(Math.abs(contributionTarget-contributionHover)>.001)moving=true;else contributionHover=contributionTarget;
+  contributionPanel.position.y=-.118-contributionHover*.16;
+  contributionPanel.scale.setScalar(1+contributionHover*.018);
+  contributionMaterial.color.setScalar(1+contributionHover*.08);
   // A restrained turntable sway; freeze the archive while a file is being read.
   let rotating=false;
   if(reduced.matches){world.rotation.y=0;rotationRate=0;scrollTurn=0;}
@@ -112,6 +138,7 @@ export function createArchiveScene(host,projects,{onHover,onOpen,onReady,onError
   light=document.documentElement.dataset.theme==='light';
   const styles=getComputedStyle(host),read=name=>styles.getPropertyValue(name).trim();
   const palette={bg:read('--bg'),soft:read('--bg-soft'),surface:read('--surface'),surface2:read('--surface-2'),text:read('--text'),muted:read('--muted'),accent:read('--accent')};
+  contributionPalette=palette;paintContribution();
   outer.color.set(light?mixColor(palette.surface2,palette.text,.06):'#20231e');outer.metalness=light?.3:.82;outer.roughness=light?.38:.32;outer.clearcoat=light?.28:.45;
   inner.color.set(light?mixColor(palette.soft,palette.muted,.13):'#0a1007');inner.metalness=light?.08:.2;
   trim.color.set(light?mixColor(palette.surface2,palette.muted,.5):'#849269');trim.emissive.set(light?palette.accent:'#a5c562');trim.emissiveIntensity=light?0:.1;trim.roughness=light?.3:.22;
@@ -126,10 +153,10 @@ export function createArchiveScene(host,projects,{onHover,onOpen,onReady,onError
   labelMaterial.map?.dispose();labelMaterial.map=inscription('BASIT BASHIR / SELECTED WORK',light,palette);labelMaterial.needsUpdate=true;renderer.shadowMap.needsUpdate=true;wake();
  };
  const setHover=index=>{if(active===index)return;active=index;onHover(index);wake();};
- const pick=event=>{const bounds=host.getBoundingClientRect();pointer.set((event.clientX-bounds.left)/bounds.width*2-1,-(event.clientY-bounds.top)/bounds.height*2+1);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.group),true);return hits.length?cards.findIndex(c=>c.group===hits[0].object.parent):-1;};
- const move=event=>{if(!fine.matches||!interactive||opening)return;const index=pick(event);hovering=index>=0;setHover(index);renderer.domElement.style.cursor=index>=0?'pointer':'';};
+ const pick=event=>{const bounds=host.getBoundingClientRect();pointer.set((event.clientX-bounds.left)/bounds.width*2-1,-(event.clientY-bounds.top)/bounds.height*2+1);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects([...cards.map(c=>c.group),contributionPanel],true);if(hits[0]?.object===contributionPanel)return -2;return hits.length?cards.findIndex(c=>c.group===hits[0].object.parent):-1;};
+ const move=event=>{if(!fine.matches||!interactive||opening)return;const index=pick(event);hovering=index!==-1;setHover(index===-2?projects.length:index);wake();renderer.domElement.style.cursor=index!==-1?'pointer':'';};
  const down=event=>{press.x=event.clientX;press.y=event.clientY;press.time=performance.now();};
- const up=event=>{if(!interactive||opening||event.button!==0||Math.hypot(event.clientX-press.x,event.clientY-press.y)>9||performance.now()-press.time>600)return;const index=pick(event);if(index>=0)onOpen(index);};
+ const up=event=>{if(!interactive||opening||event.button!==0||Math.hypot(event.clientX-press.x,event.clientY-press.y)>9||performance.now()-press.time>600)return;const index=pick(event);if(index===-2)onContributions?.();else if(index>=0)onOpen(index);};
  const leave=()=>{hovering=false;renderer.domElement.style.cursor='';if(fine.matches)setHover(-1);};
  const contextLost=event=>{event.preventDefault();onError();};
  renderer.domElement.addEventListener('pointermove',move,{passive:true});renderer.domElement.addEventListener('pointerdown',down,{passive:true});renderer.domElement.addEventListener('pointerup',up,{passive:true});renderer.domElement.addEventListener('pointerleave',leave);renderer.domElement.addEventListener('webglcontextlost',contextLost);
@@ -138,5 +165,5 @@ export function createArchiveScene(host,projects,{onHover,onOpen,onReady,onError
  const observer=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;visibility();},{rootMargin:'80px'});observer.observe(host);const ro=new ResizeObserver(resize);ro.observe(host);const theme=new MutationObserver(setTheme);theme.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
  setTheme();resize();onReady();
  const corners=index=>{const card=cards[index];if(!card)return null;card.group.updateWorldMatrix(true,false);const rect=host.getBoundingClientRect();return [[-w/2,h/2],[w/2,h/2],[w/2,-h/2],[-w/2,-h/2]].map(([x,y])=>{projected.set(x,y,.09).applyMatrix4(card.group.matrixWorld).project(camera);return {x:rect.left+(projected.x+1)*rect.width/2,y:rect.top+(1-projected.y)*rect.height/2};});};
- return {setHover,getCorners:corners,setOpening:value=>{opening=value;if(!value)scrollDirty=true;wake();},hideCard:(index,value)=>{cards[index].hidden=value;wake();},dispose(){disposed=true;cancelAnimationFrame(frame);observer.disconnect();ro.disconnect();theme.disconnect();window.removeEventListener('scroll',scroll);document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener('change',wake);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointerleave',leave);renderer.domElement.removeEventListener('webglcontextlost',contextLost);const geometries=new Set(),materials=new Set();scene.traverse(o=>{if(o.isMesh){geometries.add(o.geometry);(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>materials.add(m));}});geometries.forEach(g=>g.dispose());materials.forEach(m=>{m.map?.dispose();m.dispose();});textures.forEach(t=>t.dispose());reflector?.getRenderTarget().dispose();environment.dispose();renderer.dispose();renderer.domElement.remove();}};
+ return {setContributionCanvas:canvas=>{if(disposed)return;contributionChart=canvas;paintContribution();wake();},setHover,getCorners:corners,setOpening:value=>{opening=value;if(!value)scrollDirty=true;wake();},hideCard:(index,value)=>{cards[index].hidden=value;wake();},dispose(){disposed=true;cancelAnimationFrame(frame);observer.disconnect();ro.disconnect();theme.disconnect();window.removeEventListener('scroll',scroll);document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener('change',wake);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointerleave',leave);renderer.domElement.removeEventListener('webglcontextlost',contextLost);const geometries=new Set(),materials=new Set();scene.traverse(o=>{if(o.isMesh){geometries.add(o.geometry);(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>materials.add(m));}});geometries.forEach(g=>g.dispose());materials.forEach(m=>{m.map?.dispose();m.dispose();});textures.forEach(t=>t.dispose());reflector?.getRenderTarget().dispose();environment.dispose();renderer.dispose();renderer.domElement.remove();}};
 }

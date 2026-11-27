@@ -872,6 +872,8 @@ function App() {
 
         <BeyondCvSection />
 
+        <HeroProfileTransition compact direction="reverse" topic="contact" />
+
         <section ref={contactSection} className="contact" id="contact" onPointerEnter={(event) => { if (event.pointerType === 'mouse') revealEmail(); }} onPointerLeave={(event) => { if (event.pointerType === 'mouse') hideEmail(); }} onTouchStart={revealEmail} onFocusCapture={revealEmail}>
           <div className="contact-orb" aria-hidden="true" />
           <div className="container contact-grid">

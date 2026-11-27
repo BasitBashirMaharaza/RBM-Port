@@ -16,7 +16,7 @@ export default function LearningComputerIntro({sectionRef,onComplete}){
    // Only time out the module import; leaving the section must pause, not skip, the intro.
    watchdog=setTimeout(finish,12000);
    try{const {createComputerEntrance}=await import('./learningComputerScene.js');clearTimeout(watchdog);if(!dead&&host.current)dispose=createComputerEntrance(host.current,finish);}
-   catch{finish();}
+   catch(error){console.warn('Education computer opening could not start',error);finish();}
   };
   const check=()=>{
    frame=0;if(started)return;
@@ -25,8 +25,9 @@ export default function LearningComputerIntro({sectionRef,onComplete}){
   };
   const schedule=()=>{if(!frame)frame=requestAnimationFrame(check);};
   const observer=new IntersectionObserver(schedule,{threshold:[0,.25,.5,.75,1]});observer.observe(sectionRef.current);
+  const welcomeObserver=new MutationObserver(schedule);welcomeObserver.observe(document.body,{attributes:true,attributeFilter:['class']});
   window.addEventListener('scroll',schedule,{passive:true});window.addEventListener('resize',schedule);document.addEventListener('visibilitychange',schedule);schedule();
-  return()=>{dead=true;observer.disconnect();clearTimeout(watchdog);clearTimeout(settle);cancelAnimationFrame(frame);window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);document.removeEventListener('visibilitychange',schedule);dispose?.();};
+  return()=>{dead=true;observer.disconnect();welcomeObserver.disconnect();clearTimeout(watchdog);clearTimeout(settle);cancelAnimationFrame(frame);window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);document.removeEventListener('visibilitychange',schedule);dispose?.();};
  },[sectionRef]);
  if(done)return null;
  return <div className="lg-computer-intro"><div className="lg-computer-canvas" ref={host} aria-hidden="true"/><span className="sr-only" role="status">Opening education and capabilities on a retro computer.</span><button type="button" className="lg-computer-skip" onClick={()=>{setDone(true);finishRef.current();}}>Skip intro ↗</button></div>;

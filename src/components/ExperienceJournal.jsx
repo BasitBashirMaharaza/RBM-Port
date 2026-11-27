@@ -1,9 +1,7 @@
 import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import './experience-journal.css';
-import contributions from './journal-contributions.json';
 import { createJournalSound } from './journalSound.js';
-import JournalContributionOverlay from './JournalContributionOverlay.jsx';
 import JournalAtmosphere from './JournalAtmosphere.jsx';
 import useJournalScrollFloat from './useJournalScrollFloat.js';
 
@@ -57,24 +55,6 @@ function JournalSignature() {
     </button>
   );
 }
-
-function ContributionNote({ onOpen }) {
-  const Tag = onOpen ? 'button' : 'div';
-  return (
-    <Tag className={'journal-contribution-note' + (onOpen ? ' journal-contribution-trigger' : '')}
-      type={onOpen ? 'button' : undefined} onClick={onOpen} aria-haspopup={onOpen ? 'dialog' : undefined}
-      role={onOpen ? undefined : 'img'}
-      aria-label={onOpen ? 'View GitHub contributions' : contributions.total + ' public GitHub contributions from ' + contributions.days[0].date + ' to ' + contributions.updated}>
-      <span className="journal-tape" aria-hidden="true" />
-      <div className="journal-contribution-heading"><strong>Building in public</strong><span>GitHub ↗</span></div>
-      <div className="journal-contribution-grid" aria-hidden="true">
-        {contributions.days.map((day) => <i key={day.date} data-level={day.level} title={day.date + ': ' + day.count + ' contributions'} />)}
-      </div>
-      <div className="journal-contribution-footer"><span>{contributions.total} contributions</span><small>Updated {contributions.updated}</small></div>
-    </Tag>
-  );
-}
-
 
 function BackCoverScene() {
   return (
@@ -138,7 +118,7 @@ function CoverMaterial() {
   );
 }
 
-function Cover({ items, back = false, onOpen, onContributions }) {
+function Cover({ items, back = false, onOpen }) {
   if (back) {
     return (
       <div className="journal-cover-art journal-back-art">
@@ -156,7 +136,6 @@ function Cover({ items, back = false, onOpen, onContributions }) {
       <span className="journal-note journal-note-small"><i className="journal-paper-pin pin-silver" aria-hidden="true" />Experience<br />& field notes</span>
       <span className="journal-cover-stamp">AI · DATA<br />HEALTHCARE</span>
       <span className="journal-note journal-note-list"><span className="journal-note-tape" aria-hidden="true" />{items.map((item) => <span key={item.role}>{item.label}</span>)}</span>
-      <ContributionNote onOpen={onContributions} />
     </div>
   );
 }
@@ -360,8 +339,6 @@ export default function ExperienceJournal({ items }) {
   const [page, setPage] = useState(-1);
   const [mobile,setMobile] = useState(()=>matchMedia('(max-width:700px)').matches);
   useEffect(()=>{const media=matchMedia('(max-width:700px)'),change=()=>setMobile(media.matches);media.addEventListener('change',change);return()=>media.removeEventListener('change',change);},[]);
-  const [contributionsOpen, setContributionsOpen] = useState(false);
-  const contributionTrigger = useRef(null);
   const [turn, setTurn] = useState(null);
   const [hintReady, setHintReady] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -652,10 +629,7 @@ export default function ExperienceJournal({ items }) {
             {backClosed ? <button data-sound="silent" className="journal-cover-button" onClick={() => select(lastPage)} aria-label="Reopen the experience journal">{backCover}</button> : !mobile && leftIndex >= 0 && leftIndex <= lastPage && renderPage(leftIndex, 'left')}
           </div>
           <div className="journal-paper journal-base-right" style={{ visibility: backClosed || endClosing || endOpening ? 'hidden' : undefined }}>
-            {closed || rightIndex === -1 ? <Cover items={items} onOpen={() => select(0)} onContributions={(event) => {
-              contributionTrigger.current = event.currentTarget;
-              setContributionsOpen(true);
-            }} /> :
+            {closed || rightIndex === -1 ? <Cover items={items} onOpen={() => select(0)} /> :
                 rightIndex >= 0 && rightIndex <= lastPage && renderPage(rightIndex, 'right')}
           </div>
           <nav className="journal-bookmarks" aria-label="Journal bookmarks">
@@ -677,7 +651,6 @@ export default function ExperienceJournal({ items }) {
         <button data-sound="silent" aria-label="Closing scene" aria-current={page === lastPage ? 'page' : undefined} disabled={!!turn} onClick={() => select(lastPage)} />
         <button data-sound="silent" aria-label="Back cover" aria-current={backClosed ? 'page' : undefined} disabled={!!turn} onClick={() => select(backCoverPage)} />
       </nav>
-      {contributionsOpen && <JournalContributionOverlay trigger={contributionTrigger.current} onClosed={() => setContributionsOpen(false)} />}
       <span className="journal-status" role="status" aria-live="polite">{closed ? 'Experience journal cover' : backClosed ? 'Experience journal back cover' : page === lastPage ? 'Closing scene' : items[page]?.role}</span>
     </div>
   );

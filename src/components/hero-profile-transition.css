@@ -83,3 +83,7 @@
  .hero-profile-transition.is-compact .hero-profile-band-unit > span { font-size:1.25em; }
  .hero-profile-transition.is-compact .hero-profile-band-unit svg { width:2.2em;height:2.2em;margin:0 1em; }
 }
+
+/* Fill the exposed underside of the angled bands with the Contact surface. */
+.hero-profile-transition.is-compact[data-topic='contact']{width:100%;background:linear-gradient(180deg,transparent 0 45%,var(--accent) 45% 100%)}
+.hero-profile-transition[data-topic='contact']+.contact{margin-top:-1px;width:100%;border-top:0}
