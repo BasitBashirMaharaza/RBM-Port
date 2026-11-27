@@ -15,7 +15,7 @@ import './responsive-book-spread.css';
 const segments=1;
 const duration=880;
 const wrap=index=>(index+beyondBooks.length)%beyondBooks.length;
-function poses(progress,_width,board=false){
+function poses(progress,board=false){
  // One unbroken face avoids strip seams and ten copies of every page's content.
  const angle=-Math.PI*progress;
  const lift=board?0:Math.sin(Math.PI*progress)*.012;
@@ -28,7 +28,17 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
  // reverse face must not wait until halfway through a turn to decode its photos.
  useEffect(()=>{
   const artwork=[...new Set(item.entries.map(entry=>entry.cover).filter(Boolean))];
-  artwork.forEach(src=>{const image=new Image();image.decoding='async';image.src=src;image.decode().catch(()=>{});});
+  let cancelled=false,task=0,cursor=0;
+  // Decode in small idle batches instead of competing with the cover entrance
+  // and the first page turn for every image at once on a phone.
+  const schedule=()=>{if(cancelled||cursor>=artwork.length)return;if(window.requestIdleCallback)task=requestIdleCallback(warm,{timeout:500});else task=window.setTimeout(warm,32);};
+  const warm=()=>{
+   if(cancelled)return;
+   const batch=artwork.slice(cursor,cursor+2);cursor+=batch.length;
+   Promise.all(batch.map(src=>{const image=new Image();image.decoding='async';image.src=src;return image.decode().catch(()=>{});})).then(schedule);
+  };
+  schedule();
+  return()=>{cancelled=true;if(window.cancelIdleCallback)cancelIdleCallback(task);clearTimeout(task);};
  },[item.id]);
  const {audio,player,events,selectPreview,finishPreview,reset:stopMusic}=useMusicPreviewPlayer(item.id);
  const [selectedTrail,setSelectedTrail]=useState(null);
@@ -112,21 +122,20 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
  };
  useLayoutEffect(()=>{
   if(!turn||!rig.current)return undefined;
-  const width=rig.current.offsetWidth/2;
   const board=turn.from===-1||turn.to===-1||turn.from===2||turn.to===2;
-  const samples=Array.from({length:61},(_,step)=>poses(turn.forward?step/60:1-step/60,width,board));
+  const samples=Array.from({length:61},(_,step)=>poses(turn.forward?step/60:1-step/60,board));
   const options={duration:pendingClose.current?720:duration,easing:turn.manual?'linear':'cubic-bezier(.65,0,.35,1)',fill:'both'};
   const leaves=strips.current.map((node,part)=>node.animate(samples.map((row,step)=>({offset:step/60,transform:row[part]})),options));
-  // Explicitly gate each face as it crosses the spine. Some mobile compositors
-  // otherwise keep promoted album images from the reverse face in the frame.
+  // Gate each face on the compositor as it crosses the spine. Opacity avoids
+  // inherited visibility changes and prevents retained reverse-face images.
   strips.current.forEach(node=>{
    ['.bcv-strip-front','.bcv-strip-back'].forEach((selector,index)=>{
     const visibleFirst=turn.forward?index===0:index===1;
     leaves.push(node.querySelector(selector).animate([
-     {offset:0,visibility:visibleFirst?'visible':'hidden'},
-     {offset:.499,visibility:visibleFirst?'visible':'hidden'},
-     {offset:.5,visibility:visibleFirst?'hidden':'visible'},
-     {offset:1,visibility:visibleFirst?'hidden':'visible'},
+     {offset:0,opacity:visibleFirst?1:0},
+     {offset:.499,opacity:visibleFirst?1:0},
+     {offset:.5,opacity:visibleFirst?0:1},
+     {offset:1,opacity:visibleFirst?0:1},
     ],options));
    });
   });
@@ -242,7 +251,7 @@ export default function BeyondBookViewer({ index, getOrigin, onChoose, onClosed,
   <footer className="bcv-book-console">
    <div className="bcv-control-deck" aria-busy={!!turn||closing||player.loading}><i/><i/><i/><i/><button type="button" data-sound="silent" disabled={page===-1||!!turn||closing||player.loading} aria-label="Previous page" onClick={()=>turnTo(page-1)}>◀<span>BACK</span></button><div className="bcv-deck-display"><small>{player.loading?'LOADING…':turn?'TURNING…':closing?'POWER OFF':page===-1?'SIDE A':page===2?'SIDE B':'PLAY ▶'}</small><strong>{page===-1?'COVER':page===2?'BACK':String(page+1).padStart(2,'0')+'/02'}</strong></div><button type="button" data-sound="silent" className="bcv-deck-forward" disabled={page===2||!!turn||closing||player.loading} aria-label={page===-1?'Open book':'Next page'} onClick={()=>turnTo(page+1)}>▶<span>{page===-1?'OPEN':'NEXT'}</span></button></div>
    <div className="bcv-book-picker"><button type="button" data-sound="silent" disabled={!!turn||closing} onClick={()=>choose(index-1)}>‹ PREV BOOK</button><div>{beyondBooks.map((book,i)=><button key={book.id} type="button" data-sound="silent" aria-label={'Read '+book.title} aria-current={index===i?'true':undefined} disabled={!!turn||closing} onClick={()=>choose(i)}/>)}</div><button type="button" data-sound="silent" disabled={!!turn||closing} onClick={()=>choose(index+1)}>NEXT BOOK ›</button></div>
-   <p>← → TURN PAGES · DRAG THE PAPER · ESC CLOSE</p>
+   <p><span className="bcv-controls-hint-desktop">← → TURN PAGES · DRAG THE PAPER · ESC CLOSE</span><span className="bcv-controls-hint-touch">Swipe to turn · tap to explore</span></p>
   </footer>
  </dialog>;
 }

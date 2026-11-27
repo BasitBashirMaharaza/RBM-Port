@@ -36,8 +36,12 @@ the gallery or its book viewer is paused.
 
 Phones and desktops use the same `BeyondBookViewer.jsx` and its 180-degree
 hinged-sheet animation. Both pages remain visible together on phones.
-`responsive-book-spread.css` maximizes the spread's width, allows more vertical
-space for page content, and adjusts text, labels, and controls for phones.
+`responsive-book-spread.css` gives phone pages compact paper proportions, with
+separate grid rows for the header, spread, and touch controls. Portrait layouts
+keep both pages together; short landscape screens put the controls alongside.
+Dense trail pages have slightly more height; detailed information remains
+available in their photo-triggered windows. Nested artwork uses flat rotations
+on phones to avoid competing 3D layers inside the turning sheet.
 Stable small viewport units prevent browser toolbars from resizing the book;
 height-only resize events no longer cancel a turn. Swipe and page-click
 handlers exclude inputs and music controls. Native pinch zoom remains available.
@@ -54,3 +58,7 @@ Browsing uses a critically damped rotation spring that retains velocity when
 direction changes. Rapid arrow presses queue from the requested card, and wheel
 gestures settle onto a card before automatic rotation resumes. Drag release uses
 the same settling motion. Reduced motion keeps immediate selection.
+
+Page turns animate transforms and gate front/back faces with opacity. They do
+not measure the rig after mounting a moving sheet. Artwork decodes in small idle
+batches so it does not compete with the entrance and initial page turn.

@@ -1,79 +1,103 @@
-/* Contact composer only; the existing full-screen delivery stage keeps its skin. */
-.email-contact-redesigned { --compose-bg:#151a1c;--compose-ink:#eff3ef;--compose-muted:#a4b2af;--compose-line:#cfdfdb24;--compose-field:#ffffff04;--compose-accent:#c1badf;--compose-button:#d8dfcf;--compose-button-ink:#1d2927;--compose-glow:#a8d5c712;--compose-error:#f2b5ab; }
-html[data-theme='light'] .email-contact-redesigned { --compose-bg:#f5f6f0;--compose-ink:#273b37;--compose-muted:#637771;--compose-line:#415e4d29;--compose-field:#ffffff72;--compose-accent:#786891;--compose-button:#344c41;--compose-button-ink:#f5f6ed;--compose-glow:#a0bdb923;--compose-error:#a33f43; }
-.email-contact-redesigned:not(.is-morphing) { background:#090f11b3; }
-html[data-theme='light'] .email-contact-redesigned:not(.is-morphing) { background:#36433d66; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-dialog { display:grid;grid-template-columns:225px minmax(0,1fr);align-content:start;width:min(100%,820px);max-height:calc(100dvh - 36px);overflow:auto;border:1px solid var(--compose-line);border-radius:20px;background:var(--compose-bg);color:var(--compose-ink);box-shadow:0 34px 100px #0005,inset 0 1px 0 #f4fff814; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-dialog::before { inset:0;z-index:0;opacity:1;pointer-events:none;filter:none;background:radial-gradient(ellipse at 10% 10%,var(--compose-glow),transparent 45%),radial-gradient(ellipse at 90% 80%,#a9a1d40a,transparent 40%);background-size:auto;animation:compose-reflection 12s ease-in-out infinite alternate; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-dialog::after { display:none; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-titlebar { grid-column:1/-1;position:relative;z-index:1;min-height:58px;padding:0 22px;gap:13px;border-bottom:1px solid var(--compose-line);color:var(--compose-muted);font:400 10px/1.4 'DM Mono',monospace;letter-spacing:.03em; }
-.email-contact-redesigned .contact-compose-wordmark { color:var(--compose-ink);font:italic 600 27px/1 Georgia,serif;letter-spacing:-.1em;padding-right:15px;border-right:1px solid var(--compose-line); }
-.email-contact-redesigned:not(.is-morphing) .email-contact-titlebar .email-contact-close { display:grid;place-items:center;width:34px;height:34px;margin-left:auto;padding:0;border:1px solid var(--compose-line);border-radius:50%;background:transparent;color:var(--compose-muted); }
-.email-contact-redesigned .email-contact-close svg { width:18px;height:18px;stroke:currentColor;stroke-width:1.3;stroke-linecap:round; }
-.email-contact-redesigned .contact-compose-intro { position:relative;z-index:1;display:flex;flex-direction:column;gap:26px;padding:30px 25px 26px;border-right:1px solid var(--compose-line);background:linear-gradient(155deg,var(--compose-glow),transparent 70%); }
-.email-contact-redesigned .contact-compose-identity { display:flex;align-items:center;gap:10px;color:var(--compose-ink);font:500 11px/1.5 Manrope,system-ui,sans-serif; }
-.email-contact-redesigned .contact-compose-identity img { width:36px;height:36px;border:1px solid var(--compose-line);border-radius:50%;object-fit:cover;filter:grayscale(1); }
-.email-contact-redesigned .contact-compose-identity small { display:block;margin-top:2px;color:var(--compose-muted);font-size:9px;font-weight:400; }
-.email-contact-redesigned .contact-compose-invitation { margin-top:20px; }
-.email-contact-redesigned .contact-compose-invitation>span { display:block;max-width:140px;color:var(--compose-muted);font:400 8px/1.8 'DM Mono',monospace;letter-spacing:.12em; }
-.email-contact-redesigned .contact-compose-invitation h3 { margin:17px 0 19px;color:var(--compose-ink);font:400 39px/1.06 Georgia,serif;letter-spacing:-.055em; }
-.email-contact-redesigned .contact-compose-invitation h3 em { color:var(--compose-accent);font-weight:400; }
-.email-contact-redesigned .contact-compose-invitation p { margin:0;color:var(--compose-muted);font:400 11px/1.85 Manrope,system-ui,sans-serif; }
-.email-contact-redesigned .contact-compose-signal { display:block;width:100%;height:auto;margin:auto 0 0;overflow:visible;stroke:var(--compose-line);stroke-width:1; }
-.email-contact-redesigned .contact-compose-signal g { stroke:var(--compose-accent);fill:var(--compose-field); }
-.email-contact-redesigned .compose-signal-light { stroke:url(#compose-signal-ink);stroke-width:1.5;stroke-dasharray:20 260;animation:compose-signal-travel 6s linear infinite; }
-.email-contact-redesigned .contact-compose-signoff { color:var(--compose-muted);font:400 8px/1.8 'DM Mono',monospace;letter-spacing:.03em; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-content { min-width:0;padding:31px 32px 25px; }
-.email-contact-redesigned .contact-compose-eyebrow { display:block;margin-bottom:12px;color:var(--compose-accent);font:400 8px/1.5 'DM Mono',monospace;letter-spacing:.16em; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-content h2 { margin:0 0 9px;color:var(--compose-ink);font:500 clamp(27px,3.5vw,33px)/1.15 Manrope,system-ui,sans-serif;letter-spacing:-.055em;text-shadow:none; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-content h2 span { color:var(--compose-accent); }
-.email-contact-redesigned .contact-compose-subtitle { margin:0 0 26px;color:var(--compose-muted);font:400 11px/1.7 Manrope,system-ui,sans-serif; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-fields { gap:19px; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-row { grid-template-columns:1fr 1fr;gap:15px; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-content label { display:grid;gap:9px;width:100%;color:var(--compose-muted);font:500 10px/1.3 Manrope,system-ui,sans-serif;text-shadow:none;letter-spacing:.02em;cursor:text;transform:none;transition:color 180ms ease; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-content input { display:block;box-sizing:border-box;width:100%;min-width:0;min-height:47px;padding:12px 13px;border:1px solid var(--compose-line);border-radius:9px;background:var(--compose-field);color:var(--compose-ink);box-shadow:inset 0 1px 0 #ffffff04;font:400 13px/1.5 Manrope,system-ui,sans-serif;letter-spacing:0;text-shadow:none;outline:0;transition:border-color 180ms ease,background-color 180ms ease,box-shadow 180ms ease; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-content input::placeholder,.email-contact-redesigned:not(.is-morphing) .email-contact-content textarea::placeholder { color:var(--compose-muted);opacity:.65; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-content input:focus { border-color:var(--compose-accent);background:color-mix(in srgb,var(--compose-field) 80%,var(--compose-accent) 5%);box-shadow:0 0 0 3px color-mix(in srgb,var(--compose-accent) 10%,transparent); }
-.email-contact-redesigned:not(.is-morphing) .email-contact-content label:focus-within { color:var(--compose-accent);transform:none;text-shadow:none; }
-.email-contact-redesigned .contact-compose-message-heading { display:flex;justify-content:space-between;align-items:center;gap:16px;margin:22px 0 9px; }
-.email-contact-redesigned .contact-compose-message-heading>span { flex:none;color:var(--compose-muted);font:400 8px/1.2 'DM Mono',monospace;font-variant-numeric:tabular-nums; }
-.email-contact-redesigned:not(.is-morphing) .mo-root { margin:0; }
-.email-contact-redesigned:not(.is-morphing) .mo-input { display:grid;grid-template-columns:1fr auto;gap:8px;min-height:0;padding:12px;border:1px solid var(--compose-line);border-radius:11px;background:var(--compose-field);box-shadow:none;transition:border-color 180ms ease,box-shadow 180ms ease; }
-.email-contact-redesigned:not(.is-morphing) .mo-input:focus-within { border-color:var(--compose-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--compose-accent) 10%,transparent); }
-.email-contact-redesigned:not(.is-morphing) .mo-spark { display:none; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-content textarea.mo-field { grid-column:1/-1;display:block;box-sizing:border-box;width:100%;height:94px;min-height:94px;max-height:180px;margin:0;padding:2px 1px;border:0;border-radius:0;box-shadow:none;resize:vertical;background:transparent;color:var(--compose-ink);font:400 14px/1.7 Manrope,system-ui,sans-serif;letter-spacing:0;outline:0; }
-.email-contact-redesigned:not(.is-morphing) .mo-send { grid-column:2;justify-self:end;display:inline-flex;align-items:center;justify-content:center;gap:14px;width:auto;min-height:40px;padding:0 14px;border:1px solid color-mix(in srgb,var(--compose-button) 75%,transparent);border-radius:7px;background:var(--compose-button);color:var(--compose-button-ink);filter:none;box-shadow:inset 0 1px 0 #ffffff19; }
-.email-contact-redesigned .mo-send-label { font:600 11px/1.2 Manrope,system-ui,sans-serif;letter-spacing:0; }
-.email-contact-redesigned:not(.is-morphing) .mo-send svg { width:17px;height:17px;transform:rotate(45deg); }
-.email-contact-redesigned:not(.is-morphing) .email-contact-note { margin:14px 0 0;color:var(--compose-muted);font:400 9px/1.6 Manrope,system-ui,sans-serif; }
-.email-contact-redesigned:not(.is-morphing) .email-contact-error { margin:13px 0 0;color:var(--compose-error);font:400 11px/1.6 Manrope,system-ui,sans-serif; }
-.email-contact-redesigned .email-contact-dialog:focus-visible { outline:none; }
-.email-contact-redesigned button { touch-action:manipulation;-webkit-tap-highlight-color:transparent; }
-.email-contact-redesigned:not(.is-morphing) :is(button,input,textarea):focus-visible { outline:2px solid var(--compose-accent);outline-offset:3px; }
-.email-contact-redesigned:not(.is-morphing) :is(input,textarea):focus-visible { outline:none; }
-@media(hover:hover) and (pointer:fine) {
- .email-contact-redesigned:not(.is-morphing) .email-contact-content input:hover { border-color:color-mix(in srgb,var(--compose-accent) 60%,var(--compose-line));background:var(--compose-field); }
- .email-contact-redesigned:not(.is-morphing) .email-contact-content input:focus:hover { border-color:var(--compose-accent); }
- .email-contact-redesigned:not(.is-morphing) .email-contact-close:hover { color:var(--compose-ink);background:var(--compose-field); }
- .email-contact-redesigned:not(.is-morphing) .mo-send:hover:not(:disabled) { filter:brightness(1.06);transform:translateY(-1px); }
+/* A living glass composer. Delivery remains the original isolated MorphOrb stage. */
+.email-contact-redesigned{--compose-bg:#161b29;--compose-message:#293449;--compose-ink:#f3f5f4;--compose-muted:#c1c7d3;--compose-line:#d0dcf03b;--compose-accent:#c0b1ff;--compose-mint:#9ee0ca;--compose-lime:#c1ee93;--compose-error:#ffb9b3;--compose-pane:#1a213bcf;--compose-ribbon:#9391e8;--compose-button-ink:#142329}
+html[data-theme='light'] .email-contact-redesigned{--compose-bg:#e3e9df;--compose-message:#d5e1d8;--compose-ink:#192f28;--compose-muted:#43584e;--compose-line:#49665760;--compose-accent:#694993;--compose-mint:#2c7664;--compose-lime:#476d24;--compose-error:#a92d42;--compose-pane:#f1f3eafa;--compose-ribbon:#8d79b7;--compose-button-ink:#16372f}
+.email-contact-redesigned:not(.is-morphing){overflow:hidden;background:#080d1ed4;isolation:isolate;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+html[data-theme='light'] .email-contact-redesigned:not(.is-morphing){background:#dbe6dbb3}
+.contact-liquid-scene{position:absolute;inset:0;overflow:hidden;pointer-events:none;contain:strict;z-index:0}
+.contact-liquid-scene>i{position:absolute;left:calc(50% - 440px);top:calc(50% - 190px);width:650px;height:360px;border-radius:50%;border:1px solid #d8f4ed55;background:linear-gradient(125deg,#a9e6d11a 5%,#97e7d6b0 15%,#a392ddcc 25%,#eaeadc33 33%,#101b2844 43%,#a8c6c322 60%,#bb9be199 75%,#b3d8c288 85%,transparent);box-shadow:inset 10px 14px 30px #eefaf759,inset -12px -18px 35px #17233688,0 10px 30px #02061130;transform:rotate(-35deg);animation:contact-ribbon-drift 15s ease-in-out infinite alternate}
+.contact-liquid-scene>i:nth-child(2){left:calc(50% - 80px);top:calc(50% - 380px);width:500px;height:260px;opacity:.7;animation-delay:-8s;animation-direction:alternate-reverse}
+.contact-liquid-scene>span{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--compose-mint);left:calc(50% - 335px);top:65%;box-shadow:0 0 12px var(--compose-mint);animation:contact-glint 4s ease-in-out infinite}
+.contact-liquid-scene>span:nth-last-child(2){left:calc(50% + 330px);top:30%;animation-delay:-1.8s}
+.contact-liquid-scene>span:last-child{left:calc(50% + 295px);top:78%;animation-delay:-3s}
+.email-contact-redesigned:not(.is-morphing) .email-contact-dialog{display:block;width:min(100%,620px);max-height:calc(100dvh - 40px);overflow:auto;overscroll-behavior:contain;border:1px solid transparent;border-radius:30px 84px 30px 30px;background:linear-gradient(135deg,var(--compose-pane),var(--compose-bg)) padding-box,linear-gradient(120deg,var(--compose-mint),#c9c2e55c 25%,var(--compose-accent) 65%,var(--compose-mint)) border-box;color:var(--compose-ink);box-shadow:inset 0 1px 1px #ffffff55,0 28px 80px #0004;scrollbar-width:thin;scrollbar-color:var(--compose-line) transparent;isolation:isolate}
+.email-contact-redesigned:not(.is-morphing) .email-contact-dialog::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.6;filter:none;background:radial-gradient(ellipse at 20% 70%,#95d4b851,transparent 42%),radial-gradient(ellipse at 70% 22%,#a7a0e266,transparent 37%),linear-gradient(130deg,transparent 30%,#ebf5e921 45%,transparent 60%);animation:contact-glass-flow 13s ease-in-out infinite alternate}
+.email-contact-redesigned:not(.is-morphing) .email-contact-dialog::after{display:none}
+.email-contact-redesigned:not(.is-morphing) .email-contact-titlebar{position:relative;z-index:1;min-height:62px;padding:8px 28px;border:0;color:var(--compose-muted);font:400 10px/1.4 'DM Mono',monospace;letter-spacing:.035em;gap:14px}
+
+.email-contact-redesigned:not(.is-morphing) .email-contact-titlebar .email-contact-close{display:grid;place-items:center;width:44px;height:44px;margin-left:auto;padding:0;border:1px solid var(--compose-line);border-radius:50%;background:#ffffff05;color:var(--compose-muted);transition:transform 180ms ease,background-color 180ms ease}
+.email-contact-redesigned .email-contact-close svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.3;stroke-linecap:round}
+.email-contact-redesigned:not(.is-morphing) .email-contact-content{position:relative;z-index:1;min-width:0;padding:8px 40px 28px}
+.email-contact-redesigned .contact-compose-eyebrow{display:block;margin-bottom:8px;color:var(--compose-mint);font:500 8px/1.5 'DM Mono',monospace;letter-spacing:.15em}
+.email-contact-redesigned:not(.is-morphing) .email-contact-content h2{margin:0;color:var(--compose-ink);font:500 30px/1.2 Manrope,system-ui,sans-serif;letter-spacing:-.045em;text-shadow:none}
+.email-contact-redesigned .email-contact-content h2 em{font-family:Newsreader,Georgia,serif;font-weight:400;color:var(--compose-accent)}
+.email-contact-redesigned .contact-compose-subtitle{margin:8px 0 24px;color:var(--compose-muted);font:400 12px/1.6 Manrope,system-ui,sans-serif}
+.email-contact-redesigned:not(.is-morphing) .email-contact-fields{display:grid;gap:18px}
+.email-contact-redesigned:not(.is-morphing) .email-contact-row{display:grid;grid-template-columns:1fr;gap:18px}
+.email-contact-redesigned:not(.is-morphing) .email-contact-content label{position:relative;display:grid;gap:3px;width:100%;color:var(--compose-muted);font:500 9px/1.4 'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;text-shadow:none;cursor:text;transform:none;transition:color 180ms ease}
+.email-contact-redesigned:not(.is-morphing) .email-contact-fields label{isolation:isolate}
+.email-contact-redesigned:not(.is-morphing) .email-contact-fields label::before,.email-contact-redesigned:not(.is-morphing) .email-contact-fields label::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;pointer-events:none;background:linear-gradient(90deg,var(--compose-mint),#d4deeb88,var(--compose-accent));box-shadow:0 1px 6px #aba3de55}
+.email-contact-redesigned:not(.is-morphing) .email-contact-fields label::after{height:2px;right:auto;width:30%;background:linear-gradient(90deg,transparent,var(--compose-mint),transparent);opacity:.65;animation:contact-line-current 5s ease-in-out infinite alternate}
+.email-contact-redesigned:not(.is-morphing) .email-contact-row label:nth-child(2)::after{animation-delay:-2.5s}
+.email-contact-redesigned:not(.is-morphing) .email-contact-fields>label::after{animation-delay:-1.4s}
+.email-contact-redesigned:not(.is-morphing) .email-contact-content input{display:block;box-sizing:border-box;width:100%;min-width:0;height:38px;min-height:38px;padding:6px 0 9px;border:0;border-radius:0;background:transparent;color:var(--compose-ink);box-shadow:none;font:400 16px/1.5 Manrope,system-ui,sans-serif;letter-spacing:0;text-shadow:none;outline:0;caret-color:var(--compose-accent);transition:background-color 180ms ease}
+.email-contact-redesigned:not(.is-morphing) .email-contact-content input::placeholder,.email-contact-redesigned:not(.is-morphing) textarea.mo-field::placeholder{color:var(--compose-muted);opacity:.8}
+.email-contact-redesigned:not(.is-morphing) .email-contact-content input:focus{border:0;background:linear-gradient(0deg,#a2c9b50a,transparent);box-shadow:none}
+.email-contact-redesigned:not(.is-morphing) .email-contact-content label:focus-within{color:var(--compose-ink);transform:none;text-shadow:none}
+.email-contact-redesigned:not(.is-morphing) .email-contact-fields label:focus-within::before{height:2px;box-shadow:0 0 9px #afaae575}
+.email-contact-redesigned .contact-compose-message-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:24px 0 12px}
+.email-contact-redesigned .contact-compose-message-heading>span{flex:none;color:var(--compose-muted);font:400 8px/1.2 'DM Mono',monospace;font-variant-numeric:tabular-nums}
+.email-contact-redesigned:not(.is-morphing) .mo-root{margin:0;min-height:0}
+.email-contact-redesigned:not(.is-morphing) .mo-input{position:relative;isolation:isolate;display:grid;grid-template-columns:1fr auto;gap:20px;min-height:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none}
+.email-contact-redesigned:not(.is-morphing) .contact-liquid-surface{display:block;position:absolute;z-index:-1;inset:0 0 72px;overflow:visible;border:1px solid transparent;border-radius:30px 48px 32px 44px;background:linear-gradient(135deg,var(--compose-message),var(--compose-bg)) padding-box,linear-gradient(130deg,var(--compose-mint),#dcdfed77 30%,var(--compose-accent) 70%,var(--compose-mint)) border-box;box-shadow:inset 0 1px 16px #f4fff41c,0 5px 22px #080e2817;transition:box-shadow 180ms ease}
+.email-contact-redesigned:not(.is-morphing) .contact-liquid-surface::before{content:'';position:absolute;inset:1px;border-radius:inherit;overflow:hidden;background:radial-gradient(ellipse at 15% 20%,#a2d6c24a,transparent 40%),radial-gradient(ellipse at 80% 65%,#b2a3ed55,transparent 40%);animation:contact-message-tide 9s ease-in-out infinite alternate;pointer-events:none}
+.email-contact-redesigned:not(.is-morphing) .contact-liquid-surface::after{content:'';position:absolute;inset:1px;border-radius:inherit;pointer-events:none;opacity:.12;background-image:radial-gradient(var(--compose-ink) .6px,transparent .8px);background-size:4px 4px}
+.email-contact-redesigned:not(.is-morphing) .mo-input:focus-within{border:0;box-shadow:none}
+.email-contact-redesigned:not(.is-morphing) .mo-input:focus-within .contact-liquid-surface{box-shadow:inset 0 1px 18px #eef6eb24,0 0 0 3px #b7a5e214,0 6px 24px #839ec41a}
+.contact-liquid-surface{display:none}
+.email-contact-redesigned:not(.is-morphing) .contact-liquid-surface>span{position:absolute;right:-8px;top:18px;width:23px;height:23px;border:1px solid #def9ed99;border-radius:50%;background:radial-gradient(circle at 30% 24%,#ffffffba,#9cbddc50 35%,#43517555 62%,#c2bbef99);box-shadow:inset -2px -3px 5px #d2c5ed66,0 3px 8px #0002;animation:contact-droplet-float 5s ease-in-out infinite alternate}
+.email-contact-redesigned:not(.is-morphing) .contact-liquid-surface>span:nth-child(2){right:auto;left:-9px;top:auto;bottom:20px;width:25px;height:25px;animation-delay:-2s}
+.email-contact-redesigned:not(.is-morphing) .contact-liquid-surface>span:nth-child(3){right:38px;top:-6px;width:12px;height:12px;animation-delay:-3.6s}
+.email-contact-redesigned:not(.is-morphing) .contact-liquid-surface>i{position:absolute;right:0;top:-12px;width:3px;height:3px;border-radius:50%;background:var(--compose-mint);box-shadow:9px -6px 0 #c7c1f499,-10px 7px 0 #edf7e966,4px 14px 0 #edf7e999;animation:contact-glint 3s ease-in-out infinite}
+.email-contact-redesigned:not(.is-morphing) .contact-liquid-surface>i:last-child{left:-7px;top:auto;bottom:0;animation-delay:-1.5s}
+.email-contact-redesigned:not(.is-morphing) .mo-spark{display:none}
+.email-contact-redesigned:not(.is-morphing) .email-contact-content textarea.mo-field{position:relative;grid-column:1/-1;display:block;box-sizing:border-box;width:100%;height:146px;min-height:146px;max-height:146px;margin:0;padding:24px 26px;border:0;border-radius:28px 44px 28px 40px;box-shadow:none;resize:none;background:transparent;color:var(--compose-ink);font:400 16px/1.65 Manrope,system-ui,sans-serif;letter-spacing:0;outline:0;caret-color:var(--compose-accent);scrollbar-width:thin;scrollbar-color:var(--compose-accent) transparent}
+.email-contact-redesigned:not(.is-morphing) .mo-send{position:relative;isolation:isolate;grid-column:2;justify-self:end;display:inline-flex;align-items:center;justify-content:center;flex-direction:row-reverse;gap:11px;width:auto;min-height:50px;margin:0;padding:0 24px;border:1px solid #dbf6df8f;border-radius:28px 24px 30px 22px;background:linear-gradient(125deg,#aedebd,#bfc4f0 50%,#9bd5c6);color:var(--compose-button-ink);filter:none;box-shadow:inset 0 1px 5px #ffffffa8,0 4px 18px #9bbcd733;overflow:hidden;transition:transform 180ms ease,box-shadow 180ms ease}
+.email-contact-redesigned:not(.is-morphing) .mo-send::before{content:'';position:absolute;z-index:-1;inset:-30%;background:radial-gradient(ellipse at 25% 50%,#e7ffb6aa,transparent 43%),radial-gradient(ellipse at 75% 50%,#9992efcc,transparent 40%);animation:contact-button-flow 5s ease-in-out infinite alternate;pointer-events:none}
+.email-contact-redesigned .mo-send-label{font:600 12px/1.2 Manrope,system-ui,sans-serif;letter-spacing:.015em}
+.email-contact-redesigned:not(.is-morphing) .mo-send svg{width:19px;height:19px;transform:none;transition:transform 180ms ease}
+.email-contact-redesigned:not(.is-morphing) .email-contact-note{position:relative;max-width:230px;margin:-44px 0 16px;color:var(--compose-muted);font:400 10px/1.6 Manrope,system-ui,sans-serif;pointer-events:none}
+.email-contact-redesigned:not(.is-morphing) .email-contact-error{margin:14px 0 54px;color:var(--compose-error);font:500 12px/1.6 Manrope,system-ui,sans-serif}
+.email-contact-redesigned .email-contact-dialog:focus-visible{outline:none}
+.email-contact-redesigned button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.email-contact-redesigned:not(.is-morphing) button:focus-visible{outline:2px solid var(--compose-accent);outline-offset:4px}
+.email-contact-redesigned:not(.is-morphing) input:focus-visible,.email-contact-redesigned:not(.is-morphing) textarea:focus-visible{outline:none}
+@media(hover:hover) and (pointer:fine){
+ .email-contact-redesigned:not(.is-morphing) .email-contact-fields label:hover{color:var(--compose-ink)}
+ .email-contact-redesigned:not(.is-morphing) .email-contact-close:hover{background:#b6b9dc18;transform:rotate(8deg)}
+ .email-contact-redesigned:not(.is-morphing) .mo-send:hover:not(:disabled){transform:translateY(-2px);box-shadow:inset 0 1px 5px #ffffffb8,0 5px 24px #a6c3d855}
+ .email-contact-redesigned:not(.is-morphing) .mo-send:hover:not(:disabled) svg{transform:translate(2px,-2px)}
 }
-@keyframes compose-reflection { to { opacity:.55; } }
-@keyframes compose-signal-travel { to { stroke-dashoffset:-280; } }
-@media(max-width:700px) {
- .email-contact-redesigned:not(.is-morphing) { padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left)); }
- .email-contact-redesigned:not(.is-morphing) .email-contact-dialog { grid-template-columns:1fr;max-height:calc(100dvh - 24px);border-radius:17px; }
- .email-contact-redesigned:not(.is-morphing) .email-contact-titlebar { min-height:51px;padding:0 19px; }
- .email-contact-redesigned .contact-compose-intro { display:block;padding:15px 22px;border-right:0;border-bottom:1px solid var(--compose-line); }
- .email-contact-redesigned .contact-compose-invitation,.email-contact-redesigned .contact-compose-signal,.email-contact-redesigned .contact-compose-signoff { display:none; }
- .email-contact-redesigned:not(.is-morphing) .email-contact-content { padding:24px 22px 21px; }
- .email-contact-redesigned:not(.is-morphing) .email-contact-row { grid-template-columns:1fr;gap:18px; }
- .email-contact-redesigned:not(.is-morphing) .email-contact-content input { font-size:16px;min-height:47px; }
- .email-contact-redesigned:not(.is-morphing) .email-contact-content textarea.mo-field { font-size:16px;height:94px;min-height:94px; }
- .email-contact-redesigned:not(.is-morphing) .email-contact-content h2 { font-size:29px; }
- .email-contact-redesigned .contact-compose-subtitle { margin-bottom:24px; }
+.email-contact-redesigned:not(.is-morphing) .mo-send:active:not(:disabled){transform:scale(.98)}
+@keyframes contact-ribbon-drift{to{transform:translate3d(32px,-22px,0) rotate(-24deg)}}
+@keyframes contact-glass-flow{to{opacity:.9}}
+@keyframes contact-line-current{to{transform:translateX(230%);opacity:.25}}
+@keyframes contact-message-tide{to{transform:translate3d(2px,-3px,0);opacity:.45}}
+@keyframes contact-droplet-float{to{transform:translate3d(3px,-7px,0)}}
+@keyframes contact-glint{0%,100%{opacity:.2;transform:scale(.75)}50%{opacity:.85;transform:scale(1)}}
+@keyframes contact-button-flow{to{transform:translate3d(12%,0,0) rotate(15deg)}}
+@media(max-width:700px){
+ .email-contact-redesigned:not(.is-morphing){padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+ .email-contact-redesigned:not(.is-morphing) .email-contact-dialog{max-height:calc(100dvh - 24px);border-radius:24px 54px 24px 24px}
+ .email-contact-redesigned:not(.is-morphing) .email-contact-titlebar{padding:8px 20px;min-height:56px;font-size:9px}
+ .email-contact-redesigned:not(.is-morphing) .email-contact-content{padding:6px 24px 25px}
+ .email-contact-redesigned .contact-compose-subtitle{font-size:11px;margin-bottom:22px;max-width:260px}
+ .email-contact-redesigned:not(.is-morphing) .email-contact-content h2{font-size:29px}
+ .email-contact-redesigned:not(.is-morphing) .email-contact-fields,.email-contact-redesigned:not(.is-morphing) .email-contact-row{gap:16px}
+ .email-contact-redesigned:not(.is-morphing) .email-contact-content textarea.mo-field{height:136px;min-height:136px;max-height:136px;padding:20px}
+ .email-contact-redesigned:not(.is-morphing) .mo-send{min-height:48px;padding:0 20px}
+ .email-contact-redesigned:not(.is-morphing) .email-contact-note{margin:16px 0 0;max-width:none;font-size:10px}
+ .email-contact-redesigned:not(.is-morphing) .email-contact-error{margin:12px 0 0}
+ .email-contact-redesigned:not(.is-morphing) .contact-liquid-surface{bottom:70px}
+ .contact-liquid-scene>i{opacity:.5}
 }
-@media(prefers-reduced-motion:reduce) {
- .email-contact-redesigned:not(.is-morphing) .email-contact-dialog::before,.email-contact-redesigned .compose-signal-light { animation:none; }
- .email-contact-redesigned:not(.is-morphing) :is(input,textarea,label,.mo-input,.mo-send) { transition:none; }
- .email-contact-redesigned:not(.is-morphing) .mo-send:hover { transform:none; }
+@media(prefers-reduced-motion:reduce){
+ .email-contact-redesigned:not(.is-morphing) *, .email-contact-redesigned:not(.is-morphing) *::before,.email-contact-redesigned:not(.is-morphing) *::after{animation:none!important;transition:none!important}
 }
+
+/* Daylight glass has its own ink and pigment, rather than a faded dark skin. */
+html[data-theme='light'] .email-contact-redesigned:not(.is-morphing){background:#687d668c}
+html[data-theme='light'] .email-contact-redesigned:not(.is-morphing) .email-contact-dialog{background:linear-gradient(130deg,#e3ebd8fa,#c6d8cffa 48%,#d4c9e4fa) padding-box,linear-gradient(120deg,#508d79,#b0b88b 32%,#9270b4 70%,#508d79) border-box;box-shadow:inset 0 1px 1px #fff,0 25px 75px #17332640}
+html[data-theme='light'] .email-contact-redesigned:not(.is-morphing) .email-contact-dialog::before{opacity:.32}
+html[data-theme='light'] .email-contact-redesigned:not(.is-morphing) .contact-liquid-surface{background:linear-gradient(125deg,#bdd7c8,#cbbfdf 65%,#bfd6cb) padding-box,linear-gradient(120deg,#3c836d,#9680af 70%,#3c836d) border-box;box-shadow:inset 0 1px 12px #ffffff77,0 6px 20px #35524514}
+html[data-theme='light'] .email-contact-redesigned:not(.is-morphing) .email-contact-content input::placeholder,html[data-theme='light'] .email-contact-redesigned:not(.is-morphing) textarea.mo-field::placeholder{color:#506158;opacity:1}
+html[data-theme='light'] .email-contact-redesigned .contact-liquid-scene>i{background:linear-gradient(125deg,#547e6e44,#69a896 16%,#a28bbe 29%,#d8dfc480 39%,#59796944 55%,#8f7aac99 75%,#83b59c 87%,transparent);box-shadow:inset 10px 14px 30px #f5fff080,inset -12px -18px 35px #3c5d5855,0 10px 30px #294c3526}
